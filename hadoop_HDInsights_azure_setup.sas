@@ -1,4 +1,4 @@
-/*libname setup*/
+/*libname setup xyz*/
 option set=SAS_HADOOP_CONFIG_PATH="/caslibs/hadoopfiles/conf";
 option set=SAS_HADOOP_JAR_PATH="/caslibs/hadoopfiles/lib";
 options sastrace=',,,d' sastraceloc=saslog nostsuffix sql_ip_trace=(note,source) msglevel=i;
