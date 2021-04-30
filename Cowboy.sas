@@ -12,9 +12,9 @@ data hat;
   end;
  end;
 run;
-title1 c=white f=swiss 'The Comboy Hat';
-title2 h=2 angle=90 ' ';
+title1 c=white f=swiss 'Wifi Antenna Signal Level @1.5m from the floor';
+title2 h=2 color=bibg angle=90 'Relative Strength';
 
 proc g3d data=hat;
-plot y*x=z / ctop=blue ctext=white;
-run; run; run;
+plot y*x=z / ctop=red ctext=white;
+run; 
