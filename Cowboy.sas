@@ -16,5 +16,5 @@ title1 c=white f=swiss 'The Comboy Hat';
 title2 h=2 angle=90 ' ';
 
 proc g3d data=hat;
-plot y*x=z / ctop=purple ctext=white;
+plot y*x=z / ctop=blue ctext=white;
 run; run; run;
