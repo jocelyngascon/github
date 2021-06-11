@@ -1,0 +1,1834 @@
+<Task revision="1" schemaVersion="7.3">
+    <Registration>
+        <Name>Automated Feature Engineering.ctk</Name>
+        <Description>The Automated Feature Engineering task explores the input variables and automatically performs feature engineering in a parallel, scalable fashion.</Description>
+        <GUID>3f8c3c35-6359-41ab-8a55-18ee269c40e4</GUID>
+        <Procedures>CAS</Procedures>
+        <Links>
+            <Link href="https://documentation.sas.com/?softwareId=STUDIOBASIC&amp;softwareVersion=01&amp;softwareContextId=tasks&amp;requestor=inapp">SAS Studio Task Reference Guide</Link>
+            <Link href=""> </Link>
+            <Link href=""> </Link>
+            <Link href="https://documentation.sas.com/?softwareId=PGMVIYA&amp;softwareVersion=01&amp;softwareContextId=proc_cas&amp;requestor=inapp">The CAS Procedure</Link>
+            <Link href=""> </Link>
+            <Link href=""> </Link>
+            <Link href="https://documentation.sas.com/?softwareId=PGMVIYA&amp;softwareVersion=01&amp;softwareContextId=actions&amp;requestor=inapp">The Data Science Pilot Action Set (dataSciencePilot)</Link>
+            <Link href=""> </Link>
+            <Link href=""> </Link>
+            <Link href="http://support.sas.com/training/viyasdmml">SAS Tutorials</Link>
+        </Links>
+    </Registration>
+	
+	<Metadata>
+        <DataSources>   
+             <DataSource libraryEngineInclude="CAS" name="dataset" where="false">
+                <Roles>
+                    <Role exclude="nominalTarget,intervalTarget,nominalInputs,intervalInputs,nominalInputs,dateInputs,timeInputs,datetimeInputs,textInputs" indent="1" maxVars="1" minVars="1" name="partitionVariable" type="A">Partitioning variable:</Role>
+                    <Role exclude="partitionVariable,intervalTarget,nominalInputs,intervalInputs,nominalInputs,dateInputs,timeInputs,datetimeInputs,textInputs" indent="0" maxVars="1" minVars="1" name="nominalTarget" type="A">Nominal target:</Role>
+                    <Role exclude="partitionVariable,nominalTarget,nominalInputs,intervalInputs,nominalInputs,dateInputs,timeInputs,datetimeInputs,textInputs" indent="0" maxVars="1" minVars="1" name="intervalTarget" type="N">Interval target:</Role>
+                    <Role exclude="partitionVariable,nominalTarget,intervalTarget" indent="1" maxVars="0" minVars="0" name="inputVariables" order="true" type="A">Inputs:</Role>
+                    <Role exclude="partitionVariable,nominalTarget,intervalTarget,nominalInputs,dateInputs,timeInputs,datetimeInputs,textInputs" indent="2" maxVars="0" minVars="0" name="intervalInputs" order="true" type="N">Interval inputs:</Role>
+                    <Role exclude="partitionVariable,nominalTarget,intervalTarget,intervalInputs,dateInputs,timeInputs,datetimeInputs,textInputs" indent="2" maxVars="0" minVars="0" name="nominalInputs" order="true" type="A">Nominal inputs:</Role>
+                    <Role exclude="partitionVariable,nominalTarget,intervalTarget,intervalInputs,nominalInputs,timeInputs,datetimeInputs,textInputs" indent="2" maxVars="0" minVars="0" name="dateInputs" order="true" type="A">Date inputs:</Role>
+                    <Role exclude="partitionVariable,nominalTarget,intervalTarget,intervalInputs,nominalInputs,dateInputs,datetimeInputs,textInputs" indent="2" maxVars="0" minVars="0" name="timeInputs" order="true" type="A">Time inputs:</Role>
+                    <Role exclude="partitionVariable,nominalTarget,intervalTarget,intervalInputs,nominalInputs,dateInputs,timeInputs,textInputs" indent="2" maxVars="0" minVars="0" name="datetimeInputs" order="true" type="A">Datetime inputs:</Role>
+                    <Role exclude="partitionVariable,nominalTarget,intervalTarget,intervalInputs,nominalInputs,dateInputs,timeInputs,datetimeInputs" indent="2" maxVars="0" minVars="0" name="textInputs" order="true" type="C">Text inputs:</Role>
+                    <Role indent="2" maxVars="0" minVars="1" name="copyVariables" type="A">Include these variables:</Role>
+                </Roles>
+            </DataSource>
+        </DataSources>
+
+		<Options>
+		<!-- DATA tab -->
+			<Option inputType="string" name="dataTab">Data</Option> 
+			<Option inputType="string" name="dataGroup">Data</Option> 
+            
+            <Option inputType="string" name="partitionDataGroup">Partition Data</Option>
+            <Option inputType="string" name="inputDataLabel">Input data contains training data. Include:</Option>
+            <Option inputType="checkbox" name="validationDataChoice">Validation data</Option>
+            <Option inputType="checkbox" name="testDataChoice">Test data</Option>
+
+            <Option defaultValue="partitionDataFractionChoice" inputType="combobox" name="partitionDataCombo">Identify partitions:</Option>
+            <Option inputType="string" name="partitionDataFractionChoice">Specify a sample proportion</Option>
+            <Option inputType="string" name="partitionDataVariableChoice">Choose a value of a partitioning variable</Option>
+
+            <Option indent="2" inputType="distinct" name="validationLevelCombo" required="true" source="partitionVariable">Validation data value:</Option>
+            <Option indent="2" inputType="distinct" name="testLevelCombo" required="true" source="partitionVariable">Test data value:</Option>
+            <Option indent="2" inputType="checkbox" name="useTrainingLevel">Select training data value</Option>
+            <Option indent="2" inputType="distinct" name="trainingLevelCombo" required="true" source="partitionVariable">Training data value:</Option>
+
+            <Option indent="1" inputType="numbertext" invalidMessage="Enter a value greater than 0 and less than 1 for the proportion of validation data observations in the data set" maxInclusive="false" maxValue="1" minInclusive="false" minValue="0" missingMessage="Enter a value greater than 0 and less than 1 for the proportion of validation data observations in the data set" name="validationDataFraction" promptMessage="Enter a value greater than 0 and less than 1 for the proportion of validation data observations in the data set" rangeMessage="Enter a value greater than 0 and less than 1 for the proportion of validation data observations in the data set" required="true" width="100px">Proportion of validation cases:</Option>
+            <Option indent="1" inputType="numbertext" invalidMessage="Enter a value greater than 0 and less than 1 for the proportion of test data observations in the data set" maxInclusive="false" maxValue="1" minInclusive="false" minValue="0" missingMessage="Enter a value greater than 0 and less than 1 for the proportion of test data observations in the data set" name="testDataFraction" promptMessage="Enter a value greater than 0 and less than 1 for the proportion of test data observations in the data set" rangeMessage="Enter a value greater than 0 and less than 1 for the proportion of test data observations in the data set" required="true" width="100px">Proportion of testing cases:</Option>
+            
+            <Option defaultValue="0" inputType="checkbox" name="useRandomSeed">Random number seed</Option>
+            <Option decimalPlaces="0" formatValue="false" indent="1" inputType="numbertext" invalidMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed" maxValue="2147483647" minValue="1" missingMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed" name="randomSeed" promptMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed" rangeMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed" required="true" width="100px">Random seed:</Option>
+            <Option indent="1" inputType="string" name="partitionRandomSeedNote">Note: Specifying a random number seed may not replicate results in a distributed computing environment.</Option>
+
+
+            <Option inputType="string" name="rolesGroup">Roles</Option>
+            <Option inputType="string" name="targetGroup">Target</Option>
+            <Option inputType="radio" name="useNominalTarget" variable="targetType">Use a nominal target</Option>
+            <Option inputType="radio" name="useIntervalTarget" variable="targetType">Use an interval target</Option>
+
+            <!-- Event of interest: combobox -->
+<!--             <Option name="eventLevelCombo" inputType="combobox" defaultValue="eventLevelComboLast" indent="1" nlsKey="eventLevelCombo.combobox.label">Event of interest: </Option>
+            <Option name="eventLevelComboFirst" inputType="string" nlsKey="eventLevelComboFirst.optionItem.msg">First ordered level</Option>
+            <Option name="eventLevelComboLast" inputType="string" nlsKey="eventLevelComboLast.optionItem.msg">Last ordered level</Option>
+            <Option name="eventLevelComboCustom" inputType="string" nlsKey="eventLevelComboCustom.optionItem.msg">Select custom level</Option> -->
+            <Option indent="1" inputType="checkbox" name="eventLevelSelect">Select event of interest</Option>
+            <Option indent="2" inputType="distinct" name="nominalTargetEventLevelCustom" required="true" source="nominalTarget">Event of interest:</Option>
+            
+            <Option inputType="string" name="inputVarsGroup">Inputs</Option>
+<!--             <Option name="inputsCombo" inputType="combobox" defaultValue="inputsComboAll" indent="0" nlsKey="inputsCombo.combobox.label">Inputs: </Option>
+            <Option name="inputsComboAll" inputType="string" nlsKey="inputsComboAll.optionItem.msg">All variables except target</Option>
+            <Option name="inputsComboSelect" inputType="string" nlsKey="inputsComboSelect.optionItem.msg">Selected variables</Option> -->
+
+            <Option inputType="radio" name="inputsRadioAll" variable="inputsRadio">Use all columns except target</Option>
+            <Option inputType="radio" name="inputsRadioSelect" variable="inputsRadio">Select input variables</Option>
+
+            <Option inputType="markdown" name="inputVarsTypesGroupHelpMsg">
+
+Input variables are grouped to guide the downstream feature transformation and generation process. There are two levels in the input grouping hierarchy:
+
+  1. The first level groups inputs according to whether they are date, time, datetime, interval, or nominal variables. The input variable types for date, time, and datetime variables must be specified below. Input variables whose types are not specified below will be automatically classified as interval or nominal variables.
+  2. The second level further divides the interval and nominal input variables into groups that share the same statistical profile. This process is governed by the settings in the OPTIONS tab.
+            
+</Option>
+            <Option helpMessageRef="inputVarsTypesGroupHelpMsg" inputType="string" name="inputVarsTypesGroup">Input Variable Types</Option>
+            <Option defaultValue="0" indent="0" inputType="checkbox" name="detectNominalVars">Specify criteria for automatically detecting nominal inputs</Option>
+                <Option decimalPlaces="0" defaultValue="1024" indent="1" inputType="numstepper" invalidMessage="Enter an integer greater than or equal to 32 and less than 10000 for the maximum number of unique values" maxInclusive="false" maxValue="10000" minValue="32" missingMessage="Enter an integer greater than or equal to 32 and less than 10000 for the maximum number of unique values" name="detectNominalVarsCardinality" promptMessage="Enter an integer greater than or equal to 32 and less than 10000 for the maximum number of unique values" rangeMessage="Enter an integer greater than or equal to 32 and less than 10000 for the maximum number of unique values" required="true">Maximum number of unique values:</Option>
+                <Option inputType="string" name="detectNominalVarsCardinalityRatioHelpMsg">The cardinality ratio is the number of unique values divided by the number of observations.</Option>
+                <Option decimalPlaces="0,15" defaultValue="0.25" helpMessageRef="detectNominalVarsCardinalityRatioHelpMsg" indent="1" inputType="numbertext" invalidMessage="Enter a value greater than 0 and less than or equal to 1 for the cardinality ratio threshold" maxValue="1" minInclusive="false" minValue="0" missingMessage="Enter a value greater than 0 and less than or equal to 1 for the cardinality ratio threshold" name="detectNominalVarsCardinalityRatio" promptMessage="Enter a value greater than 0 and less than or equal to 1 for the cardinality ratio threshold" rangeMessage="Enter a value greater than 0 and less than or equal to 1 for the cardinality ratio threshold" required="true" width="100px">Cardinality ratio threshold:</Option>
+                <Option indent="1" inputType="string" name="detectNominalVarsNumeric">Include numeric variables with:</Option>
+                    <Option defaultValue="0" indent="2" inputType="checkbox" name="detectNominalVarsNumericNegative">Negative values</Option>
+                    <Option defaultValue="0" indent="2" inputType="checkbox" name="detectNominalVarsNumericNoninteger">Non-integer values</Option>
+
+<!--             <Option name="specifyInputVarTypesHelpMsg" inputType="string" nlsKey="specifyInputVarTypesHelpMsg.helpmsg.msg">
+Unspecified variable types are automatically detected.
+            </Option> -->
+            <Option defaultValue="0" indent="0" inputType="checkbox" name="specifyInputVarTypes">Specify variable types for selected inputs</Option>
+            <!-- <Option name="additionalInputsGroup" inputType="string" indent="1" nlsKey="additionalInputsGroup.string.title">Additional Inputs</Option> -->
+            <Option indent="1" inputType="string" name="specifyInputVarTypesNote">Note: Identify any date, time, or datetime input variables. Optionally identify interval and nominal variables. Unspecified variables are automatically classified as interval or nominal.</Option>
+            <Option defaultValue="0" indent="1" inputType="checkbox" name="specifyInputVarTypesDate">Select date inputs</Option>
+            <Option defaultValue="0" indent="1" inputType="checkbox" name="specifyInputVarTypesTime">Select time inputs</Option>
+            <Option defaultValue="0" indent="1" inputType="checkbox" name="specifyInputVarTypesDatetime">Select datetime inputs</Option>
+            <!-- <Option name="specifyInputVarTypesText" inputType="checkbox" defaultValue="0" indent="1" nlsKey="specifyInputVarTypesText.checkbox.label">Select text inputs</Option> -->
+            <Option defaultValue="0" indent="1" inputType="checkbox" name="specifyInputVarTypesInterval">Select interval inputs</Option>
+            <Option defaultValue="0" indent="1" inputType="checkbox" name="specifyInputVarTypesNominal">Select nominal inputs</Option>
+
+
+            <Option inputType="string" name="optionsTab">Options</Option> 
+            <!-- <Option name="methodsGroup" inputType="string" nlsKey="methodsGroup.string.title">METHODS</Option>  -->
+
+            <Option inputType="markdown" name="screeningGroupHelpMsg">
+
+Variable screening uses a variety of statistics to identify noise variables that are excluded from further analysis.  For more information, see [The screenVariables Action](https://go.documentation.sas.com/?docsetId=casactml&amp;docsetTarget=casactml_datasciencepilot_details09.htm&amp;docsetVersion=8.4).
+            
+</Option>
+            <Option helpMessageRef="screeningGroupHelpMsg" inputType="string" name="screeningGroup">Variable Screening</Option>
+            <Option defaultValue="1" indent="0" inputType="checkbox" name="screeningConstant">Constant values</Option>
+            <Option defaultValue="1" indent="0" inputType="checkbox" name="screeningLowCV">Low coefficient of variation (CV)</Option>
+                <Option defaultValue="0" indent="1" inputType="checkbox" name="screeningLowCVMoment">Specify moment CV percentage threshold</Option>
+                <Option decimalPlaces="0,15" defaultValue="0.00001" indent="2" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the moment CV percentage low-high cutoff" maxValue="100" minValue="0" missingMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the moment CV percentage low-high cutoff" name="screeningLowCVMomentLowHigh" promptMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the moment CV percentage low-high cutoff" rangeMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the moment CV percentage low-high cutoff" required="true" width="100px">Low-high cutoff:</Option>
+                <Option defaultValue="0" indent="1" inputType="checkbox" name="screeningLowCVRobust">Specify robust CV percentage threshold</Option>
+                <Option decimalPlaces="0,15" defaultValue="0.001" indent="2" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the robust CV percentage low-high cutoff" maxValue="100" minValue="0" missingMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the robust CV percentage low-high cutoff" name="screeningLowCVRobustLowHigh" promptMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the robust CV percentage low-high cutoff" rangeMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the robust CV percentage low-high cutoff" required="true" width="100px">Low-high cutoff:</Option>
+
+            <Option decimalPlaces="0,15" defaultValue="90" indent="0" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 10 and less than 100 for the missing values percentage threshold" maxInclusive="false" maxValue="100" minValue="10" missingMessage="Enter a value greater than or equal to 10 and less than 100 for the missing values percentage threshold" name="screeningMissingLowHigh" promptMessage="Enter a value greater than or equal to 10 and less than 100 for the missing values percentage threshold" rangeMessage="Enter a value greater than or equal to 10 and less than 100 for the missing values percentage threshold" required="true" width="100px">High missing values percentage threshold:</Option>
+
+            <Option decimalPlaces="0,15" defaultValue="0.05" indent="0" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 and less than or equal to 2147483648 for the target mutual information threshold" maxValue="2147483648" minValue="0" missingMessage="Enter a value greater than or equal to 0 and less than or equal to 2147483648 for the target mutual information threshold" name="screeningMutualInfoThreshold" promptMessage="Enter a value greater than or equal to 0 and less than or equal to 2147483648 for the target mutual information threshold" rangeMessage="Enter a value greater than or equal to 0 and less than or equal to 2147483648 for the target mutual information threshold" required="true" width="100px">Low target mutual information threshold:</Option>
+
+            <Option inputType="string" name="screeningSymmetricUncertaintyThresholdHelpMsg">This option identifies redundant (highly correlated) variables using symmetric uncertainty (SU).  If the SU for two variables exceeds the threshold, the variable that has less information about the target is removed.</Option>
+            <Option decimalPlaces="0,15" defaultValue="1" helpMessageRef="screeningSymmetricUncertaintyThresholdHelpMsg" indent="0" inputType="numbertext" invalidMessage="Enter a value greater than 0 and less than or equal to 1 for the redundancy threshold" maxValue="1" minInclusive="false" minValue="0" missingMessage="Enter a value greater than 0 and less than or equal to 1 for the redundancy threshold" name="screeningSymmetricUncertaintyThreshold" promptMessage="Enter a value greater than 0 and less than or equal to 1 for the redundancy threshold" rangeMessage="Enter a value greater than 0 and less than or equal to 1 for the redundancy threshold" required="true" width="100px">High redundancy threshold:</Option>
+
+            <Option inputType="string" name="screeningLeakageVarsThresholdHelpMsg">This option identifies potential target leakage variables, which are variables that have a very high level of information about the target.  This is done by using the percentage reduction in target entropy.</Option>
+            <Option decimalPlaces="0,15" defaultValue="90" helpMessageRef="screeningLeakageVarsThresholdHelpMsg" indent="0" inputType="numbertext" invalidMessage="Enter a value greater than 0 and less than or equal to 100 for the target leakage threshold" maxValue="100" minInclusive="false" minValue="0" missingMessage="Enter a value greater than 0 and less than or equal to 100 for the target leakage threshold" name="screeningLeakageVarsThreshold" promptMessage="Enter a value greater than 0 and less than or equal to 100 for the target leakage threshold" rangeMessage="Enter a value greater than 0 and less than or equal to 100 for the target leakage threshold" required="true" width="100px">High target leakage threshold:</Option>
+
+
+
+
+
+            <Option inputType="markdown" name="featEngGroupHelpMsg">
+
+The feature engineering process automatically addresses the transformations and data-quality issues selected in this section.  For the selected data-quality issues, the interval and nominal input variables are grouped into categories that share the same statistical profile and appropriate features are generated for each group.  This grouping is governed by the thresholds that can be specified in this section.  For more information, see [The featureMachine Action](https://go.documentation.sas.com/?docsetId=casactml&amp;docsetTarget=casactml_datasciencepilot_details08.htm&amp;docsetVersion=8.4).
+            
+</Option>
+            <Option helpMessageRef="featEngGroupHelpMsg" inputType="string" name="featEngGroup">Feature Engineering</Option>
+            <Option defaultValue="0" indent="0" inputType="checkbox" name="featEngInteractions">Detect and generate interactions</Option>
+            <Option defaultValue="0" indent="0" inputType="checkbox" name="featEngPolynomial">Polynomial transformations up to order three</Option>
+            <Option inputType="string" name="featEngTrans">Include transformations for the treatment of:</Option>
+            <Option defaultValue="1" indent="1" inputType="checkbox" name="featEngMissing">Missing values</Option>
+                <Option defaultValue="0" indent="2" inputType="checkbox" name="featEngMissingThresholds">Specify missing values percentage grouping thresholds</Option>
+                <Option inputType="string" name="featEngMissingThresholdsLayout"/>
+                <Option decimalPlaces="0,15" defaultValue="5" indent="3" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the missing values percentage low-medium cutoff" maxValue="100" minValue="0" missingMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the missing values percentage low-medium cutoff" name="featEngMissingThresholdsLowMed" promptMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the missing values percentage low-medium cutoff" rangeMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the missing values percentage low-medium cutoff" required="true" width="100px">Low-medium cutoff:</Option>
+                <Option decimalPlaces="0,15" defaultValue="25" indent="3" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the missing values percentage medium-high cutoff" maxValue="100" minValue="0" missingMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the missing values percentage medium-high cutoff" name="featEngMissingThresholdsMedHigh" promptMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the missing values percentage medium-high cutoff" rangeMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the missing values percentage medium-high cutoff" required="true" width="100px">Medium-high cutoff:</Option>
+            <Option defaultValue="0" indent="2" inputType="checkbox" name="featEngMissingIndicators">Specify missing values percentage indicator variable threshold</Option>
+                <Option decimalPlaces="0,15" defaultValue="75" indent="3" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 10 and less than 100 for the missing values percentage indicator low-high cutoff" maxInclusive="false" maxValue="100" minValue="10" missingMessage="Enter a value greater than or equal to 10 and less than 100 for the missing values percentage indicator low-high cutoff" name="featEngMissingIndicatorsLowHigh" promptMessage="Enter a value greater than or equal to 10 and less than 100 for the missing values percentage indicator low-high cutoff" rangeMessage="Enter a value greater than or equal to 10 and less than 100 for the missing values percentage indicator low-high cutoff" required="true" width="100px">Low-high cutoff:</Option>
+
+            <Option defaultValue="1" indent="1" inputType="checkbox" name="featEngCardinality">High cardinality</Option>
+                <Option defaultValue="0" indent="2" inputType="checkbox" name="featEngCardinalityThresholds">Specify cardinality grouping thresholds</Option>
+                <Option inputType="string" name="featEngCardinalityThresholdsLayout"/>
+                <Option decimalPlaces="0" defaultValue="32" indent="3" inputType="numbertext" invalidMessage="Enter an integer greater than or equal to 2 and less than or equal to 256 for the cardinality low-medium cutoff" maxValue="256" minValue="2" missingMessage="Enter an integer greater than or equal to 2 and less than or equal to 256 for the cardinality low-medium cutoff" name="featEngCardinalityThresholdsLowMed" promptMessage="Enter an integer greater than or equal to 2 and less than or equal to 256 for the cardinality low-medium cutoff" rangeMessage="Enter an integer greater than or equal to 2 and less than or equal to 256 for the cardinality low-medium cutoff" required="true" width="100px">Low-medium cutoff:</Option>
+                <Option decimalPlaces="0" defaultValue="64" indent="3" inputType="numbertext" invalidMessage="Enter an integer greater than or equal to 2 and less than or equal to 1024 for the cardinality medium-high cutoff" maxValue="1024" minValue="2" missingMessage="Enter an integer greater than or equal to 2 and less than or equal to 1024 for the cardinality medium-high cutoff" name="featEngCardinalityThresholdsMedHigh" promptMessage="Enter an integer greater than or equal to 2 and less than or equal to 1024 for the cardinality medium-high cutoff" rangeMessage="Enter an integer greater than or equal to 2 and less than or equal to 1024 for the cardinality medium-high cutoff" required="true" width="100px">Medium-high cutoff:</Option>
+
+
+
+
+            <Option defaultValue="0" indent="0" inputType="checkbox" name="featEngEntropy">Low entropy</Option>
+                <Option defaultValue="0" indent="1" inputType="checkbox" name="featEngEntropyGini">Specify Gini entropy grouping thresholds</Option>
+                    <Option inputType="string" name="featEngEntropyGiniLayout"/> 
+                    <Option decimalPlaces="0,15" defaultValue="0.25" indent="2" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 and less than or equal to 1 for the Gini entropy low-medium cutoff" maxValue="1" minValue="0" missingMessage="Enter a value greater than or equal to 0 and less than or equal to 1 for the Gini entropy low-medium cutoff" name="featEngEntropyGiniLowMed" promptMessage="Enter a value greater than or equal to 0 and less than or equal to 1 for the Gini entropy low-medium cutoff" rangeMessage="Enter a value greater than or equal to 0 and less than or equal to 1 for the Gini entropy low-medium cutoff" required="true" width="100px">Low-medium cutoff:</Option>
+                    <Option decimalPlaces="0,15" defaultValue="0.75" indent="2" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 and less than or equal to 1 for the Gini entropy medium-high cutoff" maxValue="1" minValue="0" missingMessage="Enter a value greater than or equal to 0 and less than or equal to 1 for the Gini entropy medium-high cutoff" name="featEngEntropyGiniMedHigh" promptMessage="Enter a value greater than or equal to 0 and less than or equal to 1 for the Gini entropy medium-high cutoff" rangeMessage="Enter a value greater than or equal to 0 and less than or equal to 1 for the Gini entropy medium-high cutoff" required="true" width="100px">Medium-high cutoff:</Option>
+                <Option defaultValue="0" indent="1" inputType="checkbox" name="featEngEntropyShannon">Specify Shannon entropy grouping thresholds</Option>
+                    <Option inputType="string" name="featEngEntropyShannonLayout"/> 
+                    <Option decimalPlaces="0,15" defaultValue="0.25" indent="2" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 and less than or equal to 1 for the Shannon entropy low-medium cutoff" maxValue="1" minValue="0" missingMessage="Enter a value greater than or equal to 0 and less than or equal to 1 for the Shannon entropy low-medium cutoff" name="featEngEntropyShannonLowMed" promptMessage="Enter a value greater than or equal to 0 and less than or equal to 1 for the Shannon entropy low-medium cutoff" rangeMessage="Enter a value greater than or equal to 0 and less than or equal to 1 for the Shannon entropy low-medium cutoff" required="true" width="100px">Low-medium cutoff:</Option>
+                    <Option decimalPlaces="0,15" defaultValue="0.75" indent="2" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 and less than or equal to 1 for the Shannon entropy medium-high cutoff" maxValue="1" minValue="0" missingMessage="Enter a value greater than or equal to 0 and less than or equal to 1 for the Shannon entropy medium-high cutoff" name="featEngEntropyShannonMedHigh" promptMessage="Enter a value greater than or equal to 0 and less than or equal to 1 for the Shannon entropy medium-high cutoff" rangeMessage="Enter a value greater than or equal to 0 and less than or equal to 1 for the Shannon entropy medium-high cutoff" required="true" width="100px">Medium-high cutoff:</Option>
+            <Option defaultValue="0" indent="0" inputType="checkbox" name="featEngIQV">Low index of qualitative variation (IQV)</Option>
+                <Option defaultValue="0" indent="1" inputType="checkbox" name="featEngIQVFreqRatio">Specify IQV frequency ratio grouping thresholds</Option>
+                <Option inputType="string" name="featEngIQVFreqRatioLayout"/> 
+                <Option decimalPlaces="0,15" defaultValue="10" indent="2" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 1 and less than or equal to 1000 for the IQV two most frequent levels ratio cutoff" maxValue="1000" minValue="1" missingMessage="Enter a value greater than or equal to 1 and less than or equal to 1000 for the IQV two most frequent levels ratio cutoff" name="featEngIQVFreqRatioMostSecond" promptMessage="Enter a value greater than or equal to 1 and less than or equal to 1000 for the IQV two most frequent levels ratio cutoff" rangeMessage="Enter a value greater than or equal to 1 and less than or equal to 1000 for the IQV two most frequent levels ratio cutoff" required="true" width="100px">Two most frequent levels ratio cutoff:</Option>                
+                 <Option decimalPlaces="0,15" defaultValue="100" indent="2" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 1 and less than or equal to 1000 for the IQV most and least frequent levels ratio cutoff" maxValue="1000" minValue="1" missingMessage="Enter a value greater than or equal to 1 and less than or equal to 1000 for the IQV most and least frequent levels ratio cutoff" name="featEngIQVFreqRatioMostLeast" promptMessage="Enter a value greater than or equal to 1 and less than or equal to 1000 for the IQV most and least frequent levels ratio cutoff" rangeMessage="Enter a value greater than or equal to 1 and less than or equal to 1000 for the IQV most and least frequent levels ratio cutoff" required="true" width="100px">Most and least frequent levels ratio cutoff:</Option>
+                <Option defaultValue="0" indent="1" inputType="checkbox" name="featEngIQVVarRatio">Specify IQV variation ratio grouping thresholds</Option>
+                    <Option decimalPlaces="0,15" defaultValue="0.5" indent="2" inputType="numbertext" invalidMessage="Enter a value greater than 0 and less than or equal to 1 for the IQV variation ratio low-high cutoff" maxValue="1" minInclusive="false" minValue="0" missingMessage="Enter a value greater than 0 and less than or equal to 1 for the IQV variation ratio low-high cutoff" name="featEngIQVVarRatioCutoff" promptMessage="Enter a value greater than 0 and less than or equal to 1 for the IQV variation ratio low-high cutoff" rangeMessage="Enter a value greater than 0 and less than or equal to 1 for the IQV variation ratio low-high cutoff" required="true" width="100px">Low-high cutoff:</Option>
+
+
+
+            <Option defaultValue="1" indent="0" inputType="checkbox" name="featEngGroupRare">Rare event levels</Option>
+                <Option defaultValue="0" indent="1" inputType="checkbox" name="featEngGroupRareThreshold">Specify rare events threshold</Option>
+                    <Option decimalPlaces="0" defaultValue="10" indent="2" inputType="numbertext" invalidMessage="Enter an integer greater than or equal to 5 and less than or equal to 100 for the minimum number of observations per level" maxValue="100" minValue="5" missingMessage="Enter an integer greater than or equal to 5 and less than or equal to 100 for the minimum number of observations per level" name="featEngGroupRareThresholdLowHigh" promptMessage="Enter an integer greater than or equal to 5 and less than or equal to 100 for the minimum number of observations per level" rangeMessage="Enter an integer greater than or equal to 5 and less than or equal to 100 for the minimum number of observations per level" required="true" width="100px">Minimum number of observations per level:</Option>
+
+            <Option defaultValue="0" indent="0" inputType="checkbox" name="featEngKurtosis">High kurtosis</Option>
+                <Option defaultValue="0" indent="1" inputType="checkbox" name="featEngKurtosisMoment">Specify moment kurtosis grouping thresholds</Option>
+                    <Option inputType="string" name="featEngKurtosisMomentLayout"/> 
+                    <Option decimalPlaces="0,15" defaultValue="5" indent="2" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the moment kurtosis low-medium cutoff" maxValue="100" minValue="0" missingMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the moment kurtosis low-medium cutoff" name="featEngKurtosisMomentLowMed" promptMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the moment kurtosis low-medium cutoff" rangeMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the moment kurtosis low-medium cutoff" required="true" width="100px">Low-medium cutoff:</Option>
+                    <Option decimalPlaces="0,15" defaultValue="10" indent="2" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the moment kurtosis medium-high cutoff" maxValue="100" minValue="0" missingMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the moment kurtosis medium-high cutoff" name="featEngKurtosisMomentMedHigh" promptMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the moment kurtosis medium-high cutoff" rangeMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the moment kurtosis medium-high cutoff" required="true" width="100px">Medium-high cutoff:</Option>
+                <Option defaultValue="0" indent="1" inputType="checkbox" name="featEngKurtosisRobust">Specify robust kurtosis grouping thresholds</Option>
+                    <Option inputType="string" name="featEngKurtosisRobustLayout"/> 
+                    <Option decimalPlaces="0,15" defaultValue="2" indent="2" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the robust kurtosis low-medium cutoff" maxValue="100" minValue="0" missingMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the robust kurtosis low-medium cutoff" name="featEngKurtosisRobustLowMed" promptMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the robust kurtosis low-medium cutoff" rangeMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the robust kurtosis low-medium cutoff" required="true" width="100px">Low-medium cutoff:</Option>
+                    <Option decimalPlaces="0,15" defaultValue="3" indent="2" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the robust kurtosis medium-high cutoff" maxValue="100" minValue="0" missingMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the robust kurtosis medium-high cutoff" name="featEngKurtosisRobustMedHigh" promptMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the robust kurtosis medium-high cutoff" rangeMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the robust kurtosis medium-high cutoff" required="true" width="100px">Medium-high cutoff:</Option>
+
+            <Option defaultValue="0" indent="0" inputType="checkbox" name="featEngOutliers">Outliers</Option>
+                <Option defaultValue="0" indent="1" inputType="checkbox" name="featEngOutliersZscore">Specify z-score percentage grouping thresholds</Option>
+                    <Option inputType="string" name="featEngOutliersZscoreLayout"/> 
+                    <Option decimalPlaces="0,15" defaultValue="1" indent="2" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the z-score percentage low-medium cutoff" maxValue="100" minValue="0" missingMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the z-score percentage low-medium cutoff" name="featEngOutliersZscoreLowMed" promptMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the z-score percentage low-medium cutoff" rangeMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the z-score percentage low-medium cutoff" required="true" width="100px">Low-medium cutoff:</Option>
+                    <Option decimalPlaces="0,15" defaultValue="2.5" indent="2" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the z-score percentage medium-high cutoff" maxValue="100" minValue="0" missingMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the z-score percentage medium-high cutoff" name="featEngOutliersZscoreMedHigh" promptMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the z-score percentage medium-high cutoff" rangeMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the z-score percentage medium-high cutoff" required="true" width="100px">Medium-high cutoff:</Option>
+                <Option defaultValue="0" indent="1" inputType="checkbox" name="featEngOutliersIQR">Specify interquartile range percentage grouping thresholds</Option>            
+                    <Option inputType="string" name="featEngOutliersIQRLayout"/> 
+                    <Option decimalPlaces="0,15" defaultValue="1" indent="2" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the interquartile range percentage low-medium cutoff" maxValue="100" minValue="0" missingMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the interquartile range percentage low-medium cutoff" name="featEngOutliersIQRLowMed" promptMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the interquartile range percentage low-medium cutoff" rangeMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the interquartile range percentage low-medium cutoff" required="true" width="100px">Low-medium cutoff:</Option>
+                    <Option decimalPlaces="0,15" defaultValue="2.5" indent="2" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the interquartile range percentage medium-high cutoff" maxValue="100" minValue="0" missingMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the interquartile range percentage medium-high cutoff" name="featEngOutliersIQRMedHigh" promptMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the interquartile range percentage medium-high cutoff" rangeMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the interquartile range percentage medium-high cutoff" required="true" width="100px">Medium-high cutoff:</Option>
+
+
+            <Option defaultValue="1" indent="1" inputType="checkbox" name="featEngSkewness">High skewness</Option>
+                <Option defaultValue="0" indent="2" inputType="checkbox" name="featEngSkewnessMoment">Specify moment skewness grouping thresholds</Option>
+                    <Option inputType="string" name="featEngSkewnessMomentLayout"/> 
+                    <Option decimalPlaces="0,15" defaultValue="2" indent="3" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the moment skewness low-medium cutoff" maxValue="100" minValue="0" missingMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the moment skewness low-medium cutoff" name="featEngSkewnessMomentLowMed" promptMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the moment skewness low-medium cutoff" rangeMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the moment skewness low-medium cutoff" required="true" width="100px">Low-medium cutoff:</Option>
+                    <Option decimalPlaces="0,15" defaultValue="10" indent="3" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the moment skewness medium-high cutoff" maxValue="100" minValue="0" missingMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the moment skewness medium-high cutoff" name="featEngSkewnessMomentMedHigh" promptMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the moment skewness medium-high cutoff" rangeMessage="Enter a value greater than or equal to 0 and less than or equal to 100 for the moment skewness medium-high cutoff" required="true" width="100px">Medium-high cutoff:</Option>
+                <Option defaultValue="0" indent="2" inputType="checkbox" name="featEngSkewnessRobust">Specify robust skewness grouping thresholds</Option>
+                    <Option inputType="string" name="featEngSkewnessRobustLayout"/> 
+                    <Option decimalPlaces="0,15" defaultValue="0.75" indent="3" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 and less than or equal to 3 for the robust skewness low-medium cutoff" maxValue="3" minValue="0" missingMessage="Enter a value greater than or equal to 0 and less than or equal to 3 for the robust skewness low-medium cutoff" name="featEngSkewnessRobustLowMed" promptMessage="Enter a value greater than or equal to 0 and less than or equal to 3 for the robust skewness low-medium cutoff" rangeMessage="Enter a value greater than or equal to 0 and less than or equal to 3 for the robust skewness low-medium cutoff" required="true" width="100px">Low-medium cutoff:</Option>
+                    <Option decimalPlaces="0,15" defaultValue="2" indent="3" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 and less than or equal to 3 for the robust skewness medium-high cutoff" maxValue="3" minValue="0" missingMessage="Enter a value greater than or equal to 0 and less than or equal to 3 for the robust skewness medium-high cutoff" name="featEngSkewnessRobustMedHigh" promptMessage="Enter a value greater than or equal to 0 and less than or equal to 3 for the robust skewness medium-high cutoff" rangeMessage="Enter a value greater than or equal to 0 and less than or equal to 3 for the robust skewness medium-high cutoff" required="true" width="100px">Medium-high cutoff:</Option>
+            <!-- <Option name="featEngNonlinearity" inputType="checkbox" defaultValue="0" indent="0" nlsKey="featEngNonlinearity.checkbox.label">Nonlinearity</Option> -->
+
+			<Option indent="1" inputType="string" name="featEngAddlOptsGroup">Additional Options</Option>
+
+
+
+
+
+            <Option inputType="string" name="featRankGroup">Feature Ranking</Option>
+            <Option defaultValue="1" indent="0" inputType="checkbox" name="featRank">Rank generated features</Option>
+            <Option defaultValue="1" indent="1" inputType="checkbox" name="featRankSeparate">Rank interval and nominal features separately</Option>
+        <!-- Interval feature ranking criterion combobox -->
+            <Option defaultValue="featRankIntervalComboSymmetricUncertainty" indent="1" inputType="combobox" name="featRankIntervalCombo">Interval feature ranking criterion:</Option>
+            <Option inputType="string" name="featRankIntervalComboEntropy" returnValue="entropy">Entropy</Option>
+            <Option inputType="string" name="featRankIntervalComboKurtosisMoment" returnValue="classicalkurt">Kurtosis (moment)</Option>
+            <Option inputType="string" name="featRankIntervalComboKurtosisRobust" returnValue="avgquankurt">Kurtosis (robust)</Option>
+            <Option inputType="string" name="featRankIntervalComboMutualInfo" returnValue="mi">Mutual information</Option>
+            <Option inputType="string" name="featRankIntervalComboNormMutualInfo" returnValue="normmi">Normalized mutual information</Option>
+            <Option inputType="string" name="featRankIntervalComboCorrelation" returnValue="pearson">Pearson correlation</Option>
+            <Option inputType="string" name="featRankIntervalComboSkewnessMoment" returnValue="classicalskew">Skewness (moment)</Option>
+            <Option inputType="string" name="featRankIntervalComboSkewnessRobust" returnValue="avgquanskew">Skewness (robust)</Option>
+            <Option inputType="string" name="featRankIntervalComboSymmetricUncertainty" returnValue="su">Symmetric uncertainty (default)</Option>
+        <!-- Nominal feature ranking criterion combobox -->
+            <Option defaultValue="featRankNominalComboSymmetricUncertainty" indent="1" inputType="combobox" name="featRankNominalCombo">Nominal feature ranking criterion:</Option>
+            <Option inputType="string" name="featRankNominalComboChi" returnValue="chisq">Chi-square statistic</Option>
+            <Option inputType="string" name="featRankNominalComboCramer" returnValue="cramersv">Cramer's V</Option>
+            <Option inputType="string" name="featRankNominalComboEntropy" returnValue="entropy">Entropy</Option>
+            <Option inputType="string" name="featRankNominalComboFtest" returnValue="ftest">F test</Option>
+            <Option inputType="string" name="featRankNominalComboG2" returnValue="g2">G2 statistic</Option>
+            <Option inputType="string" name="featRankNominalComboInfoValue" returnValue="iv">Information value</Option>
+            <Option inputType="string" name="featRankNominalComboMutualInfo" returnValue="mi">Mutual information</Option>
+            <Option inputType="string" name="featRankNominalComboNormMutualInfo" returnValue="normmi">Normalized mutual information</Option>
+            <Option inputType="string" name="featRankNominalComboSymmetricUncertainty" returnValue="su">Symmetric uncertainty (default)</Option>
+
+
+
+            <Option inputType="string" name="outputTab">Output</Option> 
+			<Option inputType="string" name="outputGroup">Output Data</Option>	
+			<Option indent="0" inputType="string" name="casOutputLibrefNote">The following tables must use a CAS engine libref:</Option>
+
+            <!-- Output: generated features (casOut) -->
+            <Option inputType="checkbox" name="outputDS">Save generated features</Option>
+            <Option indent="1" inputType="outputdata" libraryEngineInclude="cas" name="outputDSName" required="true" unique="true">Specify a CAS table:</Option>
+            <Option indent="1" inputType="string" name="includeRankedFeaturesInstruction">Top-ranked features to include:</Option>
+                <Option decimalPlaces="0" defaultValue="1" indent="2" inputType="numstepper" invalidMessage="Enter an integer greater than or equal to 1 and less than or equal to 1000 for the number of features per input variable" maxValue="1000" minValue="1" missingMessage="Enter an integer greater than or equal to 1 and less than or equal to 1000 for the number of features per input variable" name="includeRankedFeaturesNumber" promptMessage="Enter an integer greater than or equal to 1 and less than or equal to 1000 for the number of features per input variable" rangeMessage="Enter an integer greater than or equal to 1 and less than or equal to 1000 for the number of features per input variable" required="true">Number of features per input variable:</Option>
+                <Option decimalPlaces="0" defaultValue="10" indent="2" inputType="numstepper" invalidMessage="Enter an integer greater than or equal to 1 and less than or equal to 1000 for the number of interaction features" maxValue="1000" minValue="1" missingMessage="Enter an integer greater than or equal to 1 and less than or equal to 1000 for the number of interaction features" name="includeRankedFeaturesInteractions" promptMessage="Enter an integer greater than or equal to 1 and less than or equal to 1000 for the number of interaction features" rangeMessage="Enter an integer greater than or equal to 1 and less than or equal to 1000 for the number of interaction features" required="true">Number of interaction features:</Option>
+
+            <Option indent="1" inputType="string" name="includeVarsInstruction">Include variables from the input CAS table:</Option>
+            <Option indent="1" inputType="radio" name="includeSelectedVars" variable="includeVars">Selected variables</Option>
+            <Option indent="1" inputType="radio" name="includeNoVars" variable="includeVars">No variables</Option>
+            <Option defaultValue="1" indent="1" inputType="radio" name="includeTargetVar" variable="includeVars">Target variable</Option>
+            <Option indent="1" inputType="radio" name="includeTargetPartitionVars" variable="includeVars">Target and partition variables</Option>
+
+            <!-- Output: feature generation metadata -->
+            <Option inputType="checkbox" name="featureOutDS">Save feature generation metadata</Option>
+            <Option indent="1" inputType="outputdata" libraryEngineInclude="cas" name="featureOutDSName" required="true" unique="true">Specify a CAS table:</Option>
+            <!-- Output: feature generation pipelines metadata -->
+            <Option inputType="checkbox" name="transformationOutDS">Save feature generation pipelines metadata</Option>
+            <Option indent="1" inputType="outputdata" libraryEngineInclude="cas" name="transformationOutDSName" required="true" unique="true">Specify a CAS table:</Option>
+            <!-- Output: feature generation scoring model -->
+            <Option inputType="checkbox" name="astoreDS">Save feature generation scoring model</Option>
+            <Option indent="1" inputType="outputdata" libraryEngineInclude="cas" name="astoreDSName" required="true" unique="true">Specify a CAS table:</Option>
+
+
+
+
+            <Option inputType="string" name="commentPartition">Partition data</Option> 
+            <Option inputType="string" name="commentFeatureMachineTraining">Perform feature engineering on training data</Option>
+            <Option inputType="string" name="commentFeatureMachineValidation">Use scoring model to perform feature engineering on validation data</Option>
+            <Option inputType="string" name="commentFeatureMachineTest">Use scoring model to perform feature engineering on test data</Option>
+            <Option inputType="string" name="commentCombineData">Combine partitioned data</Option>
+		</Options>		
+		
+	</Metadata>
+
+	<UI>
+		<Container option="dataTab">
+			<Group open="true" option="dataGroup">
+                <DataItem data="dataset"/>
+                <Group open="true" option="partitionDataGroup">
+                    <OptionItem option="inputDataLabel"/>
+                    <OptionItem option="validationDataChoice"/>
+                    <OptionItem option="testDataChoice"/>
+                    
+                    <OptionChoice option="partitionDataCombo">
+                        <OptionItem option="partitionDataFractionChoice"/>
+                        <OptionItem option="partitionDataVariableChoice"/>
+                    </OptionChoice> 
+                    <RoleItem role="partitionVariable"/>
+                    
+                    <OptionChoice option="validationLevelCombo"/>
+                    <OptionChoice option="testLevelCombo"/>
+                    <OptionItem option="useTrainingLevel"/>
+                    <OptionChoice option="trainingLevelCombo"/>
+
+                    <OptionItem option="validationDataFraction"/>
+                    <OptionItem option="testDataFraction"/>
+                    
+                    <OptionItem option="useRandomSeed"/>
+                    <OptionItem option="randomSeed"/>
+                    <OptionItem option="partitionRandomSeedNote"/>
+                </Group>
+			</Group>
+
+            <Group open="true" option="rolesGroup">
+                <Group open="true" option="targetGroup">
+                    <OptionItem option="useNominalTarget"/>
+                    <OptionItem option="useIntervalTarget"/>
+                    <RoleItem role="intervalTarget"/>
+                    <RoleItem role="nominalTarget"/>
+                    <OptionItem option="eventLevelSelect"/>
+                        <OptionChoice option="nominalTargetEventLevelCustom"/>
+                </Group>
+                <Group open="true" option="inputVarsGroup">
+  <!--                   <OptionChoice option="inputsCombo">
+                        <OptionItem option="inputsComboAll"/>
+                        <OptionItem option="inputsComboSelect"/>
+                    </OptionChoice> -->
+                    <OptionItem option="inputsRadioAll"/>
+                    <OptionItem option="inputsRadioSelect"/>
+                    <RoleItem role="inputVariables"/>
+                    <Group open="true" option="inputVarsTypesGroup">
+                        <OptionItem option="specifyInputVarTypes"/>
+                            <OptionItem option="specifyInputVarTypesNote"/>
+                            <OptionItem option="specifyInputVarTypesDate"/>
+                                <RoleItem role="dateInputs"/>
+                            <OptionItem option="specifyInputVarTypesTime"/>
+                                <RoleItem role="timeInputs"/>
+                            <OptionItem option="specifyInputVarTypesDatetime"/>
+                                <RoleItem role="datetimeInputs"/>
+<!--                             <OptionItem option="specifyInputVarTypesText"/>
+                                <RoleItem role="textInputs"/> -->
+                            <OptionItem option="specifyInputVarTypesInterval"/>
+                                <RoleItem role="intervalInputs"/>
+                            <OptionItem option="specifyInputVarTypesNominal"/>
+                                <RoleItem role="nominalInputs"/>
+                        <OptionItem option="detectNominalVars"/>
+                            <OptionItem option="detectNominalVarsCardinality"/>
+                            <OptionItem option="detectNominalVarsCardinalityRatio"/>
+                            <OptionItem option="detectNominalVarsNumeric"/>
+                                <OptionItem option="detectNominalVarsNumericNegative"/>
+                                <OptionItem option="detectNominalVarsNumericNoninteger"/>
+                    </Group>        
+                </Group>  
+            </Group>
+ 		</Container>
+
+		<Container option="optionsTab">
+			<!-- <Group option="methodsGroup" open="true"> -->
+                <Group open="true" option="screeningGroup">
+                    <OptionItem option="screeningConstant"/>
+                    <OptionItem option="screeningLowCV"/>
+                        <OptionItem option="screeningLowCVMoment"/>
+                            <OptionItem option="screeningLowCVMomentLowHigh"/>
+                        <OptionItem option="screeningLowCVRobust"/>
+                            <OptionItem option="screeningLowCVRobustLowHigh"/>
+                    <OptionItem option="screeningMissingLowHigh"/>
+                    <OptionItem option="screeningMutualInfoThreshold"/>  
+                    <OptionItem option="screeningSymmetricUncertaintyThreshold"/>
+                    <OptionItem option="screeningLeakageVarsThreshold"/>
+                </Group>
+                <Group open="true" option="featEngGroup">
+                    <OptionItem option="featEngInteractions"/>
+                    <OptionItem option="featEngPolynomial"/>
+                    <OptionItem option="featEngTrans"/>
+                    <OptionItem option="featEngMissing"/>
+                        <OptionItem option="featEngMissingThresholds"/>
+                            <HorizontalLayout option="featEngMissingThresholdsLayout">
+                                <OptionItem option="featEngMissingThresholdsLowMed"/>
+                                <OptionItem option="featEngMissingThresholdsMedHigh"/>
+                            </HorizontalLayout>
+ <!--                        <OptionItem option="featEngMissingIndicators"/>
+                            <OptionItem option="featEngMissingIndicatorsLowHigh"/> -->
+                    <OptionItem option="featEngCardinality"/>
+                        <OptionItem option="featEngCardinalityThresholds"/>
+                            <HorizontalLayout option="featEngCardinalityThresholdsLayout">
+                                <OptionItem option="featEngCardinalityThresholdsLowMed"/>
+                                <OptionItem option="featEngCardinalityThresholdsMedHigh"/>
+                            </HorizontalLayout>
+                    <OptionItem option="featEngSkewness"/>
+                        <OptionItem option="featEngSkewnessMoment"/>
+                            <HorizontalLayout option="featEngSkewnessMomentLayout">
+                                <OptionItem option="featEngSkewnessMomentLowMed"/>
+                                <OptionItem option="featEngSkewnessMomentMedHigh"/>
+                            </HorizontalLayout>
+                        <OptionItem option="featEngSkewnessRobust"/>
+                            <HorizontalLayout option="featEngSkewnessRobustLayout">
+                                <OptionItem option="featEngSkewnessRobustLowMed"/>
+                                <OptionItem option="featEngSkewnessRobustMedHigh"/>
+                            </HorizontalLayout>   
+                	<Group open="false" option="featEngAddlOptsGroup">
+	                    <OptionItem option="featEngGroupRare"/>
+	                        <OptionItem option="featEngGroupRareThreshold"/>
+	                            <OptionItem option="featEngGroupRareThresholdLowHigh"/>
+	                    <OptionItem option="featEngEntropy"/>
+	                        <OptionItem option="featEngEntropyGini"/>
+	                            <HorizontalLayout option="featEngEntropyGiniLayout">
+	                                <OptionItem option="featEngEntropyGiniLowMed"/>
+	                                <OptionItem option="featEngEntropyGiniMedHigh"/>
+	                            </HorizontalLayout>
+	                        <OptionItem option="featEngEntropyShannon"/>
+	                            <HorizontalLayout option="featEngEntropyShannonLayout">
+	                                <OptionItem option="featEngEntropyShannonLowMed"/>
+	                                <OptionItem option="featEngEntropyShannonMedHigh"/>                            
+	                            </HorizontalLayout>               
+	                    <OptionItem option="featEngIQV"/> 
+	                        <OptionItem option="featEngIQVFreqRatio"/>
+	                            <HorizontalLayout option="featEngIQVFreqRatioLayout">
+	                                <OptionItem option="featEngIQVFreqRatioMostSecond"/>
+	                                <OptionItem option="featEngIQVFreqRatioMostLeast"/>
+	                            </HorizontalLayout>
+	                        <OptionItem option="featEngIQVVarRatio"/>
+	                            <OptionItem option="featEngIQVVarRatioCutoff"/>
+	                    <OptionItem option="featEngOutliers"/>
+	                        <OptionItem option="featEngOutliersZscore"/>
+	                            <HorizontalLayout option="featEngOutliersZscoreLayout">
+	                                <OptionItem option="featEngOutliersZscoreLowMed"/>
+	                                <OptionItem option="featEngOutliersZscoreMedHigh"/>
+	                            </HorizontalLayout>
+	                        <OptionItem option="featEngOutliersIQR"/>
+	                            <HorizontalLayout option="featEngOutliersIQRLayout">
+	                                <OptionItem option="featEngOutliersIQRLowMed"/>
+	                                <OptionItem option="featEngOutliersIQRMedHigh"/>
+	                            </HorizontalLayout>
+	                    <OptionItem option="featEngKurtosis"/>
+	                        <OptionItem option="featEngKurtosisMoment"/>
+	                        <HorizontalLayout option="featEngKurtosisMomentLayout">
+	                            <OptionItem option="featEngKurtosisMomentLowMed"/>
+	                            <OptionItem option="featEngKurtosisMomentMedHigh"/>
+	                        </HorizontalLayout>
+	                        <OptionItem option="featEngKurtosisRobust"/>
+	                        <HorizontalLayout option="featEngKurtosisRobustLayout">
+	                            <OptionItem option="featEngKurtosisRobustLowMed"/>
+	                            <OptionItem option="featEngKurtosisRobustMedHigh"/>
+	                        </HorizontalLayout>
+                    </Group>
+
+                    <!-- <OptionItem option="featEngNonlinearity"/> -->
+                </Group>
+                <Group open="true" option="featRankGroup">
+                    <OptionItem option="featRank"/>
+                        <OptionItem option="featRankSeparate"/>
+                        <!-- Interval feature ranking criterion combobox -->
+                        <OptionChoice option="featRankIntervalCombo">
+                            <OptionItem option="featRankIntervalComboEntropy"/>
+                            <OptionItem option="featRankIntervalComboKurtosisMoment"/>
+                            <OptionItem option="featRankIntervalComboKurtosisRobust"/>
+                            <OptionItem option="featRankIntervalComboMutualInfo"/>
+                            <OptionItem option="featRankIntervalComboNormMutualInfo"/>
+                            <OptionItem option="featRankIntervalComboCorrelation"/>
+                            <OptionItem option="featRankIntervalComboSkewnessMoment"/>
+                            <OptionItem option="featRankIntervalComboSkewnessRobust"/>
+                            <OptionItem option="featRankIntervalComboSymmetricUncertainty"/>
+                         </OptionChoice>
+                        <!-- Nominal feature ranking criterion combobox -->
+                        <OptionChoice option="featRankNominalCombo">
+                            <OptionItem option="featRankNominalComboChi"/>
+                            <OptionItem option="featRankNominalComboCramer"/>
+                            <OptionItem option="featRankNominalComboEntropy"/>
+                            <OptionItem option="featRankNominalComboFtest"/>
+                            <OptionItem option="featRankNominalComboG2"/>
+                            <OptionItem option="featRankNominalComboInfoValue"/>
+                            <OptionItem option="featRankNominalComboMutualInfo"/>
+                            <OptionItem option="featRankNominalComboNormMutualInfo"/>
+                            <OptionItem option="featRankNominalComboSymmetricUncertainty"/>
+                         </OptionChoice>
+                </Group>
+		    <!-- </Group>	 -->
+		</Container>
+
+        <Container option="outputTab">
+            <Group open="true" option="outputGroup">
+                <OptionItem option="casOutputLibrefNote"/>
+                <OptionItem option="outputDS"/>
+                <OptionItem option="outputDSName"/>
+                <OptionItem option="includeRankedFeaturesInstruction"/>
+                    <OptionItem option="includeRankedFeaturesNumber"/>
+                    <OptionItem option="includeRankedFeaturesInteractions"/>
+                <OptionItem option="includeVarsInstruction"/>
+                <OptionItem option="includeTargetVar"/>
+                    <OptionItem option="includeTargetPartitionVars"/>
+                    <OptionItem option="includeNoVars"/>
+                    <OptionItem option="includeSelectedVars"/>
+                    <RoleItem role="copyVariables"/> 
+                <OptionItem option="featureOutDS"/>
+                <OptionItem option="featureOutDSName"/>
+                <OptionItem option="transformationOutDS"/>
+                <OptionItem option="transformationOutDSName"/>
+                <OptionItem option="astoreDS"/>
+                <OptionItem option="astoreDSName"/>
+            </Group>
+        </Container>
+
+	</UI>
+	
+
+    <Dependencies>
+    <!-- DATA dependencies -->
+        <Dependency condition="($validationDataChoice=='1' || $testDataChoice=='1')">
+            <Target action="show" conditionResult="true" option="partitionDataCombo"/>
+            <Target action="hide" conditionResult="false" option="partitionDataCombo"/>
+        </Dependency>
+
+        <Dependency condition="(($validationDataChoice=='1' || $testDataChoice=='1') &amp;&amp; $partitionDataCombo == 'partitionDataVariableChoice')">
+            <Target action="show" conditionResult="true" option="partitionVariable"/>
+            <Target action="hide" conditionResult="false" option="partitionVariable"/>
+        </Dependency>
+    
+        <Dependency condition="($validationDataChoice=='1' &amp;&amp; $partitionDataCombo == 'partitionDataFractionChoice')">
+            <Target action="show" conditionResult="true" option="validationDataFraction"/>
+            <Target action="hide" conditionResult="false" option="validationDataFraction"/>
+        </Dependency>
+        
+        <Dependency condition="($testDataChoice=='1' &amp;&amp; $partitionDataCombo == 'partitionDataFractionChoice')">
+            <Target action="show" conditionResult="true" option="testDataFraction"/>
+            <Target action="hide" conditionResult="false" option="testDataFraction"/>
+        </Dependency>
+
+        <Dependency condition="($validationDataChoice=='1' || $testDataChoice=='1') &amp;&amp;                                  $partitionDataCombo == 'partitionDataFractionChoice'">
+            <Target action="show" conditionResult="true" option="useRandomSeed"/>
+            <Target action="hide" conditionResult="false" option="useRandomSeed"/>
+        </Dependency>
+
+        <Dependency condition="($validationDataChoice=='1' || $testDataChoice=='1') &amp;&amp;                                  $partitionDataCombo == 'partitionDataFractionChoice' &amp;&amp;                                 $useRandomSeed == '1'">
+            <Target action="show" conditionResult="true" option="randomSeed"/>
+            <Target action="hide" conditionResult="false" option="randomSeed"/>
+            <Target action="show" conditionResult="true" option="partitionRandomSeedNote"/>
+            <Target action="hide" conditionResult="false" option="partitionRandomSeedNote"/>
+        </Dependency>
+
+        <Dependency condition="($validationDataChoice=='1' &amp;&amp; $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp;                                  $partitionVariable.size() &gt; 0)">
+            <Target action="show" conditionResult="true" option="validationLevelCombo"/>
+            <Target action="hide" conditionResult="false" option="validationLevelCombo"/>
+        </Dependency>
+
+        <Dependency condition="($testDataChoice=='1' &amp;&amp; $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp;                                  $partitionVariable.size() &gt; 0)">
+            <Target action="show" conditionResult="true" option="testLevelCombo"/>
+            <Target action="hide" conditionResult="false" option="testLevelCombo"/>
+        </Dependency>
+
+        <Dependency condition="(($validationDataChoice==1 || $testDataChoice==1) &amp;&amp;                                  $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp;                                  $partitionVariable.size() &gt; 0)">
+            <Target action="show" conditionResult="true" option="useTrainingLevel"/>
+            <Target action="hide" conditionResult="false" option="useTrainingLevel"/>
+        </Dependency>
+        
+        <Dependency condition="(($validationDataChoice==1 || $testDataChoice==1) &amp;&amp;                                  $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp;                                  $partitionVariable.size() &gt; 0  &amp;&amp;                                 $useTrainingLevel == 1)">
+            <Target action="show" conditionResult="true" option="trainingLevelCombo"/>
+            <Target action="hide" conditionResult="false" option="trainingLevelCombo"/>
+        </Dependency>
+        
+ 
+    <!-- Roles dependencies -->
+        <Dependency condition="($targetType == 'useNominalTarget')">
+            <Target action="show" conditionResult="true" option="nominalTarget"/>
+            <Target action="hide" conditionResult="false" option="nominalTarget"/>
+            <Target action="show" conditionResult="true" option="eventLevelSelect"/>
+            <Target action="hide" conditionResult="false" option="eventLevelSelect"/>           
+        </Dependency>
+
+        <Dependency condition="($targetType == 'useNominalTarget' &amp;&amp; $eventLevelSelect == '1')">
+            <Target action="show" conditionResult="true" option="nominalTargetEventLevelCustom"/>
+            <Target action="hide" conditionResult="false" option="nominalTargetEventLevelCustom"/>          
+        </Dependency>
+
+        <Dependency condition="($targetType == 'useIntervalTarget')">
+            <Target action="show" conditionResult="true" option="intervalTarget"/>
+            <Target action="hide" conditionResult="false" option="intervalTarget"/>
+        </Dependency>
+
+        <Dependency condition="($inputsRadio == 'inputsRadioSelect')">
+            <Target action="show" conditionResult="true" option="inputVariables"/>
+            <Target action="hide" conditionResult="false" option="inputVariables"/>
+        </Dependency>
+
+        <Dependency condition="($detectNominalVars == '1')">
+            <Target action="show" conditionResult="true" option="detectNominalVarsCardinality"/>
+            <Target action="hide" conditionResult="false" option="detectNominalVarsCardinality"/>
+            <Target action="show" conditionResult="true" option="detectNominalVarsCardinalityRatio"/>
+            <Target action="hide" conditionResult="false" option="detectNominalVarsCardinalityRatio"/>
+            <Target action="show" conditionResult="true" option="detectNominalVarsNumeric"/>
+            <Target action="hide" conditionResult="false" option="detectNominalVarsNumeric"/>
+            <Target action="show" conditionResult="true" option="detectNominalVarsNumericNegative"/>
+            <Target action="hide" conditionResult="false" option="detectNominalVarsNumericNegative"/>
+            <Target action="show" conditionResult="true" option="detectNominalVarsNumericNoninteger"/>
+            <Target action="hide" conditionResult="false" option="detectNominalVarsNumericNoninteger"/>
+        </Dependency>
+
+        <Dependency condition="($specifyInputVarTypes == '1')">
+            <Target action="show" conditionResult="true" option="specifyInputVarTypesNote"/>
+            <Target action="hide" conditionResult="false" option="specifyInputVarTypesNote"/>            
+            <Target action="show" conditionResult="true" option="specifyInputVarTypesDate"/>
+            <Target action="hide" conditionResult="false" option="specifyInputVarTypesDate"/>
+            <Target action="show" conditionResult="true" option="specifyInputVarTypesTime"/>
+            <Target action="hide" conditionResult="false" option="specifyInputVarTypesTime"/>
+            <Target action="show" conditionResult="true" option="specifyInputVarTypesDatetime"/>
+            <Target action="hide" conditionResult="false" option="specifyInputVarTypesDatetime"/>
+<!--             <Target option="specifyInputVarTypesText" conditionResult="true"  action="show"/>
+            <Target option="specifyInputVarTypesText" conditionResult="false" action="hide"/> -->
+            <Target action="show" conditionResult="true" option="specifyInputVarTypesInterval"/>
+            <Target action="hide" conditionResult="false" option="specifyInputVarTypesInterval"/>
+            <Target action="show" conditionResult="true" option="specifyInputVarTypesNominal"/>
+            <Target action="hide" conditionResult="false" option="specifyInputVarTypesNominal"/>
+        </Dependency>
+
+        <Dependency condition="($specifyInputVarTypes == '1' &amp;&amp; $specifyInputVarTypesDate == '1')">         
+            <Target action="show" conditionResult="true" option="dateInputs"/>
+            <Target action="hide" conditionResult="false" option="dateInputs"/>
+        </Dependency>
+
+        <Dependency condition="($specifyInputVarTypes == '1' &amp;&amp; $specifyInputVarTypesTime == '1')">         
+            <Target action="show" conditionResult="true" option="timeInputs"/>
+            <Target action="hide" conditionResult="false" option="timeInputs"/>
+        </Dependency>
+
+        <Dependency condition="($specifyInputVarTypes == '1' &amp;&amp; $specifyInputVarTypesDatetime == '1')">         
+            <Target action="show" conditionResult="true" option="datetimeInputs"/>
+            <Target action="hide" conditionResult="false" option="datetimeInputs"/>
+        </Dependency>
+
+<!--         <Dependency condition="($specifyInputVarTypes == '1' &amp;&amp; $specifyInputVarTypesText == '1')">         
+            <Target option="textInputs" conditionResult="true"  action="show"/>
+            <Target option="textInputs" conditionResult="false" action="hide"/>
+        </Dependency> -->
+
+        <Dependency condition="($specifyInputVarTypes == '1' &amp;&amp; $specifyInputVarTypesInterval == '1')">         
+            <Target action="show" conditionResult="true" option="intervalInputs"/>
+            <Target action="hide" conditionResult="false" option="intervalInputs"/>
+        </Dependency>
+
+        <Dependency condition="($specifyInputVarTypes == '1' &amp;&amp; $specifyInputVarTypesNominal == '1')">         
+            <Target action="show" conditionResult="true" option="nominalInputs"/>
+            <Target action="hide" conditionResult="false" option="nominalInputs"/>
+        </Dependency>
+
+
+    <!-- Options tab: Variable screening dependencies -->
+        <Dependency condition="($screeningLowCV == '1')">
+            <Target action="show" conditionResult="true" option="screeningLowCVMoment"/>
+            <Target action="hide" conditionResult="false" option="screeningLowCVMoment"/>
+            <Target action="show" conditionResult="true" option="screeningLowCVRobust"/>
+            <Target action="hide" conditionResult="false" option="screeningLowCVRobust"/>
+        </Dependency>
+
+        <Dependency condition="($screeningLowCV == '1' &amp;&amp; $screeningLowCVMoment == '1')">
+            <Target action="show" conditionResult="true" option="screeningLowCVMomentLowHigh"/>
+            <Target action="hide" conditionResult="false" option="screeningLowCVMomentLowHigh"/>
+        </Dependency>
+
+        <Dependency condition="($screeningLowCV == '1' &amp;&amp; $screeningLowCVRobust == '1')">
+            <Target action="show" conditionResult="true" option="screeningLowCVRobustLowHigh"/>
+            <Target action="hide" conditionResult="false" option="screeningLowCVRobustLowHigh"/>
+        </Dependency>
+
+
+    <!-- Options tab: Feature engineering dependencies -->
+        <Dependency condition="($featEngMissing == '1')">
+            <Target action="show" conditionResult="true" option="featEngMissingThresholds"/>
+            <Target action="hide" conditionResult="false" option="featEngMissingThresholds"/>
+<!--             <Target option="featEngMissingIndicators" conditionResult="true"  action="show"/>
+            <Target option="featEngMissingIndicators" conditionResult="false"  action="hide"/ -->&gt;
+        </Dependency>
+
+        <Dependency condition="($featEngMissing == '1' &amp;&amp; $featEngMissingThresholds == '1')">
+            <Target action="show" conditionResult="true" option="featEngMissingThresholdsLayout"/>
+            <Target action="hide" conditionResult="false" option="featEngMissingThresholdsLayout"/>            
+        </Dependency> 
+        
+<!--         <Dependency condition="($featEngMissing == '1' &amp;&amp; $featEngMissingIndicators == '1')">
+            <Target option="featEngMissingIndicatorsLowHigh" conditionResult="true"  action="show"/>
+            <Target option="featEngMissingIndicatorsLowHigh" conditionResult="false"  action="hide"/>            
+        </Dependency>  -->
+
+        <Dependency condition="($featEngCardinality == '1')">
+            <Target action="show" conditionResult="true" option="featEngCardinalityThresholds"/>
+            <Target action="hide" conditionResult="false" option="featEngCardinalityThresholds"/>
+        </Dependency>
+
+        <Dependency condition="($featEngCardinality == '1'&amp;&amp; $featEngCardinalityThresholds == '1')">
+            <Target action="show" conditionResult="true" option="featEngCardinalityThresholdsLayout"/>
+            <Target action="hide" conditionResult="false" option="featEngCardinalityThresholdsLayout"/>
+        </Dependency>
+
+        <Dependency condition="($featEngGroupRare == '1')">
+            <Target action="show" conditionResult="true" option="featEngGroupRareThreshold"/>
+            <Target action="hide" conditionResult="false" option="featEngGroupRareThreshold"/>
+        </Dependency>
+
+        <Dependency condition="($featEngGroupRare == '1'&amp;&amp; $featEngGroupRareThreshold == '1')">
+            <Target action="show" conditionResult="true" option="featEngGroupRareThresholdLowHigh"/>
+            <Target action="hide" conditionResult="false" option="featEngGroupRareThresholdLowHigh"/>
+        </Dependency>
+
+        <Dependency condition="($featEngEntropy == '1')">
+            <Target action="show" conditionResult="true" option="featEngEntropyGini"/>
+            <Target action="hide" conditionResult="false" option="featEngEntropyGini"/>
+            <Target action="show" conditionResult="true" option="featEngEntropyShannon"/>
+            <Target action="hide" conditionResult="false" option="featEngEntropyShannon"/>
+        </Dependency>
+
+        <Dependency condition="($featEngEntropy == '1' &amp;&amp; $featEngEntropyGini == '1')">
+            <Target action="show" conditionResult="true" option="featEngEntropyGiniLayout"/>
+            <Target action="hide" conditionResult="false" option="featEngEntropyGiniLayout"/>            
+<!--             <Target option="featEngEntropyGiniLowMed" conditionResult="true"  action="show"/>
+            <Target option="featEngEntropyGiniLowMed" conditionResult="false"  action="hide"/>
+            <Target option="featEngEntropyGiniMedHigh" conditionResult="true"  action="show"/>
+            <Target option="featEngEntropyGiniMedHigh" conditionResult="false"  action="hide"/> -->
+        </Dependency>
+
+        <Dependency condition="($featEngEntropy == '1' &amp;&amp; $featEngEntropyShannon == '1')">
+            <Target action="show" conditionResult="true" option="featEngEntropyShannonLayout"/>
+            <Target action="hide" conditionResult="false" option="featEngEntropyShannonLayout"/>            
+<!--             <Target option="featEngEntropyShannonLowMed" conditionResult="true"  action="show"/>
+            <Target option="featEngEntropyShannonLowMed" conditionResult="false"  action="hide"/>
+            <Target option="featEngEntropyShannonMedHigh" conditionResult="true"  action="show"/>
+            <Target option="featEngEntropyShannonMedHigh" conditionResult="false"  action="hide"/> -->
+        </Dependency>
+
+        <Dependency condition="($featEngIQV == '1')">
+            <Target action="show" conditionResult="true" option="featEngIQVFreqRatio"/>
+            <Target action="hide" conditionResult="false" option="featEngIQVFreqRatio"/>
+            <Target action="show" conditionResult="true" option="featEngIQVVarRatio"/>
+            <Target action="hide" conditionResult="false" option="featEngIQVVarRatio"/>
+        </Dependency>
+
+        <Dependency condition="($featEngIQV == '1' &amp;&amp; $featEngIQVFreqRatio == '1')">
+            <Target action="show" conditionResult="true" option="featEngIQVFreqRatioLayout"/>
+            <Target action="hide" conditionResult="false" option="featEngIQVFreqRatioLayout"/>            
+        </Dependency>
+
+        <Dependency condition="($featEngIQV == '1' &amp;&amp; $featEngIQVVarRatio == '1')">
+            <Target action="show" conditionResult="true" option="featEngIQVVarRatioCutoff"/>
+            <Target action="hide" conditionResult="false" option="featEngIQVVarRatioCutoff"/>            
+        </Dependency>
+
+
+        <Dependency condition="($featEngOutliers == '1')">
+            <Target action="show" conditionResult="true" option="featEngOutliersZscore"/>
+            <Target action="hide" conditionResult="false" option="featEngOutliersZscore"/>
+            <Target action="show" conditionResult="true" option="featEngOutliersIQR"/>
+            <Target action="hide" conditionResult="false" option="featEngOutliersIQR"/>
+        </Dependency>
+
+        <Dependency condition="($featEngOutliers == '1' &amp;&amp; $featEngOutliersZscore == '1')">
+            <Target action="show" conditionResult="true" option="featEngOutliersZscoreLayout"/>
+            <Target action="hide" conditionResult="false" option="featEngOutliersZscoreLayout"/>            
+        </Dependency>
+
+        <Dependency condition="($featEngOutliers == '1' &amp;&amp; $featEngOutliersIQR == '1')">
+            <Target action="show" conditionResult="true" option="featEngOutliersIQRLayout"/>
+            <Target action="hide" conditionResult="false" option="featEngOutliersIQRLayout"/>            
+        </Dependency>
+
+
+
+
+        <Dependency condition="($featEngSkewness == '1')">
+            <Target action="show" conditionResult="true" option="featEngSkewnessMoment"/>
+            <Target action="hide" conditionResult="false" option="featEngSkewnessMoment"/>
+            <Target action="show" conditionResult="true" option="featEngSkewnessRobust"/>
+            <Target action="hide" conditionResult="false" option="featEngSkewnessRobust"/>
+        </Dependency>
+
+        <Dependency condition="($featEngSkewness == '1' &amp;&amp; $featEngSkewnessMoment == '1')">
+            <Target action="show" conditionResult="true" option="featEngSkewnessMomentLayout"/>
+            <Target action="hide" conditionResult="false" option="featEngSkewnessMomentLayout"/>            
+        </Dependency>
+
+        <Dependency condition="($featEngSkewness == '1' &amp;&amp; $featEngSkewnessRobust == '1')">
+            <Target action="show" conditionResult="true" option="featEngSkewnessRobustLayout"/>
+            <Target action="hide" conditionResult="false" option="featEngSkewnessRobustLayout"/>            
+        </Dependency>
+
+
+        <Dependency condition="($featEngKurtosis == '1')">
+            <Target action="show" conditionResult="true" option="featEngKurtosisMoment"/>
+            <Target action="hide" conditionResult="false" option="featEngKurtosisMoment"/>
+            <Target action="show" conditionResult="true" option="featEngKurtosisRobust"/>
+            <Target action="hide" conditionResult="false" option="featEngKurtosisRobust"/>
+        </Dependency>
+
+        <Dependency condition="($featEngKurtosis == '1' &amp;&amp; $featEngKurtosisMoment == '1')">
+            <Target action="show" conditionResult="true" option="featEngKurtosisMomentLayout"/>
+            <Target action="hide" conditionResult="false" option="featEngKurtosisMomentLayout"/>            
+        </Dependency>
+
+        <Dependency condition="($featEngKurtosis == '1' &amp;&amp; $featEngKurtosisRobust == '1')">
+            <Target action="show" conditionResult="true" option="featEngKurtosisRobustLayout"/>
+            <Target action="hide" conditionResult="false" option="featEngKurtosisRobustLayout"/>            
+        </Dependency>
+
+        <Dependency condition="($featRank == '1')">
+            <Target action="show" conditionResult="true" option="featRankSeparate"/>
+            <Target action="hide" conditionResult="false" option="featRankSeparate"/>
+            <Target action="show" conditionResult="true" option="featRankIntervalCombo"/>
+            <Target action="hide" conditionResult="false" option="featRankIntervalCombo"/>
+            <Target action="show" conditionResult="true" option="featRankNominalCombo"/>
+            <Target action="hide" conditionResult="false" option="featRankNominalCombo"/>
+        </Dependency>
+
+
+
+
+
+
+    <!-- Output tab dependencies -->
+        <Dependency condition="($outputDS == '1')">
+            <Target action="enable" conditionResult="true" option="outputDSName"/>
+            <Target action="disable" conditionResult="false" option="outputDSName"/>    
+            <Target action="show" conditionResult="true" option="includeVarsInstruction"/>
+            <Target action="hide" conditionResult="false" option="includeVarsInstruction"/>
+            <Target action="show" conditionResult="true" option="includeVars"/>
+            <Target action="hide" conditionResult="false" option="includeVars"/>
+        </Dependency>
+
+        <Dependency condition="($outputDS == '1' &amp;&amp; $featRank == '1')">
+            <Target action="show" conditionResult="true" option="includeRankedFeaturesInstruction"/>
+            <Target action="hide" conditionResult="false" option="includeRankedFeaturesInstruction"/>    
+            <Target action="show" conditionResult="true" option="includeRankedFeaturesNumber"/>
+            <Target action="hide" conditionResult="false" option="includeRankedFeaturesNumber"/>       
+        </Dependency>
+
+        <Dependency condition="($outputDS == '1' &amp;&amp; $featRank == '1' &amp;&amp;                                  $featEngInteractions == '1')">
+            <Target action="show" conditionResult="true" option="includeRankedFeaturesInteractions"/>
+            <Target action="hide" conditionResult="false" option="includeRankedFeaturesInteractions"/>
+        </Dependency>
+
+        <Dependency condition="($outputDS == '1' &amp;&amp;                                  ($validationDataChoice == '1' || $testDataChoice == '1'))">
+            <Target action="show" conditionResult="true" option="includeTargetPartitionVars"/>
+            <Target action="hide" conditionResult="false" option="includeTargetPartitionVars"/>
+            <Target action="hide" conditionResult="true" option="includeTargetVar"/>
+        </Dependency>
+
+        <Dependency condition="($outputDS == '1' &amp;&amp;                                  ($validationDataChoice == '1' || $testDataChoice == '1') &amp;&amp;                                 $includeVars != 'includeNoVars' &amp;&amp; $includeVars != 'includeSelectedVars')">
+            <Target action="set" conditionResult="true" option="includeTargetPartitionVars" property="value" value="1"/>
+        </Dependency>
+
+        <Dependency condition="($outputDS == '1' &amp;&amp;                                  $validationDataChoice == '0' &amp;&amp; $testDataChoice == '0')">
+            <Target action="show" conditionResult="true" option="includeTargetVar"/>
+        </Dependency>
+
+        <Dependency condition="($outputDS == '1' &amp;&amp;                                  $validationDataChoice == '0' &amp;&amp; $testDataChoice == '0' &amp;&amp;                                 $includeVars != 'includeNoVars' &amp;&amp; $includeVars != 'includeSelectedVars')">
+            <Target action="set" conditionResult="true" option="includeTargetVar" property="value" value="1"/>
+        </Dependency>
+
+
+        <Dependency condition="($outputDS== '1' &amp;&amp; $includeVars=='includeSelectedVars')">
+            <Target action="show" conditionResult="true" option="copyVariables"/>
+            <Target action="hide" conditionResult="false" option="copyVariables"/>
+         </Dependency>
+
+        <Dependency condition="($featureOutDS == '1')">
+            <Target action="enable" conditionResult="true" option="featureOutDSName"/>
+            <Target action="disable" conditionResult="false" option="featureOutDSName"/>
+        </Dependency>
+
+        <Dependency condition="($transformationOutDS == '1')">
+            <Target action="enable" conditionResult="true" option="transformationOutDSName"/>
+            <Target action="disable" conditionResult="false" option="transformationOutDSName"/>
+        </Dependency>
+
+        <Dependency condition="($astoreDS == '1')">
+            <Target action="enable" conditionResult="true" option="astoreDSName"/>
+            <Target action="disable" conditionResult="false" option="astoreDSName"/>
+        </Dependency>
+
+    </Dependencies>
+
+
+
+    <Requirements>
+        <Requirement condition="(!($validationDataChoice == 1) || !($testDataChoice == 1) ||              ($partitionDataCombo == 'partitionDataVariableChoice') ||             ($validationDataChoice == 1 &amp;&amp; $testDataChoice == 1 &amp;&amp;              ($validationDataFraction == '' || $MathTool.add($MathTool.toDouble($validationDataFraction),$MathTool.toDouble($testDataFraction) ) &lt; 1.0)))">
+            <Message>The sum of the sampling proportions for validation and test data must be less than 1.0.</Message>
+        </Requirement>
+ 
+        <Requirement condition="(         !(             ($validationDataChoice == 1 &amp;&amp; $testDataChoice == 1) &amp;&amp;              $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp;             $partitionVariable.size() &gt; 0 &amp;&amp;             $validationLevelCombo == $testLevelCombo         ))">
+            <Message>The value of the partitioning variable must be different for validation and test cases.</Message>
+        </Requirement>
+
+        <Requirement condition="(         !(             $validationDataChoice == 1 &amp;&amp;              $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp;             $partitionVariable.size() &gt; 0 &amp;&amp;             $useTrainingLevel == 1 &amp;&amp;              $validationLevelCombo == $trainingLevelCombo         ))">
+            <Message>The value of the partitioning variable must be different for training and validation cases.</Message>
+        </Requirement>
+
+        <Requirement condition="(         !(             $testDataChoice == 1 &amp;&amp;             $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp;             $partitionVariable.size() &gt; 0 &amp;&amp;             $useTrainingLevel == 1 &amp;&amp;              $testLevelCombo == $trainingLevelCombo         ))">
+            <Message>The value of the partitioning variable must be different for training and test cases.</Message>
+        </Requirement>
+
+        <Requirement condition="(!($inputsRadio == 'inputsRadioSelect' &amp;&amp;                                 $inputVariables.size() == 0))">
+            <Message>Select at least one input variable.</Message>
+        </Requirement>
+
+        <Requirement condition="(!($specifyInputVarTypes == '1' &amp;&amp;                                 $specifyInputVarTypesDate == '1' &amp;&amp;                                 $dateInputs.size() == 0))">
+            <Message>Select at least one date input.</Message>
+        </Requirement>
+
+        <Requirement condition="(!($specifyInputVarTypes == '1' &amp;&amp;                                 $specifyInputVarTypesTime == '1' &amp;&amp;                                 $timeInputs.size() == 0))">
+            <Message>Select at least one time input.</Message>
+        </Requirement>
+
+        <Requirement condition="(!($specifyInputVarTypes == '1' &amp;&amp;                                 $specifyInputVarTypesDatetime == '1' &amp;&amp;                                 $datetimeInputs.size() == 0))">
+            <Message>Select at least one datetime input.</Message>
+        </Requirement>
+
+<!--         <Requirement condition="(!($specifyInputVarTypes == '1' &amp;&amp;
+                                $specifyInputVarTypesText == '1' &amp;&amp;
+                                $textInputs.size() == 0))">
+            <Message nlsKey="inputVarTypesRequirement_text.requirement.msg">Select at least one text input.</Message>
+        </Requirement> -->
+
+        <Requirement condition="(!($specifyInputVarTypes == '1' &amp;&amp;                                 $specifyInputVarTypesInterval == '1' &amp;&amp;                                 $intervalInputs.size() == 0))">
+            <Message>Select at least one interval input.</Message>
+        </Requirement>
+
+        <Requirement condition="(!($specifyInputVarTypes == '1' &amp;&amp;                                 $specifyInputVarTypesNominal == '1' &amp;&amp;                                 $nominalInputs.size() == 0))">
+            <Message>Select at least one nominal input.</Message>
+        </Requirement>
+
+        <Requirement condition="(!($featEngMissing == '1' &amp;&amp;                                 $featEngMissingThresholds == '1' &amp;&amp;                                 ($featEngMissingThresholdsLowMed &gt; $featEngMissingThresholdsMedHigh)))">
+            <Message>The missing values percentage low-medium cutoff must be less than or equal to the medium-high cutoff.</Message>
+        </Requirement>
+
+        <Requirement condition="(!($featEngCardinality == '1' &amp;&amp;                                 $featEngCardinalityThresholds == '1' &amp;&amp;                                 ($featEngCardinalityThresholdsLowMed &gt; $featEngCardinalityThresholdsMedHigh)))">
+            <Message>The cardinality low-medium cutoff must be less than or equal to the medium-high cutoff.</Message>
+        </Requirement>
+
+        <Requirement condition="(!($featEngSkewness == '1' &amp;&amp;                                 $featEngSkewnessMoment == '1' &amp;&amp;                                 ($featEngSkewnessMomentLowMed &gt; $featEngSkewnessMomentMedHigh)))">
+            <Message>The moment skewness low-medium cutoff must be less than or equal to the medium-high cutoff.</Message>
+        </Requirement>
+
+        <Requirement condition="(!($featEngSkewness == '1' &amp;&amp;                                 $featEngSkewnessRobust == '1' &amp;&amp;                                 ($featEngSkewnessRobustLowMed &gt; $featEngSkewnessRobustMedHigh)))">
+            <Message>The robust skewness low-medium cutoff must be less than or equal to the medium-high cutoff.</Message>
+        </Requirement>
+
+        <Requirement condition="(!($featEngEntropy == '1' &amp;&amp;                                 $featEngEntropyGini == '1' &amp;&amp;                                 ($featEngEntropyGiniLowMed &gt; $featEngEntropyGiniMedHigh)))">
+            <Message>The Gini entropy low-medium cutoff must be less than or equal to the medium-high cutoff.</Message>
+        </Requirement>
+
+        <Requirement condition="(!($featEngEntropy == '1' &amp;&amp;                                 $featEngEntropyShannon == '1' &amp;&amp;                                 ($featEngEntropyShannonLowMed &gt; $featEngEntropyShannonMedHigh)))">
+            <Message>The Shannon entropy low-medium cutoff must be less than or equal to the medium-high cutoff.</Message>
+        </Requirement>
+
+        <Requirement condition="(!($featEngIQV == '1' &amp;&amp;                                 $featEngIQVFreqRatio == '1' &amp;&amp;                                 ($featEngIQVFreqRatioMostSecond &gt;= $featEngIQVFreqRatioMostLeast)))">
+            <Message>The IQV frequency ratio cutoff for the two most frequent levels must be less than the cutoff for the most and least frequent levels.</Message>
+        </Requirement>
+
+        <Requirement condition="(!($featEngOutliers == '1' &amp;&amp;                                 $featEngOutliersZscore == '1' &amp;&amp;                                 ($featEngOutliersZscoreLowMed &gt; $featEngOutliersZscoreMedHigh)))">
+            <Message>The outliers z-score percentage low-medium cutoff must be less than or equal to the medium-high cutoff.</Message>
+        </Requirement>
+
+        <Requirement condition="(!($featEngOutliers == '1' &amp;&amp;                                 $featEngOutliersIQR == '1' &amp;&amp;                                 ($featEngOutliersIQRLowMed &gt; $featEngOutliersIQRMedHigh)))">
+            <Message>The outliers interquartile range percentage low-medium cutoff must be less than or equal to the medium-high cutoff.</Message>
+        </Requirement>
+
+        <Requirement condition="(!($featEngKurtosis == '1' &amp;&amp;                                 $featEngKurtosisMoment == '1' &amp;&amp;                                 ($featEngKurtosisMomentLowMed &gt; $featEngKurtosisMomentMedHigh)))">
+            <Message>The moment kurtosis low-medium cutoff must be less than or equal to the medium-high cutoff.</Message>
+        </Requirement>
+
+        <Requirement condition="(!($featEngKurtosis == '1' &amp;&amp;                                 $featEngKurtosisRobust == '1' &amp;&amp;                                 ($featEngKurtosisRobustLowMed &gt; $featEngKurtosisRobustMedHigh)))">
+            <Message>The robust kurtosis low-medium cutoff must be less than or equal to the medium-high cutoff.</Message>
+        </Requirement>
+
+        <Requirement condition="(!($featEngMissing == '1' &amp;&amp;                                 $featEngMissingThresholds == '1' &amp;&amp;                                 ($featEngMissingThresholdsMedHigh &gt;= $screeningMissingLowHigh)))">
+            <Message>The missing values percentage low-medium cutoff must be less than or equal to the medium-high cutoff.</Message>
+        </Requirement>
+
+    </Requirements>
+
+
+  	<CodeTemplate>
+		<![CDATA[
+
+## $oNumericRange.fromValue
+
+## Setup for PROC CAS code
+
+## Input table
+#set($datasetCASLibref = $dataset.getLibrary())
+#set($datasetCASLib = "%sysfunc(getlcaslib($datasetCASLibref))")
+#set($datasetCASTable = $dataset.get("table"))
+#set($datasetCASTableNlit = $dataset.getTable())
+
+## Names for temporary librefs and tables
+#set($tempCASLib = "CASUSER")
+#set($tempCASLibref = "_tmpcas_")
+#set($partitionedDataName = "_partitionedData_")
+#set($casOutTempName = "_featureMachineTemp_")
+#set($validationScoredTemp = "_validScoredTemp_")
+#set($testScoredTemp = "_testScoredTemp_")
+
+#if($validationDataChoice=='1' || $testDataChoice=='1' || $featureOutDS != '1')
+    libname $tempCASLibref cas caslib=$CTMUtil.doubleQuoteString($tempCASLib);
+#end
+
+
+## Identify variable type for partitioning variable
+#if($partitionVariable.size() > 0)
+    ## Handle standard variable formatss first
+    #if($partitionVariable[0].get('format') == "")
+        #set($_partitionVariableWhere = $partitionVariable[0])
+        ## Numeric partitioning variable
+        #if($partitionVariable[0].get('type') == 'Numeric')
+            #if($useTrainingLevel == 1) 
+                #set($_trainingLevelValue = $trainingLevelCombo)
+            #end
+            #if($validationDataChoice == 1)
+                #set($_validationLevelValue = $validationLevelCombo)
+            #end
+            #if($testDataChoice == 1)
+                #set($_testLevelValue = $testLevelCombo)
+            #end
+
+        ## Character partitioning variable
+        #elseif($partitionVariable[0].get('type') == 'Char')
+            #if($useTrainingLevel == 1) 
+                #set($_trainingLevelValue = $CTMUtil.quoteString($trainingLevelCombo))
+            #end
+            #if($validationDataChoice == 1)
+                #set($_validationLevelValue = $CTMUtil.quoteString($validationLevelCombo))
+            #end
+            #if($testDataChoice == 1)
+                #set($_testLevelValue = $CTMUtil.quoteString($testLevelCombo))
+            #end
+        #end
+    #elseif($partitionVariable[0].get('format') != "")
+        #set($_partitionVariableWhere = "STRIP(PUT($partitionVariable[0], $partitionVariable[0].get('format')))")
+        #if($useTrainingLevel == 1) 
+            #set($_trainingLevelValue = $CTMUtil.quoteString($trainingLevelCombo))
+        #end
+        #if($validationDataChoice == 1)
+            #set($_validationLevelValue = $CTMUtil.quoteString($validationLevelCombo))
+        #end
+        #if($testDataChoice == 1)
+            #set($_testLevelValue = $CTMUtil.quoteString($testLevelCombo))
+        #end
+    #end
+#end
+
+## Convert partition data proportions to percents
+#set($validationDataPercent = $validationDataFraction*100)
+#set($testDataPercent = $testDataFraction*100)
+
+## Define training, validation, and test datasets (with where clauses) and caslibs
+#if($validationDataChoice!='1' && $testDataChoice!='1')
+    #set($dataUsedCaslib = $datasetCASLib)
+    #set($dataUsedTable = $datasetCASTable)
+#elseif(($validationDataChoice=='1' || $testDataChoice=='1') && $partitionDataCombo == 'partitionDataFractionChoice')
+    #set($dataUsedCaslib = $tempCASLib)
+    #set($dataUsedTable = $partitionedDataName)
+    #set($dataUsedWhereTrain =  "_PartInd_=0")
+
+    #if($validationDataChoice=='1' && $testDataChoice!='1')
+        #set($dataUsedWhereVal =  "_PartInd_=1")
+    #elseif($validationDataChoice!='1' && $testDataChoice=='1')
+        #set($dataUsedWhereTest =  "_PartInd_=1")
+    #elseif($validationDataChoice=='1' && $testDataChoice=='1')
+        #set($dataUsedWhereVal =  "_PartInd_=1")
+        #set($dataUsedWhereTest =  "_PartInd_=2")
+    #end
+
+#elseif(($validationDataChoice=='1' || $testDataChoice=='1') && $partitionDataCombo == 'partitionDataVariableChoice')
+    #set($dataUsedCaslib = $datasetCASLib)
+    #set($dataUsedTable = $datasetCASTable)
+    #if($useTrainingLevel == '1')
+        #set($dataUsedWhereTrain = "$_partitionVariableWhere = $_trainingLevelValue")
+        #set($dataUsedWhereVal = "$_partitionVariableWhere = $_validationLevelValue")
+        #set($dataUsedWhereTest = "$_partitionVariableWhere = $_testLevelValue")      
+    #elseif($validationDataChoice=='1' && $testDataChoice!='1') 
+        #set($dataUsedWhereTrain = "$_partitionVariableWhere NE $_validationLevelValue")
+        #set($dataUsedWhereVal = "$_partitionVariableWhere = $_validationLevelValue")
+    #elseif($validationDataChoice!='1' && $testDataChoice=='1')
+        #set($dataUsedWhereTrain = "$_partitionVariableWhere NE $_testLevelValue")
+        #set($dataUsedWhereTest = "$_partitionVariableWhere = $_testLevelValue")      
+    #elseif($validationDataChoice=='1' && $testDataChoice=='1')
+        #set($dataUsedWhereTrain = "$_partitionVariableWhere NE $_validationLevelValue AND $_partitionVariableWhere NE $_testLevelValue")
+        #set($dataUsedWhereVal = "$_partitionVariableWhere = $_validationLevelValue")
+        #set($dataUsedWhereTest = "$_partitionVariableWhere = $_testLevelValue")  
+    #end
+#end
+
+## Identify partition variable for copyVars
+#if($validationDataChoice=='1' || $testDataChoice=='1')
+    #if($partitionDataCombo == 'partitionDataFractionChoice')
+        #set($_partitionVariableCopyVars = "_PartInd_")
+    #elseif($partitionDataCombo == 'partitionDataVariableChoice')
+        #set($_partitionVariableCopyVars = $_partitionVariableWhere)
+    #end
+#end
+
+## Identify target variable
+#if($targetType=='useNominalTarget' && $nominalTarget.size() > 0)
+    #set($_targetVariable = $nominalTarget[0].get('value'))
+#elseif($targetType=='useIntervalTarget' && $intervalTarget.size() > 0)
+    #set($_targetVariable = $intervalTarget[0].get('value'))
+#end
+
+
+### Organize output table information ###
+
+## Output dataset info: generated features table
+#set($outputCASLibref = $outputDSName.getLibrary())
+#set($outputCASLib = "%sysfunc(getlcaslib($outputCASLibref))")
+#set($outputCASTable = $outputDSName.get("table"))
+#set($outputCASTableNlit = $outputDSName.getTable())
+
+## Output dataset info: feature generation metadata table
+#if($featureOutDS == '1')
+    #set($featureOutCASLibref = $featureOutDSName.getLibrary())
+    #set($featureOutCASLib = "%sysfunc(getlcaslib($featureOutCASLibref))")
+    #set($featureOutCASTable = $featureOutDSName.get("table"))
+    #set($featureOutCASTableNlit = $featureOutDSName.getTable())
+#else
+    #set($featureOutCASLibref = $tempCASLibref)
+    #set($featureOutCASLib = $tempCASLib)
+    #set($featureOutCASTable = "_featureOut_")
+    #set($featureOutCASTableNlit = $featureOutCASTable)
+#end
+
+## Output dataset info: feature generation pipelines metadata table
+#if($transformationOutDS == '1')
+    #set($transformationOutCASLibref = $transformationOutDSName.getLibrary())
+    #set($transformationOutCASLib = "%sysfunc(getlcaslib($transformationOutCASLibref))")
+    #set($transformationOutCASTable = $transformationOutDSName.get("table"))
+    #set($transformationOutCASTableNlit = $transformationOutDSName.getTable())
+#else
+    #set($transformationOutCASLibref = $tempCASLibref)
+    #set($transformationOutCASLib = $tempCASLib)
+    #set($transformationOutCASTable = "_transformationOut_")
+    #set($transformationOutCASTableNlit = $transformationOutCASTable)
+#end
+
+## Output dataset info: feature generation scoring model table
+#if($astoreDS == '1')
+    #set($astoreCASLibref = $astoreDSName.getLibrary())
+    #set($astoreCASLib = "%sysfunc(getlcaslib($astoreCASLibref))")
+    #set($astoreCASTable = $astoreDSName.get("table"))
+    #set($astoreCASTableNlit = $astoreDSName.getTable())
+#else
+    #set($astoreCASLibref = $tempCASLibref)
+    #set($astoreCASLib = $tempCASLib)
+    #set($astoreCASTable = "_astore_")
+    #set($astoreCASTableNlit = $astoreCASTable)
+#end
+
+
+## Create variable list for copyVars
+#if($outputDS == '1')
+    #set($copyVarsList = [])
+    #if($includeVars == 'includeSelectedVars')
+        #set($_copyVarsUsed = '1')
+        #if($copyVariables.size() > 0)
+            #foreach($item in $copyVariables) 
+                #set($success = $copyVarsList.add($item))
+            #end
+        #end
+        ## Include partition indicator if it was created
+        #if(($validationDataChoice=='1' || $testDataChoice=='1') && $partitionDataCombo == 'partitionDataFractionChoice')
+            #set($success = $copyVarsList.add($_partitionVariableCopyVars))
+        #end
+    #elseif($includeVars == 'includeTargetVar')
+        #set($success = $copyVarsList.add($_targetVariable))
+        #set($_copyVarsUsed = '1')
+    #elseif($includeVars == 'includeTargetPartitionVars')
+        #set($success = $copyVarsList.add($_targetVariable))
+        #set($success = $copyVarsList.add($_partitionVariableCopyVars))
+        #set($_copyVarsUsed = '1')
+    #end
+#end
+
+
+
+## Combine various input roles into one list
+## This is done in case a variable is not assigned as an input but it then  
+## is selected for one of the variable types
+#if($inputsRadio == 'inputsRadioSelect')
+    #set($inputVarsList = [])
+    #if($specifyInputVarTypes != '1')
+        #set($inputVarsList = $inputVariables)
+    #else
+        #if($inputVariables.size() > 0)
+            #foreach($item in $inputVariables) 
+                #set($success = $inputVarsList.add($item))
+            #end
+        #end
+        #if($dateInputs.size() > 0)
+            #foreach($item in $dateInputs) 
+                #if(!$inputVarsList.contains($item))
+                    #set($success = $inputVarsList.add($item))
+                #end
+            #end
+        #end 
+        #if($timeInputs.size() > 0)
+            #foreach($item in $timeInputs) 
+                #if(!$inputVarsList.contains($item))
+                    #set($success = $inputVarsList.add($item))
+                #end
+            #end
+        #end 
+        #if($datetimeInputs.size() > 0)
+            #foreach($item in $datetimeInputs) 
+                #if(!$inputVarsList.contains($item))
+                    #set($success = $inputVarsList.add($item))
+                #end
+            #end
+        #end 
+        #*
+        #if($textInputs.size() > 0)
+            #foreach($item in $textInputs)
+                #if(!$inputVarsList.contains($item)) 
+                    #set($success = $inputVarsList.add($item))
+                #end
+            #end
+        #end 
+        *#
+        #if($intervalInputs.size() > 0)
+            #foreach($item in $intervalInputs) 
+                ## Exclude variable if it was already selected in inputVariables
+                #if(!$inputVarsList.contains($item))
+                    #set($success = $inputVarsList.add($item))
+                #end
+            #end
+        #end
+        #if($nominalInputs.size() > 0)
+            #foreach($item in $nominalInputs) 
+                #if(!$inputVarsList.contains($item))
+                    #set($success = $inputVarsList.add($item))
+                #end
+            #end
+        #end
+    #end
+#end
+
+
+
+
+
+
+## Combine screenPolicy options into one list to handle commas
+#set($screenPolicyList = [])
+#if($screeningConstant != '1')
+    #set($success = $screenPolicyList.add("constant")) 
+#end
+#if($screeningLowCV != '1')
+    #set($success = $screenPolicyList.add("lowCV")) 
+#end
+#if($screeningMissingLowHigh != 90)
+    #set($success = $screenPolicyList.add("missing")) 
+#end
+#if($screeningMutualInfoThreshold != 0.05)
+    #set($success = $screenPolicyList.add("mutualInfo")) 
+#end
+#if($screeningSymmetricUncertaintyThreshold != 1)
+    #set($success = $screenPolicyList.add("redundant")) 
+#end
+#if($screeningLeakageVarsThreshold != 90)
+    #set($success = $screenPolicyList.add("leakage")) 
+#end
+#if($featEngGroupRare != '1')
+    #set($success = $screenPolicyList.add("rare")) 
+#end
+
+
+## Combine transformationPolicy options into one list to handle commas
+#set($transformationPolicyList = [])
+#if($featEngInteractions == '1')
+    #set($success = $transformationPolicyList.add("interaction")) 
+#end
+#if($featEngPolynomial == '1')
+    #set($success = $transformationPolicyList.add("polynomial")) 
+#end
+#if($featEngMissing != '1')
+    #set($success = $transformationPolicyList.add("missing")) 
+#end
+#if($featEngCardinality != '1')
+    #set($success = $transformationPolicyList.add("cardinality")) 
+#end
+#if($featEngSkewness != '1')
+    #set($success = $transformationPolicyList.add("skewness")) 
+#end
+
+#if($featEngEntropy == '1')
+    #set($success = $transformationPolicyList.add("entropy")) 
+#end
+#if($featEngIQV == '1')
+    #set($success = $transformationPolicyList.add("iqv")) 
+#end
+#if($featEngOutliers == '1')
+    #set($success = $transformationPolicyList.add("outliers")) 
+#end
+#if($featEngKurtosis == '1')
+    #set($success = $transformationPolicyList.add("kurtosis")) 
+#end
+#if($featEngNonlinearity == '1')
+    #set($success = $transformationPolicyList.add("nonlinear")) 
+#end
+
+
+
+
+
+
+
+## Determine if the explorationPolicy parameter is used in the code at all
+#if(($specifyInputVarTypes == '1' && ($intervalInputs.size() > 0 || $nominalInputs.size() > 0 || $dateInputs.size() > 0 || $timeInputs.size() > 0 || $datetimeInputs.size() > 0 || $textInputs.size() > 0)))
+    #set($_explorationPolicy = '1')
+#end
+
+
+## Combine explorationPolicy's nominal options into one list to handle commas
+#set($explorationNominalList = [])
+#if($specifyInputVarTypes == '1')
+    #if($intervalInputs.size() > 0)
+        #set($success = $explorationNominalList.add("intervalInputs")) 
+    #end
+    #if($nominalInputs.size() > 0)
+        #set($success = $explorationNominalList.add("nominalInputs")) 
+    #end
+#end
+#if($detectNominalVars == '1')
+    #if($detectNominalVarsCardinality != 1024)
+        #set($success = $explorationNominalList.add("cardinalityThreshold"))
+    #end
+    #if($detectNominalVarsCardinalityRatio != 0.25)
+        #set($success = $explorationNominalList.add("cardinalityRatio"))
+    #end
+    #if($detectNominalVarsNumericNegative == '1')
+        #set($success = $explorationNominalList.add("includeNegative"))
+    #end
+    #if($detectNominalVarsNumericNoninteger == '1')
+        #set($success = $explorationNominalList.add("includeNonIntegral"))
+    #end
+#end
+
+## Combine explorationPolicy's CV options into one list to handle commas
+#set($explorationCVList = [])
+#if($screeningLowCV == '1')
+    #if($screeningLowCVMoment == '1')
+        #if($screeningLowCVMomentLowHigh != 0.00001)
+            #set($success = $explorationCVList.add("lowMoment")) 
+        #end
+    #end
+    #if($screeningLowCVRobust == '1')
+         #if($screeningLowCVRobustLowHigh != 0.001)
+            #set($success = $explorationCVList.add("lowRobust")) 
+        #end 
+    #end
+#end
+
+## Combine explorationPolicy's missing options into one list to handle commas
+#set($explorationMissingList = [])
+#if($featEngMissing == '1')
+    #if($featEngMissingThresholds == '1')
+        #if($featEngMissingThresholdsLowMed != 5)
+            #set($success = $explorationMissingList.add("lowMediumCutoff")) 
+        #end
+        #if($featEngMissingThresholdsMedHigh != 25)
+            #set($success = $explorationMissingList.add("mediumHighCutoff")) 
+        #end
+    #end
+#end
+
+## Combine explorationPolicy's cardinality options into one list to handle commas
+#set($explorationCardinalityList = [])
+#if($featEngCardinality == '1')
+    #if($featEngCardinalityThresholds == '1')
+        #if($featEngCardinalityThresholdsLowMed != 32)
+            #set($success = $explorationCardinalityList.add("lowMediumCutoff")) 
+        #end
+        #if($featEngCardinalityThresholdsMedHigh != 64)
+            #set($success = $explorationCardinalityList.add("mediumHighCutoff")) 
+        #end
+    #end
+#end
+#if($featEngGroupRare == '1')
+    #if($featEngGroupRareThreshold == '1' && $featEngGroupRareThresholdLowHigh != 10)
+        #set($success = $explorationCardinalityList.add("minNObsPerTargetLevel"))
+    #end
+#end
+
+## Combine explorationPolicy's skewness options into one list to handle commas
+#set($explorationSkewnessList = [])
+#if($featEngSkewness == '1')
+    #if($featEngSkewnessMoment == '1')
+        #if($featEngSkewnessMomentLowMed != 2)
+            #set($success = $explorationSkewnessList.add("momentLowMediumCutoff")) 
+        #end
+        #if($featEngSkewnessMomentMedHigh != 10)
+            #set($success = $explorationSkewnessList.add("momentMediumHighCutoff")) 
+        #end
+    #end
+    #if($featEngSkewnessRobust == '1')
+        #if($featEngSkewnessRobustLowMed != 0.75)
+            #set($success = $explorationSkewnessList.add("robustLowMediumCutoff")) 
+        #end
+        #if($featEngSkewnessRobustMedHigh != 2)
+            #set($success = $explorationSkewnessList.add("robustMediumHighCutoff")) 
+        #end
+    #end
+#end
+
+## Combine explorationPolicy's entropy options into one list to handle commas
+#set($explorationEntropyList = [])
+#if($featEngEntropy == '1')
+    #if($featEngEntropyGini == '1')
+        #if($featEngEntropyGiniLowMed != 0.25)
+            #set($success = $explorationEntropyList.add("giniLowMediumCutoff")) 
+        #end
+        #if($featEngEntropyGiniMedHigh != 0.75)
+            #set($success = $explorationEntropyList.add("giniMediumHighCutoff")) 
+        #end
+    #end
+    #if($featEngEntropyShannon == '1')
+        #if($featEngEntropyShannonLowMed != 0.25)
+            #set($success = $explorationEntropyList.add("shannonLowMediumCutoff")) 
+        #end
+        #if($featEngEntropyShannonMedHigh != 0.75)
+            #set($success = $explorationEntropyList.add("shannonMediumHighCutoff")) 
+        #end
+    #end 
+#end
+
+## Combine explorationPolicy's IQV options into one list to handle commas
+#set($explorationIQVList = [])
+#if($featEngIQV == '1')
+    #if($featEngIQVFreqRatio == '1')
+        #if($featEngIQVFreqRatioMostSecond != 10)
+            #set($success = $explorationIQVList.add("highTopTwo")) 
+        #end
+        #if($featEngIQVFreqRatioMostLeast != 100)
+            #set($success = $explorationIQVList.add("highTopBottom")) 
+        #end
+    #end
+    #if($featEngIQVVarRatio == '1')
+        #if($featEngIQVVarRatioCutoff != 0.5)
+            #set($success = $explorationIQVList.add("highVariationRatio")) 
+        #end
+    #end 
+#end
+
+## Combine explorationPolicy's outliers options into one list to handle commas
+#set($explorationOutliersList = [])
+#if($featEngOutliers == '1')
+    #if($featEngOutliersZscore == '1')
+        #if($featEngOutliersZscoreLowMed != 1)
+            #set($success = $explorationOutliersList.add("momentLowMediumCutoff")) 
+        #end
+        #if($featEngOutliersZscoreMedHigh != 2.5)
+            #set($success = $explorationOutliersList.add("momentMediumHighCutoff")) 
+        #end
+    #end
+    #if($featEngOutliersIQR == '1')
+        #if($featEngOutliersIQRLowMed != 1)
+            #set($success = $explorationOutliersList.add("robustLowMediumCutoff")) 
+        #end
+        #if($featEngOutliersIQRMedHigh != 2.5)
+            #set($success = $explorationOutliersList.add("robustMediumHighCutoff")) 
+        #end
+    #end 
+#end
+
+## Combine explorationPolicy's kurtosis options into one list to handle commas
+#set($explorationKurtosisList = [])
+#if($featEngKurtosis == '1')
+    #if($featEngKurtosisMoment == '1')
+        #if($featEngKurtosisMomentLowMed != 5)
+            #set($success = $explorationKurtosisList.add("momentLowMediumCutoff")) 
+        #end
+        #if($featEngKurtosisMomentMedHigh != 10)
+            #set($success = $explorationKurtosisList.add("momentMediumHighCutoff")) 
+        #end
+    #end
+    #if($featEngKurtosisRobust == '1')
+        #if($featEngKurtosisRobustLowMed != 2)
+            #set($success = $explorationKurtosisList.add("robustLowMediumCutoff")) 
+        #end
+        #if($featEngKurtosisRobustMedHigh != 3)
+            #set($success = $explorationKurtosisList.add("robustMediumHighCutoff")) 
+        #end
+    #end 
+#end
+
+
+
+
+
+
+## Combine explorationPolicy options into one list to handle commas
+#set($explorationPolicyList = [])
+## Various input types
+#if($specifyInputVarTypes == '1')
+    #if($specifyInputVarTypesDate == '1' && $dateInputs.size() > 0)
+        #set($success = $explorationPolicyList.add("dateInputs")) 
+    #end
+    #if($specifyInputVarTypesTime == '1' && $timeInputs.size() > 0)
+        #set($success = $explorationPolicyList.add("timeInputs")) 
+    #end
+    #if($specifyInputVarTypesDatetime == '1' && $datetimeInputs.size() > 0)
+        #set($success = $explorationPolicyList.add("datetimeInputs")) 
+    #end
+    #*
+    #if($specifyInputVarTypesText == '1' && $textInputs.size() > 0)
+        #set($success = $explorationPolicyList.add("textInputs")) 
+    #end
+    *#
+#end
+#if($explorationNominalList.size() > 0) 
+    #set($success = $explorationPolicyList.add("nominal")) 
+#end
+#if($explorationCVList.size() > 0) 
+    #set($success = $explorationPolicyList.add("cv")) 
+#end
+#if($explorationMissingList.size() > 0) 
+    #set($success = $explorationPolicyList.add("missing")) 
+#end
+#if($explorationCardinalityList.size() > 0) 
+    #set($success = $explorationPolicyList.add("cardinality")) 
+#end
+#if($explorationSkewnessList.size() > 0) 
+    #set($success = $explorationPolicyList.add("skewness")) 
+#end
+#if($explorationEntropyList.size() > 0) 
+    #set($success = $explorationPolicyList.add("entropy")) 
+#end
+#if($explorationIQVList.size() > 0) 
+    #set($success = $explorationPolicyList.add("iqv"))
+#end
+#if($explorationOutliersList.size() > 0) 
+    #set($success = $explorationPolicyList.add("outliers"))
+#end
+#if($explorationKurtosisList.size() > 0) 
+    #set($success = $explorationPolicyList.add("kurtosis"))
+#end
+
+
+## Combine rankPolicy options into one list to handle commas
+#set($rankPolicyList = [])
+#if($featRank == '1')
+    #if($featRankSeparate != '1')
+        #set($success = $rankPolicyList.add("separateRank"))
+    #end
+    #if($featRankIntervalCombo != 'su')
+        #set($success = $rankPolicyList.add("intervalStat"))
+    #end
+    #if($featRankNominalCombo != 'su')
+        #set($success = $rankPolicyList.add("nominalStat"))
+    #end
+    #if($outputDS == '1')
+        #if($includeRankedFeaturesNumber != 1)
+            #set($success = $rankPolicyList.add("topKSave"))
+        #end
+        #if($featEngInteractions == '1' && $includeRankedFeaturesInteractions != 10)
+            #set($success = $rankPolicyList.add("topKInteractions"))
+        #end    
+    #end
+#end
+
+
+
+
+
+
+### Begin PROC CAS code generation ###
+proc cas;
+    session %sysfunc(getlsessref($datasetCASLibref));
+## Partition data into validation or test sets
+#if(($validationDataChoice=='1' || $testDataChoice=='1') && $partitionDataCombo == 'partitionDataFractionChoice')
+    /* $commentPartition */
+    action sampling.srs /
+        table={caslib="$datasetCASLib", name="$datasetCASTable"}
+        #if($validationDataChoice=='1' && $testDataChoice!='1') samppct=$validationDataPercent#end
+        #if($validationDataChoice!='1' && $testDataChoice=='1') samppct=$testDataPercent#end
+        #if($validationDataChoice=='1' && $testDataChoice=='1') samppct=$validationDataPercent samppct2=$testDataPercent#end   
+        #if($useRandomSeed == '1') seed=$randomSeed#end
+        partInd=TRUE
+        output={casout={caslib="$tempCASLib", name="$partitionedDataName", replace="TRUE"},       
+          copyVars="all"};
+#end
+#if($validationDataChoice=='1' || $testDataChoice=='1')
+    /* $commentFeatureMachineTraining */
+#end
+    action dataSciencePilot.featureMachine / 
+        table={caslib="$dataUsedCaslib", name="$dataUsedTable"#if($validationDataChoice=='1' || $testDataChoice=='1'), where="$dataUsedWhereTrain"#end}
+        target=$CTMUtil.doubleQuoteString($_targetVariable)
+        #if($targetType=='useNominalTarget' && $nominalTarget.size() > 0 && $eventLevelSelect == '1') event=$CTMUtil.doubleQuoteString($nominalTargetEventLevelCustom) #end
+        
+        #if($inputsRadio == 'inputsRadioSelect')
+            #if($inputVarsList.size() > 0)
+                inputs={
+                    #foreach( $item in $inputVarsList ) $CTMUtil.doubleQuoteString($item.get('value'))#if($foreach.count < $inputVarsList.size()),#end#end
+                }#end
+        #end
+        
+        #if($explorationPolicyList.size() > 0)
+            explorationPolicy={
+                #foreach($item in $explorationPolicyList) 
+                    #if($item == 'nominal')nominal={#foreach($item in $explorationNominalList) 
+                            #if($item == 'cardinalityThreshold')
+                                cardinalityThreshold=$detectNominalVarsCardinality#if($foreach.count < $explorationNominalList.size()),#end
+                            #elseif($item == 'cardinalityRatio')
+                                cardinalityRatio=$detectNominalVarsCardinalityRatio#if($foreach.count < $explorationNominalList.size()),#end
+                            #elseif($item == 'includeNegative')
+                                includeNegative=TRUE#if($foreach.count < $explorationNominalList.size()),#end
+                            #elseif($item == 'includeNonIntegral')
+                                includeNonIntegral=TRUE#if($foreach.count < $explorationNominalList.size()),#end                                
+                            #elseif($item == 'intervalInputs')
+                                intervals={#foreach( $item in $intervalInputs ) $CTMUtil.doubleQuoteString($item.get('value'))#if($foreach.count < $intervalInputs.size()),#end#end}#if($foreach.count < $explorationNominalList.size()),#end
+                            #elseif($item == 'nominalInputs')
+                                nominals={#foreach( $item in $nominalInputs ) $CTMUtil.doubleQuoteString($item.get('value'))#if($foreach.count < $nominalInputs.size()),#end#end}#if($foreach.count < $explorationNominalList.size()),#end
+                            #end    
+                        #end}#if($foreach.count < $explorationPolicyList.size()),#end
+                    #elseif($item == 'dateInputs')
+                        dateVariables={
+                            #foreach( $item in $dateInputs ) $CTMUtil.doubleQuoteString($item.get('value'))#if($foreach.count < $dateInputs.size()),#end#end
+                        }#if($foreach.count < $explorationPolicyList.size()),#end
+                    #elseif($item == 'timeInputs')  
+                        timeVariables={
+                        #foreach( $item in $timeInputs ) $CTMUtil.doubleQuoteString($item.get('value'))#if($foreach.count < $timeInputs.size()),#end#end
+                        }#if($foreach.count < $explorationPolicyList.size()),#end
+                    #elseif($item == 'datetimeInputs')
+                        dateTimeVariables={
+                        #foreach( $item in $datetimeInputs ) $CTMUtil.doubleQuoteString($item.get('value'))#if($foreach.count < $datetimeInputs.size()),#end#end
+                        }#if($foreach.count < $explorationPolicyList.size()),#end
+                    #elseif($item == 'textInputs') 
+                        text={
+                        #foreach( $item in $textInputs ) $CTMUtil.doubleQuoteString($item.get('value'))#if($foreach.count < $textInputs.size()),#end#end
+                        }#if($foreach.count < $explorationPolicyList.size()),#end
+                     #elseif($item == 'cv')
+                        cv={#foreach($item in $explorationCVList) 
+                            #if($item == 'lowMoment')lowMoment=$screeningLowCVMomentLowHigh#if($foreach.count < $explorationCVList.size()),#end
+                            #elseif($item == 'lowRobust') lowRobust=$screeningLowCVRobustLowHigh#if($foreach.count < $explorationCVList.size()),#end
+                            #end
+                        #end}#if($foreach.count < $explorationPolicyList.size()),#end  
+                     #elseif($item == 'missing')
+                        missing={#foreach($item in $explorationMissingList) 
+                            #if($item == 'lowMediumCutoff')lowMediumCutoff=$featEngMissingThresholdsLowMed#if($foreach.count < $explorationMissingList.size()),#end
+                            #elseif($item == 'mediumHighCutoff') mediumHighCutoff=$featEngMissingThresholdsMedHigh#if($foreach.count < $explorationMissingList.size()),#end
+                            #end
+                        #end}#if($foreach.count < $explorationPolicyList.size()),#end                       
+                     #elseif($item == 'cardinality')
+                        cardinality={#foreach($item in $explorationCardinalityList) 
+                            #if($item == 'lowMediumCutoff')lowMediumCutoff=$featEngCardinalityThresholdsLowMed#if($foreach.count < $explorationCardinalityList.size()),#end
+                            #elseif($item == 'mediumHighCutoff') mediumHighCutoff=$featEngCardinalityThresholdsMedHigh#if($foreach.count < $explorationCardinalityList.size()),#end
+                            #elseif($item == 'minNObsPerTargetLevel') minNObsPerTargetLevel=$featEngGroupRareThresholdLowHigh#if($foreach.count < $explorationCardinalityList.size()),#end
+                            #end
+                        #end}#if($foreach.count < $explorationPolicyList.size()),#end
+                     #elseif($item == 'skewness')
+                        skewness={#foreach($item in $explorationSkewnessList) 
+                            #if($item == 'momentLowMediumCutoff')momentLowMediumCutoff=$featEngSkewnessMomentLowMed#if($foreach.count < $explorationSkewnessList.size()),#end
+                            #elseif($item == 'momentMediumHighCutoff') momentMediumHighCutoff=$featEngSkewnessMomentMedHigh#if($foreach.count < $explorationSkewnessList.size()),#end
+                            #elseif($item == 'robustLowMediumCutoff') robustLowMediumCutoff=$featEngSkewnessRobustLowMed#if($foreach.count < $explorationSkewnessList.size()),#end
+                            #elseif($item == 'robustMediumHighCutoff') robustMediumHighCutoff=$featEngSkewnessRobustMedHigh#if($foreach.count < $explorationSkewnessList.size()),#end
+                            #end
+                        #end}#if($foreach.count < $explorationPolicyList.size()),#end                       
+                    #elseif($item == 'entropy')
+                        entropy={#foreach($item in $explorationEntropyList) 
+                            #if($item == 'giniLowMediumCutoff')giniLowMediumCutoff=$featEngEntropyGiniLowMed#if($foreach.count < $explorationEntropyList.size()),#end
+                            #elseif($item == 'giniMediumHighCutoff') giniMediumHighCutoff=$featEngEntropyGiniMedHigh#if($foreach.count < $explorationEntropyList.size()),#end
+                            #elseif($item == 'shannonLowMediumCutoff') shannonLowMediumCutoff=$featEngEntropyShannonLowMed#if($foreach.count < $explorationEntropyList.size()),#end
+                            #elseif($item == 'shannonMediumHighCutoff') shannonMediumHighCutoff=$featEngEntropyShannonMedHigh#if($foreach.count < $explorationEntropyList.size()),#end
+                            #end
+                        #end}#if($foreach.count < $explorationPolicyList.size()),#end
+                    #elseif($item == 'iqv')
+                        iqv={#foreach($item in $explorationIQVList) 
+                            #if($item == 'highTopTwo')highTopTwo=$featEngIQVFreqRatioMostSecond#if($foreach.count < $explorationIQVList.size()),#end
+                            #elseif($item == 'highTopBottom') highTopBottom=$featEngIQVFreqRatioMostLeast#if($foreach.count < $explorationIQVList.size()),#end
+                            #elseif($item == 'highVariationRatio') highVariationRatio=$featEngIQVVarRatioCutoff#if($foreach.count < $explorationIQVList.size()),#end
+                            #end
+                        #end}#if($foreach.count < $explorationPolicyList.size()),#end
+                    #elseif($item == 'outliers')
+                        outlier={#foreach($item in $explorationOutliersList) 
+                            #if($item == 'momentLowMediumCutoff')momentLowMediumCutoff=$featEngOutliersZscoreLowMed#if($foreach.count < $explorationOutliersList.size()),#end
+                            #elseif($item == 'momentMediumHighCutoff') momentMediumHighCutoff=$featEngOutliersZscoreMedHigh#if($foreach.count < $explorationOutliersList.size()),#end
+                            #elseif($item == 'robustLowMediumCutoff') robustLowMediumCutoff=$featEngOutliersIQRLowMed#if($foreach.count < $explorationOutliersList.size()),#end
+                            #elseif($item == 'robustMediumHighCutoff') robustMediumHighCutoff=$featEngOutliersIQRMedHigh#if($foreach.count < $explorationOutliersList.size()),#end
+                            #end
+                        #end}#if($foreach.count < $explorationPolicyList.size()),#end
+                    #elseif($item == 'kurtosis')
+                        kurtosis={#foreach($item in $explorationKurtosisList) 
+                            #if($item == 'momentLowMediumCutoff')momentLowMediumCutoff=$featEngKurtosisMomentLowMed#if($foreach.count < $explorationKurtosisList.size()),#end
+                            #elseif($item == 'momentMediumHighCutoff') momentMediumHighCutoff=$featEngKurtosisMomentMedHigh#if($foreach.count < $explorationKurtosisList.size()),#end
+                            #elseif($item == 'robustLowMediumCutoff') robustLowMediumCutoff=$featEngKurtosisRobustLowMed#if($foreach.count < $explorationKurtosisList.size()),#end
+                            #elseif($item == 'robustMediumHighCutoff') robustMediumHighCutoff=$featEngKurtosisRobustMedHigh#if($foreach.count < $explorationKurtosisList.size()),#end
+                            #end
+                        #end}#if($foreach.count < $explorationPolicyList.size()),#end
+                    #end
+                #end} ## end $explorationPolicyList foreach loop
+        #end ## end $explorationPolicyList.size() > 0 loop
+
+        #if($screenPolicyList.size() > 0)
+            screenPolicy={
+                #foreach($item in $screenPolicyList) 
+                    #if($item == 'constant')constant=FALSE#if($foreach.count < $screenPolicyList.size()),#end
+                    #elseif($item == 'lowCV') lowCV=FALSE#if($foreach.count < $screenPolicyList.size()),#end
+                    #elseif($item == 'mutualInfo') lowMutualInformation=$screeningMutualInfoThreshold#if($foreach.count < $screenPolicyList.size()),#end
+                    #elseif($item == 'missing') missingPercentThreshold=$screeningMissingLowHigh#if($foreach.count < $screenPolicyList.size()),#end
+                    #elseif($item == 'redundant') redundant=$screeningSymmetricUncertaintyThreshold#if($foreach.count < $screenPolicyList.size()),#end
+                    #elseif($item == 'leakage') leakagePercentThreshold=$screeningLeakageVarsThreshold#if($foreach.count < $screenPolicyList.size()),#end
+                    #elseif($item == 'rare') groupRareLevels=FALSE#if($foreach.count < $screenPolicyList.size()),#end
+                    #end
+                #end}
+        #end ## end $screenPolicyList > 0
+
+        #if($transformationPolicyList.size() > 0)
+            transformationPolicy={
+                #foreach($item in $transformationPolicyList) 
+                    #if($item == 'interaction')interaction=TRUE#if($foreach.count < $transformationPolicyList.size()),#end
+                    #elseif($item == 'polynomial') polynomial=TRUE#if($foreach.count < $transformationPolicyList.size()),#end
+                    #elseif($item == 'missing') missing=FALSE#if($foreach.count < $transformationPolicyList.size()),#end
+                    #elseif($item == 'cardinality') cardinality=FALSE#if($foreach.count < $transformationPolicyList.size()),#end
+                    #elseif($item == 'skewness') skewness=FALSE#if($foreach.count < $transformationPolicyList.size()),#end
+                    #elseif($item == 'entropy') entropy=TRUE#if($foreach.count < $transformationPolicyList.size()),#end
+                    #elseif($item == 'iqv') iqv=TRUE#if($foreach.count < $transformationPolicyList.size()),#end
+                    #elseif($item == 'outliers') outlier=TRUE#if($foreach.count < $transformationPolicyList.size()),#end                    
+                    #elseif($item == 'kurtosis') kurtosis=TRUE#if($foreach.count < $transformationPolicyList.size()),#end
+                    #elseif($item == 'nonlinear') nonlinear=TRUE#if($foreach.count < $transformationPolicyList.size()),#end
+                    #end
+                #end}
+        #end ## end $transformationPolicyList > 0
+
+        #if($featRank == '1')
+            rankPolicy={#if($rankPolicyList.size() > 0)
+                #foreach($item in $rankPolicyList) 
+                    #if($item == 'separateRank')separateRank=FALSE#if($foreach.count < $rankPolicyList.size()),#end
+                    #elseif($item == 'intervalStat') intervalStat=$CTMUtil.doubleQuoteString($featRankIntervalCombo)#if($foreach.count < $rankPolicyList.size()),#end
+                    #elseif($item == 'nominalStat') nominalStat=$CTMUtil.doubleQuoteString($featRankNominalCombo)#if($foreach.count < $rankPolicyList.size()),#end
+                    #elseif($item == 'topKSave') topKSave=$includeRankedFeaturesNumber#if($foreach.count < $rankPolicyList.size()),#end
+                    #elseif($item == 'topKInteractions') topKInteractions=$includeRankedFeaturesInteractions#if($foreach.count < $rankPolicyList.size()),#end
+                    #end 
+                #end ## end foreach loop
+            #end}  ## end $rankPolicyList.size() > 0
+        #end ## end $featRank == '1'
+
+        #if($outputDS == '1')
+            #if($validationDataChoice == '1' || $testDataChoice == '1')
+                casOut={caslib=$CTMUtil.doubleQuoteString($tempCASLib), name=$CTMUtil.doubleQuoteString($casOutTempName), replace=TRUE}
+            #else
+                casOut={caslib=$CTMUtil.doubleQuoteString($outputCASLib), name=$CTMUtil.doubleQuoteString($outputCASTable), replace=TRUE}
+            #end            
+        #end
+        #if($_copyVarsUsed == '1')
+            #if($copyVarsList.size() > 0) 
+                copyVars={#foreach( $item in $copyVarsList ) $CTMUtil.doubleQuoteString($item)#if($foreach.count < $copyVarsList.size()),#end#end}
+            #end
+        #end
+        featureOut={caslib=$CTMUtil.doubleQuoteString($featureOutCASLib), name=$CTMUtil.doubleQuoteString($featureOutCASTable), replace=TRUE}
+        transformationOut={caslib=$CTMUtil.doubleQuoteString($transformationOutCASLib), name=$CTMUtil.doubleQuoteString($transformationOutCASTable), replace=TRUE}
+        #if($astoreDS == '1' || $validationDataChoice=='1' || $testDataChoice=='1')
+            saveState={caslib=$CTMUtil.doubleQuoteString($astoreCASLib), name=$CTMUtil.doubleQuoteString($astoreCASTable), replace=TRUE}
+        #end
+        ;
+## Perform feature generation on validation data set
+#if($validationDataChoice=='1' && $outputDS == '1')
+    /* $commentFeatureMachineValidation */
+    action astore.score / 
+        table={caslib="$dataUsedCaslib", name="$dataUsedTable", where="$dataUsedWhereVal"} 
+        rstore={caslib=$CTMUtil.doubleQuoteString($astoreCASLib), name=$CTMUtil.doubleQuoteString($astoreCASTable)} 
+        #if($_copyVarsUsed == '1')
+            #if($copyVarsList.size() > 0) 
+                copyVars={#foreach( $item in $copyVarsList ) $CTMUtil.doubleQuoteString($item)#if($foreach.count < $copyVarsList.size()),#end#end}
+            #end
+        #end
+        casOut={caslib=$CTMUtil.doubleQuoteString($tempCASLib), name=$CTMUtil.doubleQuoteString($validationScoredTemp), replace=TRUE}; 
+#end
+## Perform feature generation on test data set
+#if($testDataChoice == '1' && $outputDS == '1')
+    /* $commentFeatureMachineTest */
+    action astore.score / 
+        table={caslib="$dataUsedCaslib", name="$dataUsedTable", where="$dataUsedWhereTest"} 
+        rstore={caslib=$CTMUtil.doubleQuoteString($astoreCASLib), name=$CTMUtil.doubleQuoteString($astoreCASTable)} 
+        #if($_copyVarsUsed == '1')
+            #if($copyVarsList.size() > 0) 
+                copyVars={#foreach( $item in $copyVarsList ) $CTMUtil.doubleQuoteString($item)#if($foreach.count < $copyVarsList.size()),#end#end}
+            #end
+        #end
+        casOut={caslib=$CTMUtil.doubleQuoteString($tempCASLib), name=$CTMUtil.doubleQuoteString($testScoredTemp), replace=TRUE}; 
+#end
+run;
+quit;
+
+## Display feature generation metadata
+proc print data=${featureOutCASLibref}.${featureOutCASTableNlit}(obs=50 drop=FeatureId #if($transformationOutDS != '1') FTGPipelineId#end#if($featEngInteractions != '1' && $featEngPolynomial != '1') NInputs InputVar2 InputVar3#end);
+run;
+
+## Combine partitions back into one table
+#if($outputDS == '1' && ($validationDataChoice == '1' || $testDataChoice == '1'))
+/* $commentCombineData */
+data ${outputCASLibref}.${outputCASTableNlit};
+    set ${tempCASLibref}.${casOutTempName}#if($validationDataChoice == '1') ${tempCASLibref}.${validationScoredTemp}#end#if($testDataChoice == '1') ${tempCASLibref}.${testScoredTemp}#end;
+run;
+#end
+
+## Delete temporary tables
+#if($featureOutDS != '1' || (($validationDataChoice=='1' || $testDataChoice=='1') && $outputDS == '1'))
+proc delete data=#if($validationDataChoice=='1' && $outputDS == '1')${tempCASLibref}.${validationScoredTemp}#end#if($testDataChoice=='1' && $outputDS == '1') ${tempCASLibref}.${testScoredTemp}#end#if($featureOutDS != '1') ${tempCASLibref}.${featureOutCASTableNlit}#end;
+run;
+    libname $tempCASLibref;
+#end
+  
+
+		]]>
+	</CodeTemplate>
+	
+<TemplateValues version="7.3">
+<![CDATA[
+{"dataset":{"librarytable":"CASUSER.CUSTOMERFOCUSGROUP2"},"partitionVariable":"","nominalTarget":"json:[{\"value\":\"Influencer\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"}]","intervalTarget":"","inputVariables":"","intervalInputs":"","nominalInputs":"","dateInputs":"","timeInputs":"","datetimeInputs":"","copyVariables":"","validationDataChoice":"1","testDataChoice":"1","partitionDataCombo":[{"value":"partitionDataFractionChoice","displayValue":"Specify a sample proportion","keys":["partitionDataFractionChoice",null,"Specify a sample proportion"],"label":"Specify a sample proportion","baseid":"{\"value\":\"partitionDataFractionChoice\",\"label\":\"Specify a sample proportion\"}","id":"{\"value\":\"partitionDataFractionChoice\",\"label\":\"Specify a sample proportion\"}1"}],"useTrainingLevel":"0","validationDataFraction":0.2,"testDataFraction":0.1,"useRandomSeed":"1","randomSeed":1232324,"useNominalTarget":"1","targetType":"useNominalTarget","useIntervalTarget":"0","eventLevelSelect":"0","inputsRadioAll":"1","inputsRadio":"inputsRadioAll","inputsRadioSelect":"0","detectNominalVars":"0","detectNominalVarsCardinality":1024,"detectNominalVarsCardinalityRatio":0.25,"detectNominalVarsNumericNegative":"0","detectNominalVarsNumericNoninteger":"0","specifyInputVarTypes":"0","specifyInputVarTypesDate":"0","specifyInputVarTypesTime":"0","specifyInputVarTypesDatetime":"0","specifyInputVarTypesInterval":"0","specifyInputVarTypesNominal":"0","screeningConstant":"1","screeningLowCV":"1","screeningLowCVMoment":"0","screeningLowCVMomentLowHigh":0.00001,"screeningLowCVRobust":"0","screeningLowCVRobustLowHigh":0.001,"screeningMissingLowHigh":90,"screeningMutualInfoThreshold":0.05,"screeningSymmetricUncertaintyThreshold":1,"screeningLeakageVarsThreshold":90,"featEngInteractions":"1","featEngPolynomial":"1","featEngMissing":"1","featEngMissingThresholds":"0","featEngMissingThresholdsLowMed":5,"featEngMissingThresholdsMedHigh":25,"featEngCardinality":"1","featEngCardinalityThresholds":"0","featEngCardinalityThresholdsLowMed":32,"featEngCardinalityThresholdsMedHigh":64,"featEngEntropy":"0","featEngEntropyGini":"0","featEngEntropyGiniLowMed":0.25,"featEngEntropyGiniMedHigh":0.75,"featEngEntropyShannon":"0","featEngEntropyShannonLowMed":0.25,"featEngEntropyShannonMedHigh":0.75,"featEngIQV":"0","featEngIQVFreqRatio":"0","featEngIQVFreqRatioMostSecond":10,"featEngIQVFreqRatioMostLeast":100,"featEngIQVVarRatio":"0","featEngIQVVarRatioCutoff":0.5,"featEngGroupRare":"1","featEngGroupRareThreshold":"0","featEngGroupRareThresholdLowHigh":10,"featEngKurtosis":"0","featEngKurtosisMoment":"0","featEngKurtosisMomentLowMed":5,"featEngKurtosisMomentMedHigh":10,"featEngKurtosisRobust":"0","featEngKurtosisRobustLowMed":2,"featEngKurtosisRobustMedHigh":3,"featEngOutliers":"0","featEngOutliersZscore":"0","featEngOutliersZscoreLowMed":1,"featEngOutliersZscoreMedHigh":2.5,"featEngOutliersIQR":"0","featEngOutliersIQRLowMed":1,"featEngOutliersIQRMedHigh":2.5,"featEngSkewness":"1","featEngSkewnessMoment":"0","featEngSkewnessMomentLowMed":2,"featEngSkewnessMomentMedHigh":10,"featEngSkewnessRobust":"0","featEngSkewnessRobustLowMed":0.75,"featEngSkewnessRobustMedHigh":2,"featRank":"1","featRankSeparate":"1","featRankIntervalCombo":[{"value":"su","displayValue":"Symmetric uncertainty (default)","keys":["featRankIntervalComboSymmetricUncertainty","su","Symmetric uncertainty (default)"],"label":"Symmetric uncertainty (default)","baseid":"{\"value\":\"su\",\"label\":\"Symmetric uncertainty (default)\"}","id":"{\"value\":\"su\",\"label\":\"Symmetric uncertainty (default)\"}1"}],"featRankNominalCombo":[{"value":"su","displayValue":"Symmetric uncertainty (default)","keys":["featRankNominalComboSymmetricUncertainty","su","Symmetric uncertainty (default)"],"label":"Symmetric uncertainty (default)","baseid":"{\"value\":\"su\",\"label\":\"Symmetric uncertainty (default)\"}","id":"{\"value\":\"su\",\"label\":\"Symmetric uncertainty (default)\"}1"}],"outputDS":"1","outputDSName":{"value":"CASUSER.AutoMLFeatures","cbSelected":true},"includeRankedFeaturesNumber":1,"includeRankedFeaturesInteractions":10,"includeSelectedVars":"0","includeVars":"includeTargetPartitionVars","includeNoVars":"0","includeTargetVar":"0","includeTargetPartitionVars":"1","featureOutDS":"0","featureOutDSName":{"value":"","cbSelected":false},"transformationOutDS":"0","transformationOutDSName":{"value":"","cbSelected":false},"astoreDS":"1","astoreDSName":{"value":"CASUSER.AutoMLFeatureGenScoringModel","cbSelected":true}}
+]]>
+</TemplateValues>
+
+</Task>

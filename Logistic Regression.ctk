@@ -1,0 +1,1112 @@
+<Task revision="1" schemaVersion="7.3">
+    <Registration>
+        <Name>Logistic Regression.ctk</Name> 
+        <Description>The Logistic Regression task  fits predictive models by using logistic regression of a binary response with automated model selection.</Description> 
+        <GUID>0f88c62d-5856-4904-bff8-a62407ea8fff</GUID>
+        <Procedures>LOGSELECT</Procedures>
+        <Links>
+            <Link href="https://documentation.sas.com/?softwareId=STUDIOBASIC&amp;softwareVersion=01&amp;softwareContextId=tasks&amp;requestor=inapp">SAS Studio Task Reference Guide</Link>
+            <Link href=""> </Link>
+            <Link href=""> </Link>
+            <Link href="https://documentation.sas.com/?softwareId=ANVIYA&amp;softwareVersion=01&amp;softwareContextId=proc_logselect&amp;requestor=inapp">The LOGSELECT Procedure</Link>
+            <Link href=""> </Link>
+            <Link href=""> </Link>
+            <Link href="http://support.sas.com/training/viyasdmml">SAS Tutorials</Link>
+        </Links>
+    </Registration>
+    
+    <Metadata>
+        <DataSources>
+            <DataSource libraryEngineInclude="CAS" name="dataset" where="true">
+            <Roles>
+            <Role exclude="continuousVariables,classVariables,offsetVariable,freqVariable,weightVariable,byVariables" fetchDistinct="true" maxVars="1" minVars="1" name="responseVariable" type="A">Binary target:</Role>
+            <Role exclude="trialsVariable,continuousVariables,classVariables,offsetVariable,freqVariable,weightVariable,byVariables" maxVars="1" minVars="1" name="eventVariable" type="N">Number of events:</Role>
+            <Role exclude="eventVariable,continuousVariables,classVariables,offsetVariable,freqVariable,weightVariable,byVariables" maxVars="1" minVars="1" name="trialsVariable" type="N">Number of trials:</Role>
+            <Role exclude="responseVariable,eventVariable,trialsVariable,classVariables,offsetVariable,freqVariable,weightVariable,byVariables" maxVars="0" minVars="0" name="continuousVariables" order="true" type="N">Interval inputs:</Role>
+            <Role exclude="responseVariable,eventVariable,trialsVariable,continuousVariables,offsetVariable,freqVariable,weightVariable,byVariables" maxVars="0" minVars="0" name="classVariables" order="true" type="A">Nominal inputs:</Role>
+            <Role exclude="responseVariable,eventVariable,trialsVariable,continuousVariables,classVariables,freqVariable,weightVariable,byVariables" maxVars="1" minVars="0" name="offsetVariable" type="N">Offset variable:</Role>
+            <Role indent="2" maxVars="0" minVars="1" name="idVariables" order="true" type="A">Include these variables:</Role>
+            <Role exclude="responseVariable,eventVariable,trialsVariable,classVariables,continuousVariables,offsetVariable,weightVariable,byVariables" maxVars="1" minVars="0" name="freqVariable" type="N">Frequency count:</Role>
+            <Role exclude="responseVariable,eventVariable,trialsVariable,continuousVariables,classVariables,offsetVariable,freqVariable" maxVars="1" minVars="0" name="weightVariable" type="N">Weight:</Role>
+            <Role exclude="responseVariable,eventVariable,trialsVariable,continuousVariables,classVariables,offsetVariable,freqVariable,weightVariable" maxVars="0" minVars="0" name="byVariables" order="true" type="A">Group analysis by:</Role>
+            <Role exclude="responseVariable,eventVariable,trialsVariable,classVariables,continuousVariables,offsetVariable,freqVariable,weightVariable,byVariables" indent="1" maxVars="1" minVars="1" name="partitionVariable" type="A">Partitioning variable:</Role>
+            </Roles>
+            </DataSource>
+        </DataSources>
+
+        <Options>
+            <Option inputType="string" name="dataTab">Data</Option> 
+            <Option inputType="string" name="optionsTab">Options</Option> 
+            <Option inputType="string" name="dataGroup">Data</Option> 
+            <Option inputType="string" name="rolesGroup">Roles</Option> 
+            <Option inputType="string" name="otherRolesGroup">Additional Roles</Option> 
+            <Option inputType="string" name="explanatoryGroup">Inputs</Option> 
+
+            <Option inputType="string" name="modelGroup">Model Effects</Option>
+            <Option inputType="string" name="modelTab">Model</Option> 
+            <Option inputType="string" name="standardModelInstruction">Select a model type:</Option> 
+            <Option defaultValue="1" inputType="radio" name="mainEffectsChoice" variable="standardModel">Main effects model</Option> 
+            <Option inputType="radio" name="mainNwayEffectsChoice" variable="standardModel">Main effects and all n-way interactions</Option> 
+            <Option inputType="radio" name="customModelChoice" variable="standardModel">Custom model</Option> 
+            <Option excludeTools="POLYEFFECT,TWOFACT,THREEFACT,NFACTPOLY" indent="1" inputType="mixedeffects" name="modelBuilder" roleClassification="classVariables" roleContinuous="continuousVariables" width="100%"/>
+           <Option decimalPlaces="0" defaultValue="2" increment="1" indent="1" inputType="numstepper" invalidMessage="Enter an integer that is greater than 1 and less than 100 for the maximum order of interactions" maxValue="99" minValue="2" missingMessage="Enter an integer that is greater than 1 and less than 100 for the maximum order of interactions" name="nway" promptMessage="Enter an integer that is greater than 1 and less than 100 for the maximum order of interactions" rangeMessage="Enter an integer that is greater than 1 and less than 100 for the maximum order of interactions" required="true" width="75px">N:</Option>
+
+            <Option inputType="string" name="responseGroup">Target</Option>
+            
+            <Option inputType="checkbox" name="eventTrialsData">Target data consists of numbers of events and trials</Option>
+            <Option indent="1" inputType="distinct" name="referenceLevelCombo" required="true" selectMessage="Select a level" source="responseVariable">Event of interest:</Option>
+            
+<!-- Link functions -->
+            <Option defaultValue="logitChoice" inputType="combobox" name="linkFx">Link function:</Option>
+            <Option inputType="string" name="cLogLogChoice">Complementary log-log</Option>
+            <Option inputType="string" name="logLogChoice">Log-log</Option>
+            <Option inputType="string" name="logitChoice">Logit</Option>
+            <Option inputType="string" name="probitChoice">Probit</Option>
+            
+            <Option inputType="string" name="methodsGroup">Methods</Option>
+
+            <Option inputType="string" name="resultsGroup">RESULTS</Option>
+            <Option inputType="string" name="statisticsGroup">Statistics</Option>
+            <Option defaultValue="defaultStatsChoice" inputType="combobox" name="statsCombo">Select statistics to display:</Option>
+            <Option inputType="string" name="defaultStatsChoice">Default statistics</Option>
+            <Option inputType="string" name="customStatsChoice">Default and additional statistics</Option>
+            <Option inputType="string" name="noStatsChoice">None</Option>
+            <Option indent="1" inputType="string" name="additionalStatsLabel">Additional Statistics</Option>
+
+            <Option inputType="string" name="parmEstGroup">Parameter Estimates</Option>
+            <Option inputType="checkbox" name="cl">Confidence intervals for parameter estimates</Option>
+            <Option indent="1" inputType="checkbox" name="stb">Standardized parameter estimates</Option>
+            <Option inputType="checkbox" name="corrEst">Correlations of parameter estimates</Option>
+            <Option inputType="checkbox" name="covEst">Covariances of parameter estimates</Option>
+
+            <Option defaultValue="confidence95" inputType="combobox" name="confidence" width="200px">Confidence level:</Option>
+            <Option inputType="string" name="confidence90">90%</Option>
+            <Option inputType="string" name="confidence95">95%</Option>
+            <Option inputType="string" name="confidence99">99%</Option>
+            <Option inputType="string" name="confidenceSpecify">Use custom value</Option>
+            <Option decimalPlaces="0,15" defaultValue="95" indent="1" inputType="numbertext" invalidMessage="Enter a number greater than zero and less than 100 for the confidence level" maxValue="99.999999999" minValue="0.00000000001" missingMessage="Enter a number greater than zero and less than 100 for the confidence level" name="confidenceValue" promptMessage="Enter a number greater than zero and less than 100 for the confidence level" rangeMessage="Enter a number greater than zero and less than 100 for the confidence level" required="true" width="75px">Custom confidence level:</Option>
+
+            <Option indent="1" inputType="checkbox" name="ctable">Classification table</Option>
+            <Option indent="1" inputType="checkbox" name="rsquare">Generalized R Square</Option>
+            <Option indent="1" inputType="checkbox" name="association">Measures of association</Option>
+
+            <Option indent="1" inputType="checkbox" name="lackfit">Hosmer &amp; Lemeshow goodness-of-fit</Option>
+            <Option indent="2" inputType="checkbox" name="useNGroups">Specify number of groups</Option>
+            <Option decimalPlaces="0" defaultValue="10" indent="3" inputType="numbertext" invalidMessage="Enter a number greater than or equal to 5 for the number of groups to divide the subjects into" maxValue="999999999" minValue="5" missingMessage="Enter a number greater than or equal to 5 for the number of groups to divide the subjects into" name="nGroups" promptMessage="Enter a number greater than or equal to 5 for the number of groups to divide the subjects into" rangeMessage="Enter a number greater than or equal to 5 for the number of groups to divide the subjects into" required="true" width="100px">Custom number of groups:</Option>
+
+            <Option inputType="string" name="diagnosticsGroup">Diagnostics</Option>
+ 
+<!-- Model selection methods -->
+            <Option inputType="string" name="selectionTab">Selection</Option> 
+            <Option inputType="string" name="selectionGroup">Model Selection</Option>
+
+<!-- the default for the selection method is None for the task -->
+            <Option defaultValue="noneSelectionChoice" inputType="combobox" name="selectionMethod">Selection method:</Option>
+            <Option inputType="string" name="noneSelectionChoice">None</Option>
+            <Option inputType="string" name="forwardChoice">Forward selection</Option>
+            <Option inputType="string" name="backwardChoice">Backward elimination</Option>
+            <Option inputType="string" name="fastBackwardChoice">Fast backward elimination</Option>
+            <Option inputType="string" name="stepwiseChoice">Stepwise selection</Option>
+            <Option inputType="string" name="fastStepwiseChoice">Stepwise selection with fast backward elimination</Option>
+            <Option inputType="string" name="lassoChoice">LASSO</Option>
+
+            <Option defaultValue="sbcChoice" inputType="combobox" name="selectMethod">Add/remove effects with:</Option>
+            <Option defaultValue="sbcChoice" inputType="combobox" name="noCvChooseMethod">Select best model by:</Option>
+            <Option defaultValue="sbcChoice" inputType="combobox" name="cvChooseMethod">Select best model by:</Option>
+            <Option defaultValue="sbcChoice" inputType="combobox" name="noCvStopMethod">Stop adding/removing effects with:</Option>
+            <Option defaultValue="sbcChoice" inputType="combobox" name="cvStopMethod">Stop adding/removing effects with:</Option>
+            <Option defaultValue="sbcChoice" inputType="combobox" name="noCvStopMethodForLasso">Stop adding/removing effects with:</Option>
+            <Option defaultValue="sbcChoice" inputType="combobox" name="cvStopMethodForLasso">Stop adding/removing effects with:</Option>
+           
+
+            <Option inputType="string" name="sigLevelChoice">Significance level</Option>
+            <Option inputType="string" name="adjrsqChoice">Adjusted R-square statistic</Option>
+            <Option inputType="string" name="aicChoice">Akaike's information criterion</Option>
+            <Option inputType="string" name="aiccChoice">Akaike's information criterion corrected for small-sample bias</Option>
+            <Option inputType="string" name="crossValidateChoice">Cross validation</Option>
+            <Option inputType="string" name="cpChoice">Mallows' C(p) statistic</Option>
+            <Option inputType="string" name="pressChoice">Press statistic</Option>
+            <Option inputType="string" name="sbcChoice">Schwarz Bayesian information criterion (Default)</Option>
+            <Option inputType="string" name="rsquareChoice">R-square statistic</Option>
+            <Option inputType="string" name="validateChoice">Average square error for validation data</Option>
+            <Option inputType="string" name="noStopChoice">None</Option>
+
+            <!-- 0 < slEntry < 1 -->
+            <Option decimalPlaces="1,15" defaultValue="0.05" inputType="numbertext" invalidMessage="Enter a value greater than 0 and less than 1 for the significance level to add an effect to the model" maxValue="0.9999999999" minValue="0.0000000001" missingMessage="Enter a value greater than 0 and less than 1 for the significance level to add an effect to the model" name="slEntry" promptMessage="Enter a value greater than 0 and less than 1 for the significance level to add an effect to the model" rangeMessage="Enter a value greater than 0 and less than 1 for the significance level to add an effect to the model" required="true" width="100px">Significance level to add an effect to the model:</Option>
+
+            <!-- 0 < slStay < 1 -->
+            <Option decimalPlaces="1,15" defaultValue="0.05" inputType="numbertext" invalidMessage="Enter a value greater than 0 and less than 1 for the significance level to remove an effect from the model" maxValue="0.9999999999" minValue="0.0000000001" missingMessage="Enter a value greater than 0 and less than 1 for the significance level to remove an effect from the model" name="slStay" promptMessage="Enter a value greater than 0 and less than 1 for the significance level to remove an effect from the model" rangeMessage="Enter a value greater than 0 and less than 1 for the significance level to remove an effect from the model" required="true" width="100px">Significance level to remove an effect from the model:</Option>
+    
+            <Option inputType="string" name="selectionDetailsGroup">Details</Option>
+            <Option defaultValue="summaryDetailsChoice" inputType="combobox" name="detailsCombo">Selection process details:</Option>
+            <Option inputType="string" name="summaryDetailsChoice">Selection summary (default)</Option>
+            <Option inputType="string" name="stepDetailsChoice">Details for each step</Option>
+            <Option inputType="string" name="allDetailsChoice">All</Option>
+                        
+            <Option defaultValue="entireEffectChoice" inputType="combobox" name="splitClassCombo">Add/remove nominal effects as:</Option>
+            <Option inputType="string" name="singleDFEffectChoice">Individual single degree of freedom effects</Option>
+            <Option inputType="string" name="entireEffectChoice">An entire effect</Option>
+    
+            <Option inputType="string" name="hierarchyLabel">Model effects hierarchy: For any term to be in the model, all model effects contained in the term must be present in the model</Option>
+            <Option defaultValue="0" inputType="checkbox" name="hierarchy">Maintain hierarchy of effects</Option>
+
+            <Option inputType="checkbox" name="useIncludeList">Select effects to include in all models</Option>
+            <Option indent="1" inputType="select" multiple="true" name="includeList" sourceLink="modelBuilder">Effects to include:</Option>
+
+<!-- Optimization techniques -->            
+            <Option defaultValue="nrridgChoice" inputType="combobox" name="optMethod" width="200px">Optimization method:</Option>
+<!-- implement default if offer link=glogit -->
+
+            <Option inputType="string" name="defaultOptChoice">Default</Option>
+            <Option inputType="string" name="nrridgChoice">Newton-Raphson with ridging (Default)</Option>
+            <Option inputType="string" name="newrapChoice">Newton-Raphson with line search</Option>
+            <Option inputType="string" name="congraChoice">Conjugate-gradient</Option>
+            <Option inputType="string" name="doubleDogChoice">Double-dogleg</Option>
+            <Option inputType="string" name="quasiNewtonChoice">Dual quasi-Newton</Option>
+            <Option inputType="string" name="simplexChoice">Nelder-Mead simplex</Option>
+            <Option inputType="string" name="trustRegionChoice">Trust-region</Option>
+            
+            <Option defaultValue="maxiterDefaultChoice" inputType="combobox" name="maxiterCombo" width="200px">Maximum number of iterations:</Option>
+            <Option inputType="string" name="maxiterDefaultChoice">Use default value</Option>
+            <Option inputType="string" name="maxiterCustomChoice">Use custom value</Option>
+            <Option decimalPlaces="0" defaultValue="50" indent="1" inputType="numbertext" invalidMessage="Enter a number greater than 0 for the maximum number of iterations" maxValue="999999999" minValue="1" missingMessage="Enter a number greater than 0 for the maximum number of iterations" name="maxiter" promptMessage="Enter a number greater than 0 for the maximum number of iterations" rangeMessage="Enter a number greater than 0 for the maximum number of iterations" required="true" width="100px">Custom maximum number of iterations:</Option>
+<!--
+            <Option name="gconv" inputType="validationtext" defaultValue="1E-8"
+                nlsKey="gconvKey.txt" width="100px"
+                promptMessage="Enter a numeric value for the relative gradient convergence criterion"
+                promptMessageKey="gconvMessageKey.txt" 
+                missingMessage="Enter a numeric value for the relative gradient convergence criterion"
+                missingMessageKey="gconvMessageKey.txt" 
+                invalidMessage="Enter a numeric value for the relative gradient convergence criterion"
+                invalidMessageKey="gconvMessageKey.txt" 
+                regExp="^[+]?\d+-[Ee]\d+">Relative gradient convergence criterion: </Option>
+-->
+<!-- Output data set options -->
+            <Option inputType="string" name="outputTab">Output</Option>
+            <Option inputType="string" name="outputGroup">Output Data</Option>
+            <Option inputType="string" name="casOutputLibrefNote">The following table must use a CAS engine libref:</Option>
+            <Option inputType="checkbox" name="outputDS">Save observation statistics</Option>
+            <Option indent="1" inputType="outputdata" libraryEngineInclude="cas" name="outputDSName" required="true" unique="true">Specify a CAS table:</Option>
+
+            <Option indent="1" inputType="string" name="residualStatsGroup">Residuals</Option>
+            <Option indent="1" inputType="string" name="influenceStatsGroup">Influence Statistics</Option>
+            <Option indent="1" inputType="string" name="predictedStatsGroup">Predicted Values</Option>
+            <Option indent="1" inputType="string" name="otherStatsGroup">Other Statistics</Option>
+
+            <Option inputType="checkbox" name="linp">Linear predictor</Option>
+            <Option defaultValue="1" inputType="checkbox" name="pred">Predicted values</Option>
+            <Option inputType="checkbox" name="clPred">Confidence limits for predicted values</Option>
+            <Option inputType="checkbox" name="pearson">Pearson residuals</Option>
+            <Option inputType="checkbox" name="adjPearson">Adjusted Pearson residuals</Option>   
+            <Option inputType="checkbox" name="residual">Raw residuals</Option>
+            <Option inputType="checkbox" name="resdevChoice">Deviance residuals</Option>
+            <Option inputType="checkbox" name="reslikChoice">Likelihood residuals</Option>
+            <Option inputType="checkbox" name="stdReschiChoice">Standardized Pearson residuals</Option>
+            <Option inputType="checkbox" name="stdResdevChoice">Standardized deviance residuals</Option>
+            <Option inputType="checkbox" name="leverageChoice">Leverage</Option>
+            <Option inputType="checkbox" name="stdXbetaChoice">Standard error of the linear predictor</Option>
+            <Option inputType="checkbox" name="difChisqChoice">Change in the chi-square goodness-of-fit from deleting the individual observation</Option>
+            <Option inputType="checkbox" name="difDevChoice">Change in the deviance from deleting the individual observation</Option>
+            <Option indent="1" inputType="checkbox" name="role">Partition identifier</Option>
+
+            <Option indent="1" inputType="string" name="includeVarsInstruction">Include variables from the input data set:</Option>
+            <Option indent="1" inputType="radio" name="includeAllVars" variable="includeVars">All variables</Option>
+            <Option indent="1" inputType="radio" name="includeSelectedVars" variable="includeVars">Selected variables</Option>
+            <Option defaultValue="1" indent="1" inputType="radio" name="includeNoVars" variable="includeVars">No variables</Option>
+
+            <Option inputType="checkbox" name="scoreDS">Create scored data set</Option>
+            <Option defaultValue="work.Logistic_scores" indent="1" inputType="outputdata" name="scoreDSName" required="true" unique="true">Data set name:</Option>
+
+            <Option inputType="string" name="scoreCodeFileNote">Specify a path name for the scoring code:</Option>
+            <Option inputType="checkbox" name="scoreCode">Save scoring code</Option>
+<!-- Note: The sasserverpath component is for internal use only -->
+            <Option defaultExtension="sas" defaultName="score" indent="1" inputType="sasserverpath" name="scoringCodeFileName"/>
+
+            <Option inputType="string" name="partitionGroup">Partition Data</Option>
+            <Option inputType="string" name="inputDataLabel">Input data contains training data. Include:</Option>
+            <Option inputType="checkbox" name="testDataChoice">Test data</Option>
+            <Option inputType="checkbox" name="validationDataChoice">Validation data</Option>
+            <Option indent="1" inputType="validationtext" invalidMessage="Enter a value greater than 0 and less than 1 for the proportion of training data observations in the data set" missingMessage="Enter a value greater than 0 and less than 1 for the proportion of training data observations in the data set" name="trainingDataFraction" promptMessage="Enter a value greater than 0 and less than 1 for the proportion of training data observations in the data set" regExp="[0]?[.]\d+" required="true" width="100px">Proportion of training cases:</Option>
+            <Option indent="1" inputType="numbertext" invalidMessage="Enter a value greater than 0 and less than 1 for the proportion of test data observations in the data set" maxValue="0.9999999999" minValue="0.0000000001" missingMessage="Enter a value greater than 0 and less than 1 for the proportion of test data observations in the data set" name="testDataFraction" promptMessage="Enter a value greater than 0 and less than 1 for the proportion of test data observations in the data set" rangeMessage="Enter a value greater than 0 and less than 1 for the proportion of test data observations in the data set" required="true" width="100px">Proportion of testing cases:</Option>
+
+            <Option indent="1" inputType="numbertext" invalidMessage="Enter a value greater than 0 and less than 1 for the proportion of validation data observations in the data set" maxValue="0.9999999999" minValue="0.0000000001" missingMessage="Enter a value greater than 0 and less than 1 for the proportion of validation data observations in the data set" name="validationDataFraction" promptMessage="Enter a value greater than 0 and less than 1 for the proportion of validation data observations in the data set" rangeMessage="Enter a value greater than 0 and less than 1 for the proportion of validation data observations in the data set" required="true" width="100px">Proportion of validation cases:</Option>
+            
+            <Option defaultValue="0" inputType="checkbox" name="useRandomSeed">Random number seed</Option>
+            <Option decimalPlaces="0" indent="1" inputType="numbertext" invalidMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed" maxValue="2147483647" minValue="1" missingMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed" name="randomSeed" promptMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed" rangeMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed" required="true" width="100px">Random seed:</Option>
+            <Option indent="1" inputType="string" name="partitionRandomSeedNote">Specifying a random number seed may not replicate results in a distributed computing environment.</Option>
+
+            <Option defaultValue="partitionDataFractionChoice" inputType="combobox" name="partitionDataCombo">Identify partitions:</Option>
+            <Option inputType="string" name="partitionDataFractionChoice">Specify a sample proportion</Option>
+            <Option inputType="string" name="partitionDataVariableChoice">Choose a value of a partitioning variable</Option>
+
+            <Option indent="2" inputType="distinct" name="validationLevelCombo" required="true" source="partitionVariable">Validation data value:</Option>
+            <Option indent="2" inputType="distinct" name="testLevelCombo" required="true" source="partitionVariable">Test data value:</Option>
+            <Option indent="2" inputType="checkbox" name="useTrainingLevel">Select training data value</Option>
+            <Option indent="2" inputType="distinct" name="trainingLevelCombo" required="true" source="partitionVariable">Training data value:</Option>
+            
+        </Options>
+    </Metadata>
+
+    <UI>
+        <Container option="dataTab">
+            <Group open="true" option="dataGroup">
+                <DataItem data="dataset"/>
+                
+                <Group open="true" option="partitionGroup">
+                    <OptionItem option="inputDataLabel"/>
+                    <OptionItem option="validationDataChoice"/>
+                    <OptionItem option="testDataChoice"/>
+                    
+                    <OptionChoice option="partitionDataCombo">
+                        <OptionItem option="partitionDataFractionChoice"/>
+                        <OptionItem option="partitionDataVariableChoice"/>
+                    </OptionChoice> 
+                    <RoleItem role="partitionVariable"/>
+                    
+                    <OptionChoice option="validationLevelCombo"/>                    
+                    <OptionChoice option="testLevelCombo"/>
+                    <OptionItem option="useTrainingLevel"/>
+                    <OptionChoice option="trainingLevelCombo"/>
+<!--                    
+                    <OptionItem option="trainingDataFraction"/>
+-->
+                    <OptionItem option="validationDataFraction"/>
+                    <OptionItem option="testDataFraction"/>
+                    
+                    <OptionItem option="useRandomSeed"/>
+                    <OptionItem option="randomSeed"/>
+                    <OptionItem option="partitionRandomSeedNote"/>
+                </Group>
+            </Group>
+            <Group open="true" option="rolesGroup">
+                <Group open="true" option="responseGroup">
+                    <OptionItem option="eventTrialsData"/>
+                
+                    <RoleItem role="eventVariable"/>
+                    <RoleItem role="trialsVariable"/>
+                
+                    <RoleItem role="responseVariable"/>
+                    <OptionChoice option="referenceLevelCombo">
+                    </OptionChoice>
+                            
+                    <OptionChoice option="linkFx">
+                        <OptionItem option="cLogLogChoice"/>
+                        <OptionItem option="logLogChoice"/>
+                        <OptionItem option="logitChoice"/>
+                        <OptionItem option="probitChoice"/>
+                    </OptionChoice>
+                </Group>
+                <Group open="true" option="explanatoryGroup">
+                    <RoleItem role="continuousVariables"/>
+                    <RoleItem role="classVariables"/>
+                </Group>
+            </Group>
+            <Group option="otherRolesGroup">
+                <RoleItem role="freqVariable"/>
+                <RoleItem role="weightVariable"/>
+                <RoleItem role="byVariables"/>
+            </Group>
+        </Container>
+
+        <Container option="modelTab">   
+            <Group open="true" option="modelGroup">
+                <OptionItem option="standardModelInstruction"/>
+                <OptionItem option="mainEffectsChoice"/>
+                <OptionItem option="mainNwayEffectsChoice"/>
+                <OptionItem option="nway"/>
+                <OptionItem option="customModelChoice"/>
+                <OptionItem option="modelBuilder"/>
+                <RoleItem role="offsetVariable"/>
+            </Group>
+            
+        </Container>
+
+        <Container option="selectionTab">   
+            <Group open="true" option="selectionGroup">
+                <OptionChoice option="selectionMethod">
+                    <OptionItem option="noneSelectionChoice"/>
+                    <OptionItem option="forwardChoice"/>
+                    <OptionItem option="backwardChoice"/>
+                    <OptionItem option="fastBackwardChoice"/>
+                    <OptionItem option="stepwiseChoice"/>
+                    <!--
+                    <OptionItem option="fastStepwiseChoice"/>
+                    -->
+                    <OptionItem option="lassoChoice"/>
+                </OptionChoice>
+                
+                <OptionItem option="useIncludeList"/>
+                <OptionItem option="includeList"/>
+                
+                <OptionChoice option="selectMethod">
+                    <OptionItem option="aicChoice"/>
+                    <OptionItem option="aiccChoice"/>
+                    <OptionItem option="sbcChoice"/>
+                    <OptionItem option="sigLevelChoice"/>
+                </OptionChoice>
+                
+                <OptionChoice option="noCvStopMethod">
+                    <OptionItem option="aicChoice"/>
+                    <OptionItem option="aiccChoice"/>
+                    <OptionItem option="sbcChoice"/>
+                    <OptionItem option="sigLevelChoice"/>
+                    <OptionItem option="noStopChoice"/>
+                </OptionChoice>
+                <OptionChoice option="cvStopMethod">
+                    <OptionItem option="validateChoice"/>
+                    <OptionItem option="aicChoice"/>
+                    <OptionItem option="aiccChoice"/>
+                    <OptionItem option="sbcChoice"/>
+                    <OptionItem option="sigLevelChoice"/>
+                    <OptionItem option="noStopChoice"/>
+                </OptionChoice>
+                <OptionChoice option="noCvStopMethodForLasso">
+                    <OptionItem option="aicChoice"/>
+                    <OptionItem option="aiccChoice"/>
+                    <OptionItem option="sbcChoice"/>
+                    <OptionItem option="noStopChoice"/>
+                </OptionChoice>
+                <OptionChoice option="cvStopMethodForLasso">
+                    <OptionItem option="validateChoice"/>
+                    <OptionItem option="aicChoice"/>
+                    <OptionItem option="aiccChoice"/>
+                    <OptionItem option="sbcChoice"/>
+                    <OptionItem option="noStopChoice"/>
+                </OptionChoice>
+                <OptionItem option="slEntry"/>
+                <OptionItem option="slStay"/>
+                
+                <OptionChoice option="noCvChooseMethod">
+                    <OptionItem option="aicChoice"/>
+                    <OptionItem option="aiccChoice"/>
+                    <OptionItem option="sbcChoice"/>
+                </OptionChoice>
+
+                <OptionChoice option="cvChooseMethod">
+                    <OptionItem option="validateChoice"/>
+                    <OptionItem option="aicChoice"/>
+                    <OptionItem option="aiccChoice"/>
+                    <OptionItem option="sbcChoice"/>
+                </OptionChoice>
+
+            </Group>
+            <Group option="selectionDetailsGroup">
+                <OptionChoice option="detailsCombo">
+                    <OptionItem option="summaryDetailsChoice"/>
+                    <OptionItem option="stepDetailsChoice"/>
+                    <OptionItem option="allDetailsChoice"/> 
+                </OptionChoice>
+                <OptionChoice option="splitClassCombo">
+                    <OptionItem option="entireEffectChoice"/>
+                    <OptionItem option="singleDFEffectChoice"/>
+                </OptionChoice>
+                <OptionItem option="hierarchyLabel"/>
+                <OptionItem option="hierarchy"/>
+            </Group>
+        </Container>
+
+        <Container option="optionsTab"> 
+            <Group open="true" option="methodsGroup">
+                <OptionChoice option="confidence">
+                    <OptionItem option="confidence90"/>
+                    <OptionItem option="confidence95"/>
+                    <OptionItem option="confidence99"/>
+                    <OptionItem option="confidenceSpecify"/>
+                </OptionChoice>
+                <OptionItem option="confidenceValue"/>
+                
+                <OptionChoice option="optMethod">
+                        <OptionItem option="congraChoice"/>
+                        <OptionItem option="doubleDogChoice"/>
+                        <OptionItem option="quasiNewtonChoice"/>
+                        <OptionItem option="simplexChoice"/>
+                        <OptionItem option="newrapChoice"/>
+                        <OptionItem option="nrridgChoice"/>
+                        <OptionItem option="trustRegionChoice"/>
+                </OptionChoice>
+                <OptionChoice option="maxiterCombo">
+                        <OptionItem option="maxiterDefaultChoice"/>
+                        <OptionItem option="maxiterCustomChoice"/>
+                </OptionChoice>
+                <OptionItem option="maxiter"/>
+
+            </Group>
+            <Group open="true" option="statisticsGroup">
+
+                <OptionChoice option="statsCombo">
+                    <OptionItem option="defaultStatsChoice"/>
+                    <OptionItem option="customStatsChoice"/>
+                </OptionChoice>
+                <OptionItem option="cl"/>
+                <OptionItem option="corrEst"/>
+                <OptionItem option="covEst"/>
+ <!-- not in 16w17 
+                <OptionItem option="association"/>
+                <OptionItem option="ctable"/>
+                <OptionItem option="rsquare"/>
+                <OptionItem option="lackfit"/>
+                <OptionItem option="useNGroups"/>
+                <OptionItem option="nGroups"/>
+  -->                               
+            </Group>
+             
+        </Container>        
+        
+        <Container option="outputTab">  
+            <Group open="true" option="outputGroup">
+                <OptionItem option="casOutputLibrefNote"/>
+                <OptionItem option="outputDS"/> 
+                <OptionItem option="outputDSName"/>
+            
+                <Group open="true" option="predictedStatsGroup">                
+                    <OptionItem option="linp"/>
+                    <OptionItem option="pred"/>     
+                    <OptionItem option="clPred"/>
+                </Group>
+                <Group open="true" option="residualStatsGroup">             
+                    <OptionItem option="residual"/>
+                    <OptionItem option="pearson"/>
+                    <OptionItem option="adjPearson"/>
+                    <OptionItem option="resdevChoice"/>
+                    <OptionItem option="reslikChoice"/>
+                    <OptionItem option="stdReschiChoice"/>
+                    <OptionItem option="stdResdevChoice"/>
+                    <OptionItem option="difDevChoice"/>
+                </Group>
+                <Group option="otherStatsGroup">
+                    <OptionItem option="leverageChoice"/>
+                    <OptionItem option="difChisqChoice"/>
+                    <OptionItem option="stdXbetaChoice"/>
+                </Group>
+                    <OptionItem option="role"/>
+                <OptionItem option="includeVarsInstruction"/>
+                <OptionItem option="includeAllVars"/>
+                <OptionItem option="includeNoVars"/>
+                <OptionItem option="includeSelectedVars"/>
+                
+                <RoleItem role="idVariables"/>
+
+                <OptionItem option="scoreCodeFileNote"/>
+                <OptionItem option="scoreCode"/>
+                <OptionItem option="scoringCodeFileName"/>
+
+            </Group>
+            
+        </Container>        
+    </UI>
+
+    <Dependencies>
+ <!-- Dependencies whose targets are used in conditions of dependencies -->  
+ <!-- These dependencies must precede the dependencies that use one of these targets in a dependency condition -->
+        <Dependency condition="($MathTool.add($continuousVariables.size(),$classVariables.size()) &gt; 1)">
+            <Target action="enable" conditionResult="true" option="mainNwayEffectsChoice"/>
+            <Target action="disable" conditionResult="false" option="mainNwayEffectsChoice"/>
+        </Dependency>
+        <Dependency condition="($validationDataChoice=='1' || $testDataChoice=='1')">
+            <Target action="show" conditionResult="true" option="partitionDataCombo"/>
+            <Target action="hide" conditionResult="false" option="partitionDataCombo"/>
+        </Dependency>
+        <Dependency condition="(($validationDataChoice=='1' || $testDataChoice=='1') &amp;&amp; $partitionDataCombo == 'partitionDataVariableChoice')">
+            <Target action="show" conditionResult="true" option="partitionVariable"/>
+            <Target action="hide" conditionResult="false" option="partitionVariable"/>
+        </Dependency>
+        <Dependency condition="($validationDataChoice=='1' || $testDataChoice=='1') &amp;&amp;              $partitionDataCombo == 'partitionDataFractionChoice'">
+            <Target action="show" conditionResult="true" option="useRandomSeed"/>
+            <Target action="hide" conditionResult="false" option="useRandomSeed"/>
+        </Dependency>
+        
+        <Dependency condition="(($validationDataChoice==1 || $testDataChoice==1) &amp;&amp;              $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp;              $partitionVariable.size() &gt; 0                       )">
+            <Target action="show" conditionResult="true" option="useTrainingLevel"/>
+            <Target action="hide" conditionResult="false" option="useTrainingLevel"/>
+        </Dependency>
+        
+        <Dependency condition="($outputDS=='1')">
+            <Target action="show" conditionResult="true" option="includeVars"/>
+            <Target action="hide" conditionResult="false" option="includeVars"/>
+        </Dependency>
+
+ <!-- End of Dependencies whose targets are used in conditions of dependencies -->
+ 
+        <Dependency condition="($standardModel == 'customModelChoice')">
+            <Target action="show" conditionResult="true" option="modelBuilder"/>
+            <Target action="hide" conditionResult="false" option="modelBuilder"/>
+        </Dependency>
+        <Dependency condition="($standardModel == 'mainNwayEffectsChoice')">
+            <Target action="show" conditionResult="true" option="nway"/>
+            <Target action="hide" conditionResult="false" option="nway"/>
+        </Dependency>
+        <Dependency condition="!($eventTrialsData=='1')">
+            <Target action="show" conditionResult="true" option="responseVariable"/>
+            <Target action="hide" conditionResult="false" option="responseVariable"/>
+        </Dependency>
+        <Dependency condition="($eventTrialsData=='1')">            
+            <Target action="show" conditionResult="true" option="eventVariable"/>
+            <Target action="hide" conditionResult="false" option="eventVariable"/>
+            <Target action="show" conditionResult="true" option="trialsVariable"/>
+            <Target action="hide" conditionResult="false" option="trialsVariable"/>
+        </Dependency>
+        <Dependency condition="!($eventTrialsData=='1') &amp;&amp; $responseVariable.size() &gt; 0  &amp;&amp; $dataset.getDistinctCount($responseVariable[0]) == 2">
+            <Target action="show" conditionResult="true" option="referenceLevelCombo"/>
+            <Target action="hide" conditionResult="false" option="referenceLevelCombo"/>
+        </Dependency>
+      
+        <Dependency condition="($statsCombo=='customStatsChoice')"> 
+            <Target action="show" conditionResult="true" option="corrEst"/>
+            <Target action="hide" conditionResult="false" option="corrEst"/>
+            <Target action="show" conditionResult="true" option="covEst"/>
+            <Target action="hide" conditionResult="false" option="covEst"/>
+        </Dependency>          
+      
+        <Dependency condition="(!($selectionMethod == 'lassoChoice') &amp;&amp; $statsCombo=='customStatsChoice')"> 
+            <Target action="show" conditionResult="true" option="cl"/>
+            <Target action="hide" conditionResult="false" option="cl"/>
+        </Dependency>          
+      
+<!-- not supported in 16w17        
+        <Dependency condition="($statsCombo=='customStatsChoice')"> 
+            <Target option="ctable" conditionResult="true"  action="show"/>
+            <Target option="ctable" conditionResult="false" action="hide"/>
+            <Target option="lackfit" conditionResult="true"  action="show"/>
+            <Target option="lackfit" conditionResult="false" action="hide"/>
+            <Target option="rsquare" conditionResult="true"  action="show"/>
+            <Target option="rsquare" conditionResult="false" action="hide"/>
+            <Target option="association" conditionResult="true"  action="show"/>
+            <Target option="association" conditionResult="false" action="hide"/>
+        </Dependency> 
+
+        <Dependency condition="($statsCombo=='customStatsChoice' &amp;&amp; $lackfit==1)">
+            <Target option="useNGroups" conditionResult="true"  action="show"/>
+            <Target option="useNGroups" conditionResult="false" action="hide"/>
+        </Dependency>
+        <Dependency condition="($statsCombo=='customStatsChoice' &amp;&amp; $lackfit==1  &amp;&amp; $useNGroups == 1 )">
+            <Target option="nGroups" conditionResult="true"  action="show"/>
+            <Target option="nGroups" conditionResult="false" action="hide"/>
+        </Dependency>
+-->
+
+        <Dependency condition="(!($selectionMethod == 'lassoChoice'))"> 
+            <Target action="show" conditionResult="true" option="confidence"/>
+            <Target action="hide" conditionResult="false" option="confidence"/>
+        </Dependency>
+        <Dependency condition="(!($selectionMethod == 'lassoChoice') &amp;&amp; $confidence == 'confidenceSpecify')">
+            <Target action="show" conditionResult="true" option="confidenceValue"/>
+            <Target action="hide" conditionResult="false" option="confidenceValue"/>
+        </Dependency>
+        
+        <Dependency condition=" !($selectionMethod == 'noneSelectionChoice') ">
+            <Target action="show" conditionResult="true" option="selectionDetailsGroup"/>
+            <Target action="hide" conditionResult="false" option="selectionDetailsGroup"/>
+        </Dependency>
+        
+        <Dependency condition="(!($selectionMethod == 'noneSelectionChoice' || $selectionMethod == 'lassoChoice'))">
+            <Target action="show" conditionResult="true" option="selectMethod"/>
+            <Target action="hide" conditionResult="false" option="selectMethod"/>
+        </Dependency>
+       
+        <Dependency condition="(             !($selectionMethod == 'noneSelectionChoice' || $selectionMethod == 'lassoChoice') &amp;&amp;              !($validationDataChoice==1)             )">
+            <Target action="show" conditionResult="true" option="noCvStopMethod"/>
+            <Target action="hide" conditionResult="false" option="noCvStopMethod"/>
+        </Dependency>
+          
+        <Dependency condition="(!($selectionMethod == 'noneSelectionChoice' || $selectionMethod == 'lassoChoice') &amp;&amp; ($validationDataChoice=='1'))">
+            <Target action="show" conditionResult="true" option="cvStopMethod"/>
+            <Target action="hide" conditionResult="false" option="cvStopMethod"/>
+        </Dependency>
+      
+        <Dependency condition="($selectionMethod == 'lassoChoice' &amp;&amp; !($validationDataChoice=='1'))">
+            <Target action="show" conditionResult="true" option="noCvStopMethodForLasso"/>
+            <Target action="hide" conditionResult="false" option="noCvStopMethodForLasso"/>
+        </Dependency>
+        
+        <Dependency condition="($selectionMethod == 'lassoChoice' &amp;&amp; ($validationDataChoice=='1'))">
+            <Target action="show" conditionResult="true" option="cvStopMethodForLasso"/>
+            <Target action="hide" conditionResult="false" option="cvStopMethodForLasso"/>
+        </Dependency>
+   
+        <Dependency condition="(!($selectionMethod == 'noneSelectionChoice') &amp;&amp; !($validationDataChoice=='1'))">
+            <Target action="show" conditionResult="true" option="noCvChooseMethod"/>
+            <Target action="hide" conditionResult="false" option="noCvChooseMethod"/>
+        </Dependency>
+        
+        <Dependency condition="(!($selectionMethod == 'noneSelectionChoice') &amp;&amp; ($validationDataChoice=='1'))">
+            <Target action="show" conditionResult="true" option="cvChooseMethod"/>
+            <Target action="hide" conditionResult="false" option="cvChooseMethod"/>
+        </Dependency>
+
+        <Dependency condition="(             ($selectionMethod == 'forwardChoice' || $selectionMethod == 'stepwiseChoice') &amp;&amp;             (                 ($selectMethod    &amp;&amp; $selectMethod    =='sigLevelChoice') ||                  ($noCvStopMethod  &amp;&amp; $noCvStopMethod      =='sigLevelChoice') ||                 ($cvStopMethod    &amp;&amp; $cvStopMethod        =='sigLevelChoice')             )              )">
+            <Target action="show" conditionResult="true" option="slEntry"/>
+            <Target action="hide" conditionResult="false" option="slEntry"/>
+        </Dependency>
+
+        <Dependency condition="( ($selectionMethod == 'backwardChoice' ||   $selectionMethod == 'stepwiseChoice' ||   $selectionMethod == 'fastBackwardChoice') &amp;&amp; ( ($selectMethod    &amp;&amp; $selectMethod    =='sigLevelChoice') ||   ($noCvStopMethod      &amp;&amp; $noCvStopMethod      =='sigLevelChoice') || ($cvStopMethod        &amp;&amp; $cvStopMethod        =='sigLevelChoice') )  )">
+            <Target action="show" conditionResult="true" option="slStay"/>
+            <Target action="hide" conditionResult="false" option="slStay"/>
+        </Dependency>
+
+        <Dependency condition="(!($selectionMethod == 'noneSelectionChoice') &amp;&amp; $standardModel == 'customModelChoice')">
+            <Target action="show" conditionResult="true" option="useIncludeList"/>
+            <Target action="hide" conditionResult="false" option="useIncludeList"/>
+        </Dependency>
+        <Dependency condition="!($selectionMethod == 'noneSelectionChoice') &amp;&amp; $standardModel == 'customModelChoice' &amp;&amp; $useIncludeList == 1">
+            <Target action="show" conditionResult="true" option="includeList"/>
+            <Target action="hide" conditionResult="false" option="includeList"/>
+        </Dependency>
+
+        <Dependency condition=" !($selectionMethod == 'noneSelectionChoice') &amp;&amp;              ($selectionMethod == 'forwardChoice' || $selectionMethod == 'backwardChoice' ||               $selectionMethod == 'fastBackwardChoice' || $selectionMethod == 'stepwiseChoice')">
+            <Target action="show" conditionResult="true" option="hierarchy"/>
+            <Target action="hide" conditionResult="false" option="hierarchy"/>
+            <Target action="show" conditionResult="true" option="hierarchyLabel"/>
+            <Target action="hide" conditionResult="false" option="hierarchyLabel"/>
+        </Dependency>
+
+        <Dependency condition="!($selectionMethod == 'noneSelectionChoice') &amp;&amp;          ($classVariables.size() &gt; 0 &amp;&amp;             !($selectionMethod == 'noneSelectionChoice' || $selectionMethod == 'lassoChoice')          )">
+            <Target action="show" conditionResult="true" option="splitClassCombo"/>
+            <Target action="hide" conditionResult="false" option="splitClassCombo"/>
+        </Dependency>
+        
+        <Dependency condition="($outputDS=='1')">
+            <Target action="enable" conditionResult="true" option="outputDSName"/>
+            <Target action="disable" conditionResult="false" option="outputDSName"/>
+            <Target action="show" conditionResult="true" option="residualStatsGroup"/>
+            <Target action="hide" conditionResult="false" option="residualStatsGroup"/>
+            <Target action="show" conditionResult="true" option="predictedStatsGroup"/>
+            <Target action="hide" conditionResult="false" option="predictedStatsGroup"/>
+            <Target action="show" conditionResult="true" option="otherStatsGroup"/>
+            <Target action="hide" conditionResult="false" option="otherStatsGroup"/>
+            <Target action="show" conditionResult="true" option="includeVarsInstruction"/>
+            <Target action="hide" conditionResult="false" option="includeVarsInstruction"/>
+        </Dependency>
+              
+        <Dependency condition="($outputDS=='1' &amp;&amp; !($selectionMethod == 'lassoChoice'))">
+            <Target action="show" conditionResult="true" option="clPred"/>
+            <Target action="hide" conditionResult="false" option="clPred"/>
+        </Dependency>       
+        <Dependency condition="($outputDS=='1' &amp;&amp; $includeVars=='includeSelectedVars')">
+            <Target action="show" conditionResult="true" option="idVariables"/>
+            <Target action="hide" conditionResult="false" option="idVariables"/>
+        </Dependency> 
+        
+        <Dependency condition="($outputDS=='1' &amp;&amp;              ($validationDataChoice=='1' || $testDataChoice=='1') &amp;&amp;              $partitionDataCombo == 'partitionDataFractionChoice')">
+            <Target action="show" conditionResult="true" option="role"/>
+            <Target action="hide" conditionResult="false" option="role"/>       
+        </Dependency>
+      
+        <Dependency condition="($scoreCode==1)">
+            <Target action="enable" conditionResult="true" option="scoringCodeFileName"/>
+            <Target action="disable" conditionResult="false" option="scoringCodeFileName"/>
+         </Dependency>
+       
+        <Dependency condition="($maxiterCombo=='maxiterCustomChoice')">
+            <Target action="show" conditionResult="true" option="maxiter"/>
+            <Target action="hide" conditionResult="false" option="maxiter"/>
+        </Dependency>
+        <Dependency condition="($validationDataChoice=='1' || $testDataChoice=='1') &amp;&amp;              $partitionDataCombo == 'partitionDataFractionChoice' &amp;&amp;             $useRandomSeed == '1'">
+            <Target action="show" conditionResult="true" option="randomSeed"/>
+            <Target action="hide" conditionResult="false" option="randomSeed"/>
+            <Target action="show" conditionResult="true" option="partitionRandomSeedNote"/>
+            <Target action="hide" conditionResult="false" option="partitionRandomSeedNote"/>
+        </Dependency>
+<!-- NOT USED   
+        <Dependency condition="(($validationDataChoice=='1' || $testDataChoice=='1') &amp;&amp; $partitionDataCombo == 'partitionDataFractionChoice')">
+            <Target option="trainingDataFraction" conditionResult="true"  action="show"/>
+            <Target option="trainingDataFraction" conditionResult="false" action="hide"/>
+        </Dependency>
+-->     
+        <Dependency condition="($validationDataChoice=='1' &amp;&amp; $partitionDataCombo == 'partitionDataFractionChoice')">
+            <Target action="show" conditionResult="true" option="validationDataFraction"/>
+            <Target action="hide" conditionResult="false" option="validationDataFraction"/>
+        </Dependency>
+        
+        <Dependency condition="($testDataChoice=='1' &amp;&amp; $partitionDataCombo == 'partitionDataFractionChoice')">
+            <Target action="show" conditionResult="true" option="testDataFraction"/>
+            <Target action="hide" conditionResult="false" option="testDataFraction"/>
+        </Dependency>
+        
+        <Dependency condition="($validationDataChoice=='1' &amp;&amp; $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp; $partitionVariable.size() &gt; 0)">
+            <Target action="show" conditionResult="true" option="validationLevelCombo"/>
+            <Target action="hide" conditionResult="false" option="validationLevelCombo"/>
+        </Dependency>
+        <Dependency condition="($testDataChoice=='1' &amp;&amp; $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp; $partitionVariable.size() &gt; 0)">
+            <Target action="show" conditionResult="true" option="testLevelCombo"/>
+            <Target action="hide" conditionResult="false" option="testLevelCombo"/>
+        </Dependency>
+        
+        <Dependency condition="(($validationDataChoice==1 || $testDataChoice==1) &amp;&amp;              $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp;              $partitionVariable.size() &gt; 0  &amp;&amp;             $useTrainingLevel == 1                    )">
+            <Target action="show" conditionResult="true" option="trainingLevelCombo"/>
+            <Target action="hide" conditionResult="false" option="trainingLevelCombo"/>
+        </Dependency>
+                  
+    </Dependencies>
+
+    <Requirements> 
+        <Requirement condition="$eventTrialsData == '1' || (!($eventTrialsData == '1') &amp;&amp; ($responseVariable.size() == 0 || ($responseVariable.size() &gt; 0 &amp;&amp;          ($dataset.getDistinctCount($responseVariable[0]) == 2 )          )))">
+            <Message>The target can only have two non-missing levels. Select another target.</Message>
+        </Requirement>
+
+        <Requirement condition="($continuousVariables.size() &gt; 0 || $classVariables.size() &gt; 0 )">
+            <Message>Select at least one interval or nominal input.</Message>
+        </Requirement>
+        <Requirement condition="($continuousVariables.size() == 0 &amp;&amp; $classVariables.size() == 0 ) ||              !($standardModel == 'customModelChoice') ||             ($standardModel == 'customModelChoice' &amp;&amp; $modelBuilder.modelSummaryValues.fixedEffectsCount &gt; 0)">
+            <Message>Add one or more effects to the model on the MODEL tab.</Message>
+        </Requirement>
+        <Requirement condition="!($standardModel == 'customModelChoice' &amp;&amp; $useIncludeList &amp;&amp; $useIncludeList == 1 &amp;&amp; $includeList.size() == 0)">
+            <Message>Select at least one effect to include in all models.</Message>
+        </Requirement>
+           
+        <Requirement condition="(!($outputDS=='1') ||                  (($outputDS=='1') &amp;&amp;(                     $linp == '1' ||                     $pred == '1' || $clPred == 1 ||                     $pearson == '1' || $adjPearson == '1' ||                     $residual == '1' ||                     $resdevChoice == '1' || $stdResdevChoice == '1' ||                     $reslikChoice == '1' ||                     $stdReschiChoice == '1' ||                     $difDevChoice == 1 ||                                        $leverageChoice == 1 ||                      $difChisqChoice == 1 || $stdXbetaChoice == 1  ||                 (($validationDataChoice=='1' || $testDataChoice=='1') &amp;&amp;                  $partitionDataCombo == 'partitionDataFractionChoice' &amp;&amp; $role == 1)                    )))">
+                <Message>Select at least one statistic to include in the output data set.</Message>
+            </Requirement>
+ 
+<!-- not currently used
+        <Requirement condition="(!($validationDataChoice == 1) ||
+          ($partitionDataCombo == 'partitionDataVariableChoice') ||
+          ($validationDataChoice == 1 &amp;&amp; $testDataChoice == 0 &amp;&amp; ( $validationDataFraction == '' || $validationDataFraction &lt; $MathTool.toDouble(1.0)))
+)">
+            <Message nlsKey="requirementKey.txt">The sampling proportion for validation data must be greater than 0 and less than 1.</Message>
+        </Requirement> 
+  -->
+        <Requirement condition="(!($validationDataChoice == 1) || !($testDataChoice == 1) ||              ($partitionDataCombo == 'partitionDataVariableChoice') ||             ($validationDataChoice == 1 &amp;&amp; $testDataChoice == 1 &amp;&amp;              ($validationDataFraction == '' || $MathTool.add($MathTool.toDouble($validationDataFraction),$MathTool.toDouble($testDataFraction) ) &lt; 1.0)))">
+            <Message>The sum of the sampling proportions for validation and test data must be less than 1.0.</Message>
+        </Requirement>
+ 
+        <Requirement condition="(         !(             ($validationDataChoice == 1 &amp;&amp; $testDataChoice == 1) &amp;&amp;              ($partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp; $partitionVariable.size() &gt; 0) &amp;&amp;             ($validationLevelCombo == $testLevelCombo)         ))">
+            <Message>The value of the partitioning variable must be different for validation and test cases.</Message>
+        </Requirement> 
+        <Requirement condition="(         !(             $validationDataChoice == 1 &amp;&amp;              $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp;             $partitionVariable.size() &gt; 0 &amp;&amp;             $useTrainingLevel == 1 &amp;&amp;              $validationLevelCombo == $trainingLevelCombo         ))">
+            <Message>The value of the partitioning variable must be different for training and validation cases.</Message>
+        </Requirement>
+        <Requirement condition="(         !(             $testDataChoice == 1 &amp;&amp;             $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp;             $partitionVariable.size() &gt; 0 &amp;&amp;             $useTrainingLevel == 1 &amp;&amp;              $testLevelCombo == $trainingLevelCombo         ))">
+            <Message>The value of the partitioning variable must be different for training and test cases.</Message>
+        </Requirement>
+    </Requirements>
+    
+    <CodeTemplate>
+        <![CDATA[
+#macro( GenerateEffect  $modelEffect $numNestedLevels)
+## $numNestedLevels can be 'all' or 'one'.  One extracts only the lowest-level of the hierarchy
+## if the effectType is 'nested', then this is a nested effect
+    #if ( $modelEffect.effectType == 'nested' )
+        ## Handle nested effects in UI5
+        #if($modelEffect.levelInclusionIndices.size() > 0)
+            ## Extract nested effects for all levels of the hierarchy
+            #if($numNestedLevels == 'all')
+                #foreach( $layerNum in $modelEffect.levelInclusionIndices )
+                    ## extract outer terms (remember indexing in hierarchyTerms starts at 0)
+                    #set( $outerTerm = $modelEffect.hierarchyTerms[$layerNum] )
+                    #foreach( $subitem1 in $outerTerm )
+$CTMUtil.toSASName($subitem1)#if($foreach.count < $outerTerm.size())*#end#end
+(#foreach($subterm2 in $modelEffect.hierarchyTerms)
+                        #if($foreach.index < $layerNum)
+#foreach($subitem2 in $subterm2)
+$CTMUtil.toSASName($subitem2)#if($foreach.count < $subterm2.size())*#end#end#if($foreach.index < ($layerNum) - 1) #end
+                        #end
+                    #end)
+                #end
+            ## Extract nested effects for only the lowest level of the hierarchy (for subject and group effects)
+            #elseif($numNestedLevels == 'one')
+                ## Outer term corresponds to the last (lowest) in the hierarchy
+                #set( $layerNum =  $modelEffect.levelInclusionIndices[$MathTool.sub($modelEffect.levelInclusionIndices.size(), 1)])
+                #set( $outerTerm = $modelEffect.hierarchyTerms[$layerNum] )
+                #foreach( $subitem1 in $outerTerm )
+$CTMUtil.toSASName($subitem1)#if($foreach.count < $outerTerm.size())*#end#end
+(#foreach($subterm2 in $modelEffect.hierarchyTerms)
+                    #if($foreach.index < $layerNum)
+#foreach($subitem2 in $subterm2)
+$CTMUtil.toSASName($subitem2)#if($foreach.count < $subterm2.size())*#end#end#if($foreach.index < ($layerNum) - 1) #end
+                    #end
+                #end)
+            #end
+
+        ## Handle pre-UI5 nested effects
+        #elseif($modelEffect.memberSet1.size() > 0)
+            ## extract outer terms
+            #foreach( $subitem1 in $modelEffect.memberSet1 )
+$CTMUtil.toSASName($subitem1)#if($foreach.count < $modelEffect.memberSet1.size())*#end#end
+(#foreach($subitem2 in $modelEffect.memberSet2)
+$CTMUtil.toSASName($subitem2)#if($foreach.count < $modelEffect.memberSet2.size())*#end#end)
+        #end
+## handle 'main' or 'interaction' effects
+    #else
+        ## Extract effects from memberSet1
+        #foreach( $subitem in $modelEffect.memberSet1 )
+$CTMUtil.toSASName($subitem)#if($foreach.count < $modelEffect.memberSet1.size())*#end#end
+    #end
+#end
+
+ods noproctitle;
+         
+## Calculate alpha from confidence
+#if (!($selectionMethod == 'lassoChoice') && !($confidence == "confidence95"))
+   #if     ($confidence == "confidence95")#set( $alpha = 0.05 )
+   #elseif ($confidence == "confidence99")#set( $alpha = 0.01 )
+   #elseif ($confidence == "confidence90")#set( $alpha = 0.10 ) 
+   #else#set( $alpha = "%sysevalf((100-$confidenceValue)/100)" )
+   #end
+#end
+
+#if ($scoreCode == 1)
+#if($scoringCodeFileName.pathLocation == "sascontent")
+filename sfile filesrvc folderpath=$CTMUtil.quoteString($scoringCodeFileName.path) filename=$CTMUtil.quoteString($scoringCodeFileName.name);
+filename tempfile temp; 
+#else
+filename sfile $CTMUtil.quoteString($scoringCodeFileName.fullPath);
+#end
+#end
+
+proc logselect data=$dataset 
+#if (!($selectionMethod == 'lassoChoice') && !($confidence == "confidence95")) alpha=$alpha#end
+#if ($statsCombo=='customStatsChoice')
+    #if ($corrEst == 1) corrb#end
+    #if ($covEst == 1) covb#end
+#end
+#if(!($optMethod == "nrridgChoice"))
+ technique=
+   #if     ($optMethod == "congraChoice")congra
+   #elseif ($optMethod == "doubleDogChoice")dbldog
+   #elseif ($optMethod == "simplexChoice")nmsimp
+   #elseif ($optMethod == "newrapChoice")newrap
+   #elseif ($optMethod == "nrridgChoice")nrridg
+   #elseif ($optMethod == "quasiNewtonChoice")quanew
+   #elseif ($optMethod == "trustRegionChoice")trureg
+   #end 
+  
+#end
+
+
+#if($maxiterCombo=='maxiterCustomChoice') maxiter=$maxiter#end
+;
+
+#if ($dataset.getWhereClause() != '')
+   where $dataset.getWhereClause();
+#end
+
+## PARTITION THE DATA
+#if ($testDataChoice == 1 || $validationDataChoice == 1)
+   partition
+   #if($partitionDataCombo == 'partitionDataFractionChoice')
+ fraction(
+      #if ($validationDataChoice == 1) validate=$validationDataFraction#end
+      #if($testDataChoice == 1) test=$testDataFraction #end
+      #if (($validationDataChoice=='1' || $testDataChoice=='1') && 
+           $partitionDataCombo == 'partitionDataFractionChoice' &&
+           $useRandomSeed == '1') seed=$randomSeed
+      #end
+   #elseif ($partitionDataCombo == 'partitionDataVariableChoice')
+ role=#foreach( $item in $partitionVariable ) $item #end(
+      #if ($validationDataChoice == 1) validate=$CTMUtil.quoteString($validationLevelCombo)#end
+      #if($testDataChoice == 1) test=$CTMUtil.quoteString($testLevelCombo)#end
+      #if($useTrainingLevel == 1) train=$CTMUtil.quoteString($trainingLevelCombo)#end
+   #end
+    );
+#end
+
+#if ( $classVariables.size() > 0 )   
+   class #foreach( $item in $classVariables ) $item #end
+   #if ($splitClassCombo == 'singleDFEffectChoice') / split #end
+; 
+#end
+  
+   model 
+#if(!($eventTrialsData == '1')) 
+   #foreach( $item in $responseVariable ) $item#end(event=$CTMUtil.quoteString($referenceLevelCombo)) =
+#else
+   #foreach( $item in $eventVariable ) $item #end / #foreach( $item in $trialsVariable ) $item #end = 
+#end
+
+   #if     ($standardModel == 'mainEffectsChoice')
+      #foreach( $item in $classVariables ) $item#end
+      #foreach( $item in $continuousVariables ) $item#end
+ /
+   #elseif ($standardModel == 'mainNwayEffectsChoice')
+      #foreach( $item in $classVariables ) $item#if( $foreach.hasNext ) |#end#end#if ($classVariables.size() > 0 && $continuousVariables.size() > 0) |#end#foreach( $item in $continuousVariables ) $item#if($foreach.count < $continuousVariables.size()) |#end#end @$nway
+ /
+   #elseif ($standardModel == 'customModelChoice')
+   #if ( $modelBuilder.mixedEffectsModels )
+      #foreach( $model in $modelBuilder.mixedEffectsModels )
+         #if ($model.emtype=='FIXED')
+            #if ( $model.modelEffects.size() > 0 )
+                #foreach( $modelEffect in $model.modelEffects )
+                   #GenerateEffect( $modelEffect 'all' )
+                #end
+            #end           
+ / 
+            #if ($model.intercept == "False" ) noint#end
+            
+         #end
+      #end    ## end #foreach( $model in $modelBuilder.mixedEffectsModels )
+   #end    ## end #if ( $modelBuilder.mixedEffectsModels ) 
+   #end
+   
+## NOTE: THIS ARRANGEMENT ASSUMES THAT THERE IS ONLY ONE MODEL AND IT IS A FIXED EFFECTS MODEL
+## otherwise the following code up to the ";" should be placed after "/" above
+
+ link=
+      #if     ($linkFx == "logitChoice")logit
+      #elseif ($linkFx == "probitChoice")probit
+      #elseif ($linkFx == "cLogLogChoice")cloglog
+      #elseif ($linkFx == "logLogChoice")loglog
+      #end
+   ##if ($statsCombo=='customStatsChoice')
+         #if ($stb == 1) stb#end
+         #if ($cl == 1) clb#end
+         #if ($lackfit == 1) lackfit#if ($useNGroups == 1)(groups=$nGroups)#end#end
+         #if ($rsquare == 1) rsquare #end
+         #if ($ctable==1) ctable#end
+   ##end
+   #if ($offsetVariable.size() > 0) offset=#foreach( $item in $offsetVariable )$item#end#end
+   #if (!($selectionMethod == 'noneSelectionChoice') && $useIncludeList == 1 && $includeList.size() > 0) 
+ include=(#foreach( $modelEffect in $includeList )
+          #GenerateEffect( $modelEffect 'all' )
+      #end
+ )
+   #end
+; 
+
+## SELECTION statement
+#if (!($selectionMethod == 'noneSelectionChoice'))
+   selection method=#if($selectionMethod == 'forwardChoice')forward
+   #elseif ($selectionMethod == 'backwardChoice')backward
+   #elseif ($selectionMethod == 'fastBackwardChoice')backward
+   #elseif ($selectionMethod == 'stepwiseChoice')stepwise
+   #elseif ($selectionMethod == 'fastStepwiseChoice')stepwise
+   #elseif ($selectionMethod == 'lassoChoice')lasso
+   #end     ## end of #if($selectionMethod == 'forwardChoice')
+(
+   #if ($selectionMethod == 'fastBackwardChoice' || $selectionMethod == 'fastStepwiseChoice')fast#end
+
+   #if(!($selectionMethod == 'lassoChoice') && !($selectMethod == 'sbcChoice'))
+ select=#if($selectMethod == "sigLevelChoice") sl
+      #elseif($selectMethod == "adjrsqChoice") adjrsq
+      #elseif($selectMethod == "aicChoice") aic
+      #elseif($selectMethod == "aiccChoice") aicc
+      #elseif($selectMethod == "aicChoice") aic
+      #elseif($selectMethod == "cpChoice") cp
+      #elseif($selectMethod == "crossValidateChoice")#set($cvFlag=1) cv   
+      #elseif($selectMethod == "pressChoice") press
+      #elseif($selectMethod == "rsquareChoice") rsquare
+      #elseif($selectMethod == "sbcChoice") sbc
+      #end  ## end of #if($selectMethod == "sigLevelChoice")
+   #end
+   
+   #if ($selectionMethod == 'lassoChoice')
+      #if ($validationDataChoice=='1')
+            #set($stopMethod=$cvStopMethodForLasso)
+      #else #set($stopMethod=$noCvStopMethodForLasso)
+      #end
+   #else
+      #if ($validationDataChoice=='1')
+            #set($stopMethod=$cvStopMethod)
+      #else #set($stopMethod=$noCvStopMethod)
+      #end
+   #end
+   
+   #if($validationDataChoice=='1')
+         #set($chooseMethod = $cvChooseMethod)
+   #else #set($chooseMethod = $noCvChooseMethod)
+   #end
+
+## STOP=
+   ##if(!($stopMethod == "sbcChoice")) 
+ stop=#if($stopMethod == "adjrsqChoice") adjrsq
+      #elseif($stopMethod == "aicChoice") aic
+      #elseif($stopMethod == "aiccChoice") aicc
+      #elseif($stopMethod == "crossValidateChoice")#set($cvFlag=1) cv   
+      #elseif($stopMethod == "cpChoice") cp
+      #elseif($stopMethod == "pressChoice") press
+      #elseif($stopMethod == "sbcChoice") sbc
+      #elseif($stopMethod == "sigLevelChoice") sl
+      #elseif($stopMethod == "validateChoice") validate
+      #elseif($stopMethod == "noStopChoice") none
+      #end 
+   ##end
+
+#if($slEntry) slentry=$slEntry#end#if($slStay) slstay=$slStay#end
+
+
+## CHOOSE=
+   ##if(!($chooseMethod == "sbcChoice")) 
+ choose=#if($chooseMethod == "adjrsqChoice") adjrsq
+      #elseif($chooseMethod == "aicChoice") aic
+      #elseif($chooseMethod == "aiccChoice") aicc
+      #elseif($chooseMethod == "crossValidateChoice")#set($cvFlag=1) cv   
+      #elseif($chooseMethod == "cpChoice") cp
+      #elseif($chooseMethod == "pressChoice") press
+      #elseif($chooseMethod == "sbcChoice") sbc
+      #elseif($chooseMethod == "validateChoice") validate
+      #end 
+   ##end
+)   
+
+   #if    ($detailsCombo == 'stepDetailsChoice') details=steps
+   #elseif($detailsCombo == 'allDetailsChoice') details=all
+   #end 
+      
+   #if($selectionMethod == 'forwardChoice' || $selectionMethod == 'backwardChoice' || $selectionMethod == 'fastBackwardChoice' || $selectionMethod == 'stepwiseChoice')
+      #if($hierarchy == 1) hierarchy=single
+      #else hierarchy=none
+      #end  
+   #end ## end of #if($selectionMethod == 'forwardChoice'...
+;   
+#end    ## end of #if (!($selectionMethod == 'noneSelectionChoice'))
+
+#if( $freqVariable.size() > 0 )
+    freq #foreach( $item in $freqVariable ) $item #end;
+#end
+#if( $weightVariable.size() > 0 )
+    weight #foreach( $item in $weightVariable ) $item #end;
+#end
+#if( $byVariables.size() > 0 )
+    by #foreach( $item in $byVariables ) $item #end;
+#end
+
+#if ($outputDS == '1')
+   output out=$outputDSName
+   #if($linp == 1) xbeta#end
+   #if($pred == 1) predicted#end
+   #if($clPred == 1) lower upper#end
+   #if($pearson == 1) reschi#end
+   #if($adjPearson == 1) adjpearson#end
+   #if($residual == 1) residual#end
+   #if($resdevChoice == 1) resdev#end
+   #if($reslikChoice == 1) reslik#end
+   #if($stdReschiChoice == 1) stdReschi#end
+   #if($stdResdevChoice == 1) stdResdev#end
+   #if($difChisqChoice == 1) difchisq#end
+   #if($difDevChoice == 1) difdev#end
+   #if($leverageChoice == 1) h#end
+   #if($stdXbetaChoice == 1) stdxbeta#end
+   #if (($validationDataChoice=='1' || $testDataChoice=='1') && 
+         $partitionDataCombo == 'partitionDataFractionChoice' && $role==1) role=_PartInd_#end
+
+   #if ($includeVars=='includeAllVars') copyvars=(_all_)
+   #elseif ($includeVars=='includeSelectedVars')
+      #if($idVariables.size() > 0 ) copyvars=( #foreach( $item in $idVariables ) $item#end)
+   #end
+#end
+;
+#end
+
+#if ($scoreCode == 1)
+   code file=#if($scoringCodeFileName.pathLocation == "sascontent")tempfile #else sfile #end  
+ ;
+#end
+
+run;
+
+#if ($scoreCode == 1)
+#if($scoringCodeFileName.pathLocation == "sascontent")
+%let x=%sysfunc(fcopy(tempfile,sfile)); 
+%if &x %then %do; %put &x - %sysfunc(sysmsg()); %end;
+filename tempfile clear;
+#end
+filename sfile CLEAR;
+#end
+]]>
+    </CodeTemplate>
+<TemplateValues version="7.3">
+<![CDATA[
+{"dataset":{"librarytable":"PUBLIC.HMEQ"},"responseVariable":"json:[{\"value\":\"BAD\",\"type\":\"Numeric\",\"length\":8,\"format\":\"\",\"informat\":\"\",\"className\":\"RoleObject\"}]","eventVariable":"json:[{\"value\":\"BAD\",\"type\":\"Numeric\",\"length\":8,\"format\":\"\",\"informat\":\"\",\"className\":\"RoleObject\"}]","trialsVariable":"","continuousVariables":"json:[{\"value\":\"LOAN\",\"type\":\"Numeric\",\"length\":8,\"format\":\"\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"MORTDUE\",\"type\":\"Numeric\",\"length\":8,\"format\":\"\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"VALUE\",\"type\":\"Numeric\",\"length\":8,\"format\":\"\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"YOJ\",\"type\":\"Numeric\",\"length\":8,\"format\":\"\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"DEROG\",\"type\":\"Numeric\",\"length\":8,\"format\":\"\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"DELINQ\",\"type\":\"Numeric\",\"length\":8,\"format\":\"\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"CLAGE\",\"type\":\"Numeric\",\"length\":8,\"format\":\"\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"NINQ\",\"type\":\"Numeric\",\"length\":8,\"format\":\"\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"CLNO\",\"type\":\"Numeric\",\"length\":8,\"format\":\"\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"DEBTINC\",\"type\":\"Numeric\",\"length\":8,\"format\":\"\",\"informat\":\"\",\"className\":\"RoleObject\"}]","classVariables":"","offsetVariable":"","idVariables":"","freqVariable":"","weightVariable":"","byVariables":"","partitionVariable":"","mainEffectsChoice":"1","standardModel":"mainEffectsChoice","mainNwayEffectsChoice":"0","customModelChoice":"0","modelBuilder":{"modelSummaryValues":{"randomEffectsSetCount":0,"repeatedEffectsSetCount":0,"zeroInflatedEffectsSetCount":0,"zeroInflatedEffectsCount":0,"fixedEffectsCount":0,"fixedContinuousMainEffectsCount":0,"fixedClassificationMainEffectsCount":0,"fixedInterceptValue":"True","fixedModelsetInvalidStateCount":0,"randomModelsetInvalidStateCount":0,"repeatedModelsetInvalidStateCount":0,"meansModelsetInvalidStateCount":0,"zeroInflatedModelsetInvalidStateCount":0},"mixedEffectsModels":[{"emtype":"FIXED","intercept":"True","modelEffects":[]}]},"nway":2,"eventTrialsData":"0","referenceLevelCombo":0,"linkFx":[{"value":"logitChoice","displayValue":"Logit","keys":["logitChoice",null,"Logit"],"label":"Logit","baseid":"{\"value\":\"logitChoice\",\"label\":\"Logit\"}","id":"{\"value\":\"logitChoice\",\"label\":\"Logit\"}1"}],"statsCombo":[{"value":"defaultStatsChoice","displayValue":"Default statistics","keys":["defaultStatsChoice",null,"Default statistics"],"label":"Default statistics","baseid":"{\"value\":\"defaultStatsChoice\",\"label\":\"Default statistics\"}","id":"{\"value\":\"defaultStatsChoice\",\"label\":\"Default statistics\"}1"}],"cl":"0","corrEst":"0","covEst":"0","confidence":[{"value":"confidence95","displayValue":"95%","keys":["confidence95",null,"95%"],"label":"95%","baseid":"{\"value\":\"confidence95\",\"label\":\"95%\"}","id":"{\"value\":\"confidence95\",\"label\":\"95%\"}1"}],"confidenceValue":95,"selectionMethod":[{"value":"forwardChoice","displayValue":"Forward selection","keys":["forwardChoice",null,"Forward selection"],"label":"Forward selection","baseid":"{\"value\":\"forwardChoice\",\"label\":\"Forward selection\"}","id":"{\"value\":\"forwardChoice\",\"label\":\"Forward selection\"}1"}],"selectMethod":[{"value":"sbcChoice","displayValue":"Schwarz Bayesian information criterion (Default)","keys":["sbcChoice",null,"Schwarz Bayesian information criterion (Default)"],"label":"Schwarz Bayesian information criterion (Default)","baseid":"{\"value\":\"sbcChoice\",\"label\":\"Schwarz Bayesian information criterion (Default)\"}","id":"{\"value\":\"sbcChoice\",\"label\":\"Schwarz Bayesian information criterion (Default)\"}1"}],"noCvChooseMethod":[{"value":"sbcChoice","displayValue":"Schwarz Bayesian information criterion (Default)","keys":["sbcChoice",null,"Schwarz Bayesian information criterion (Default)"],"label":"Schwarz Bayesian information criterion (Default)","baseid":"{\"value\":\"sbcChoice\",\"label\":\"Schwarz Bayesian information criterion (Default)\"}","id":"{\"value\":\"sbcChoice\",\"label\":\"Schwarz Bayesian information criterion (Default)\"}1"}],"cvChooseMethod":[{"value":"sbcChoice","displayValue":"Schwarz Bayesian information criterion (Default)","keys":["sbcChoice",null,"Schwarz Bayesian information criterion (Default)"],"label":"Schwarz Bayesian information criterion (Default)","baseid":"{\"value\":\"sbcChoice\",\"label\":\"Schwarz Bayesian information criterion (Default)\"}","id":"{\"value\":\"sbcChoice\",\"label\":\"Schwarz Bayesian information criterion (Default)\"}1"}],"noCvStopMethod":[{"value":"sbcChoice","displayValue":"Schwarz Bayesian information criterion (Default)","keys":["sbcChoice",null,"Schwarz Bayesian information criterion (Default)"],"label":"Schwarz Bayesian information criterion (Default)","baseid":"{\"value\":\"sbcChoice\",\"label\":\"Schwarz Bayesian information criterion (Default)\"}","id":"{\"value\":\"sbcChoice\",\"label\":\"Schwarz Bayesian information criterion (Default)\"}1"}],"cvStopMethod":[{"value":"sbcChoice","displayValue":"Schwarz Bayesian information criterion (Default)","keys":["sbcChoice",null,"Schwarz Bayesian information criterion (Default)"],"label":"Schwarz Bayesian information criterion (Default)","baseid":"{\"value\":\"sbcChoice\",\"label\":\"Schwarz Bayesian information criterion (Default)\"}","id":"{\"value\":\"sbcChoice\",\"label\":\"Schwarz Bayesian information criterion (Default)\"}1"}],"noCvStopMethodForLasso":[{"value":"sbcChoice","displayValue":"Schwarz Bayesian information criterion (Default)","keys":["sbcChoice",null,"Schwarz Bayesian information criterion (Default)"],"label":"Schwarz Bayesian information criterion (Default)","baseid":"{\"value\":\"sbcChoice\",\"label\":\"Schwarz Bayesian information criterion (Default)\"}","id":"{\"value\":\"sbcChoice\",\"label\":\"Schwarz Bayesian information criterion (Default)\"}1"}],"cvStopMethodForLasso":[{"value":"sbcChoice","displayValue":"Schwarz Bayesian information criterion (Default)","keys":["sbcChoice",null,"Schwarz Bayesian information criterion (Default)"],"label":"Schwarz Bayesian information criterion (Default)","baseid":"{\"value\":\"sbcChoice\",\"label\":\"Schwarz Bayesian information criterion (Default)\"}","id":"{\"value\":\"sbcChoice\",\"label\":\"Schwarz Bayesian information criterion (Default)\"}1"}],"slEntry":0.05,"slStay":0.05,"detailsCombo":[{"value":"summaryDetailsChoice","displayValue":"Selection summary (default)","keys":["summaryDetailsChoice",null,"Selection summary (default)"],"label":"Selection summary (default)","baseid":"{\"value\":\"summaryDetailsChoice\",\"label\":\"Selection summary (default)\"}","id":"{\"value\":\"summaryDetailsChoice\",\"label\":\"Selection summary (default)\"}1"}],"splitClassCombo":[{"value":"entireEffectChoice","displayValue":"An entire effect","keys":["entireEffectChoice",null,"An entire effect"],"label":"An entire effect","baseid":"{\"value\":\"entireEffectChoice\",\"label\":\"An entire effect\"}","id":"{\"value\":\"entireEffectChoice\",\"label\":\"An entire effect\"}1"}],"hierarchy":"0","useIncludeList":"0","includeList":[],"optMethod":[{"value":"nrridgChoice","displayValue":"Newton-Raphson with ridging (Default)","keys":["nrridgChoice",null,"Newton-Raphson with ridging (Default)"],"label":"Newton-Raphson with ridging (Default)","baseid":"{\"value\":\"nrridgChoice\",\"label\":\"Newton-Raphson with ridging (Default)\"}","id":"{\"value\":\"nrridgChoice\",\"label\":\"Newton-Raphson with ridging (Default)\"}1"}],"maxiterCombo":[{"value":"maxiterDefaultChoice","displayValue":"Use default value","keys":["maxiterDefaultChoice",null,"Use default value"],"label":"Use default value","baseid":"{\"value\":\"maxiterDefaultChoice\",\"label\":\"Use default value\"}","id":"{\"value\":\"maxiterDefaultChoice\",\"label\":\"Use default value\"}1"}],"maxiter":50,"outputDS":"0","outputDSName":{"value":"","cbSelected":false},"linp":"0","pred":"1","clPred":"0","pearson":"0","adjPearson":"0","residual":"0","resdevChoice":"0","reslikChoice":"0","stdReschiChoice":"0","stdResdevChoice":"0","leverageChoice":"0","stdXbetaChoice":"0","difChisqChoice":"0","difDevChoice":"0","role":"0","includeAllVars":"0","includeVars":"includeNoVars","includeSelectedVars":"0","includeNoVars":"1","scoreCode":"0","scoringCodeFileName":{"path":"/Users/Jocelyn.Gascon-Giroux@sas.com/My Folder","name":"score.sas","fullPath":"/Users/Jocelyn.Gascon-Giroux@sas.com/My Folder/score.sas","pathLocation":"sascontent","pathUri":"sascontent:/folders/folders/4f6809f6-1f07-44ad-ba18-f43d032b8d21"},"testDataChoice":"1","validationDataChoice":"1","testDataFraction":0.1,"validationDataFraction":0.2,"useRandomSeed":"1","randomSeed":12343,"partitionDataCombo":[{"value":"partitionDataFractionChoice","displayValue":"Specify a sample proportion","keys":["partitionDataFractionChoice",null,"Specify a sample proportion"],"label":"Specify a sample proportion","baseid":"{\"value\":\"partitionDataFractionChoice\",\"label\":\"Specify a sample proportion\"}","id":"{\"value\":\"partitionDataFractionChoice\",\"label\":\"Specify a sample proportion\"}1"}],"useTrainingLevel":"0"}
+]]>
+</TemplateValues>
+
+</Task>
