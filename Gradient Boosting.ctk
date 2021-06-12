@@ -1,0 +1,1447 @@
+<Task revision="1" schemaVersion="7.3">
+    <Registration>
+        <Name>Gradient Boosting.ctk</Name>
+        <Description>The Gradient Boosting task builds a predictive model for an interval or nominal target that creates an ensemble of decision trees using the gradient boosting method.</Description>
+        <GUID>0b029035-18ed-4e86-b983-edf2981a956b</GUID>
+        <Procedures>GRADBOOST</Procedures>
+        <Links>
+            <Link href="https://documentation.sas.com/?softwareId=STUDIOBASIC&amp;softwareVersion=01&amp;softwareContextId=tasks&amp;requestor=inapp">SAS Studio Task Reference Guide</Link>
+            <Link href=""> </Link>
+            <Link href=""> </Link>
+            <Link href="https://documentation.sas.com/?softwareId=ANVIYA&amp;softwareVersion=01&amp;softwareContextId=proc_gradboost&amp;requestor=inapp">The GRADBOOST Procedure</Link>
+            <Link href=""> </Link>
+            <Link href=""> </Link>
+            <Link href="http://support.sas.com/training/viyasdmml">SAS Tutorials</Link>
+        </Links>
+    </Registration>
+    <Metadata>
+        <DataSources>
+        <!-- where="true" removed for 16w17: not supported -->
+            <DataSource libraryEngineInclude="CAS" name="dataset">
+                    <Roles>
+                <Role exclude="intervalVariables,nominalVariables,partitionVariable" maxVars="1" minVars="1" name="categoricalTarget" type="A">Nominal target:</Role>
+                <Role exclude="intervalVariables,nominalVariables,partitionVariable" maxVars="1" minVars="1" name="continuousTarget" type="N">Interval target:</Role>
+                <Role exclude="categoricalTarget,continuousTarget,nominalVariables,partitionVariable" maxVars="0" minVars="0" name="intervalVariables" order="true" type="N">Interval inputs:</Role>
+                <Role exclude="categoricalTarget,continuousTarget,intervalVariables,partitionVariable" maxVars="0" minVars="0" name="nominalVariables" order="true" type="A">Nominal inputs:</Role>
+                <Role indent="2" maxVars="0" minVars="1" name="copyVariables" type="A">Include these variables:</Role>
+                <Role indent="3" maxVars="0" minVars="0" name="outputVariables2" type="A">Include these variables:</Role>
+                <Role exclude="categoricalTarget,continuousTarget,intervalVariables,nominalVariables" indent="1" maxVars="1" minVars="1" name="partitionVariable" type="A">Partitioning variable:</Role>
+                    </Roles>
+            </DataSource>
+        </DataSources>
+
+        <Options>
+            <Option inputType="string" name="dataTab">Data</Option>
+            <Option inputType="string" name="optionsTab">Options</Option>
+            <Option inputType="string" name="dataGroup">Data</Option>
+            <Option inputType="string" name="rolesGroup">Roles</Option>
+            <Option inputType="string" name="otherRolesGroup">ADDITIONAL ROLES</Option>
+
+            <Option inputType="string" name="targetGroup">Target</Option>
+            <Option inputType="string" name="inputsGroup">Inputs</Option>
+            <Option inputType="radio" name="useIntervalTarget" variable="targetType">Use an interval target</Option>
+            <Option defaultValue="1" inputType="radio" name="useNominalTarget" variable="targetType">Use a nominal target</Option>
+
+            <Option inputType="string" name="methodsGroup">Methods</Option>
+            <Option inputType="checkbox" name="useIntervalBins">Number of bins for interval inputs</Option>
+            <Option decimalPlaces="0" defaultValue="50" increment="1" indent="1" inputType="numstepper" invalidMessage="Enter an integer greater than 1 and not greater than 500 for the number of bins for interval inputs" maxValue="500" minValue="2" missingMessage="Enter an integer greater than 1 and not greater than 500 for the number of bins for interval inputs" name="intervalBins" promptMessage="Enter an integer greater than 1 and not greater than 500 for the number of bins for interval inputs" rangeMessage="Enter an integer greater than 1 and not greater than 500 for the number of bins for interval inputs" required="true" width="50px">Number of bins:</Option>
+
+            <Option inputType="string" name="treeOptionGroup">Creating Trees</Option>
+            <Option decimalPlaces="0" defaultValue="100" increment="1" inputType="numstepper" invalidMessage="Enter an integer greater than 0 and not greater than 10,000 for the number of trees" maxValue="10000" minValue="1" missingMessage="Enter an integer greater than 0 and not greater than 10,000 for the number of trees" name="maxTrees" promptMessage="Enter an integer greater than 0 and not greater than 10,000 for the number of trees" rangeMessage="Enter an integer greater than 0 and not greater than 10,000 for the number of trees" required="true" width="50px">Number of trees:</Option>
+
+            <Option defaultValue="1" inputType="checkbox" name="useMaxTreeRange">Autotune number of trees</Option>
+            <Option decimalPlaces="0" defaultValue="100" increment="1" indent="1" inputType="numstepper" invalidMessage="Enter an integer greater than 0 and not greater than 1000 for the initial value of the number of trees" maxValue="1000" minValue="1" missingMessage="Enter an integer greater than 0 and not greater than 1000 for the initial value of the number of trees" name="initialMaxTrees" promptMessage="Enter an integer greater than 0 and not greater than 1000 for the initial value of the number of trees" rangeMessage="Enter an integer greater than 0 and not greater than 1000 for the initial value of the number of trees" required="true" width="75px">Initial value:</Option>
+            <Option decimalPlaces="0" defaultValue="20" increment="1" indent="1" inputType="numstepper" invalidMessage="Enter an integer greater than 0 and not greater than 1000 for the lower bound of the number of trees" maxValue="1000" minValue="1" missingMessage="Enter an integer greater than 0 and not greater than 1000 for the lower bound of the number of trees" name="lowerMaxTrees" promptMessage="Enter an integer greater than 0 and not greater than 1000 for the lower bound of the number of trees" rangeMessage="Enter an integer greater than 0 and not greater than 1000 for the lower bound of the number of trees" required="true" width="75px">Lower bound:</Option>
+            <Option decimalPlaces="0" defaultValue="150" increment="1" indent="1" inputType="numstepper" invalidMessage="Enter an integer greater than 0 and not greater than 1000 for the upper bound of the number of trees" maxValue="1000" minValue="1" missingMessage="Enter an integer greater than 0 and not greater than 1000 for the upper bound of the number of trees" name="upperMaxTrees" promptMessage="Enter an integer greater than 0 and not greater than 1000 for the upper bound of the number of trees" rangeMessage="Enter an integer greater than 0 and not greater than 1000 for the upper bound of the number of trees" required="true" width="75px">Upper bound:</Option>
+
+            <Option decimalPlaces="0" defaultValue="4" increment="1" inputType="numstepper" invalidMessage="Enter an integer greater than 0 and not greater than 50 for the maximum depth of a node in a tree" maxValue="50" minValue="1" missingMessage="Enter an integer greater than 0 and not greater than 50 for the maximum depth of a node in a tree" name="maxDepth" promptMessage="Enter an integer greater than 0 and not greater than 50 for the maximum depth of a node in a tree" rangeMessage="Enter an integer greater than 0 and not greater than 50 for the maximum depth of a node in a tree" required="true" width="50px">Maximum depth of a tree:</Option>
+            <Option decimalPlaces="0" defaultValue="2" increment="1" inputType="numstepper" invalidMessage="Enter an integer greater than or equal to 2 and not greater than 5 for the maximum number of branches for a node in a tree" maxValue="5" minValue="2" missingMessage="Enter an integer greater than or equal to 2 and not greater than 5 for the maximum number of branches for a node in a tree" name="maxBranches" promptMessage="Enter an integer greater than or equal to 2 and not greater than 5 for the maximum number of branches for a node in a tree" rangeMessage="Enter an integer greater than or equal to 2 and not greater than 5 for the maximum number of branches for a node in a tree" required="true" width="50px">Maximum number of branches for a node:</Option>
+
+            <Option inputType="string" name="samplingGroup">Sampling</Option>
+
+            <Option inputType="string" name="nodeOptionGroup">Splitting a Node</Option>
+            <Option decimalPlaces="0,15" defaultValue="0.5" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the sampling proportion of training data observations in the data set" maxValue="1" minValue="0.000001" missingMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the sampling proportion of training data observations in the data set" name="inbagFraction" promptMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the sampling proportion of training data observations in the data set" required="true" width="60px">Sampling proportion of training observations for each iteration:</Option>
+            <Option defaultValue="1" inputType="checkbox" name="useInbagFractionRange">Autotune sampling proportion</Option>
+            <Option decimalPlaces="0,15" defaultValue="0.5" indent="1" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the initial value of the sampling proportion for each iteration" maxValue="1" minValue="0.000001" missingMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the initial value of the sampling proportion for each iteration" name="initialInbagFraction" promptMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the initial value of the sampling proportion for each iteration" required="true" width="100px">Initial value:</Option>
+            <Option decimalPlaces="0,15" defaultValue="0.1" indent="1" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the lower bound of the sampling proportion for each iteration" maxValue="1" minValue="0.000001" missingMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the lower bound of the sampling proportion for each iteration" name="lowerInbagFraction" promptMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the lower bound of the sampling proportion for each iteration" required="true" width="100px">Lower bound:</Option>
+            <Option decimalPlaces="0,15" defaultValue="1" indent="1" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the upper bound of the sampling proportion for each iteration" maxValue="1" minValue="0.000001" missingMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the upper bound of the sampling proportion for each iteration" name="upperInbagFraction" promptMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the upper bound of the sampling proportion for each iteration" required="true" width="100px">Upper bound:</Option>
+
+            <Option defaultValue="0" inputType="checkbox" name="useInbagRandomSeed">Random number seed</Option>
+            <Option decimalPlaces="0" indent="1" inputType="numbertext" invalidMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed" maxValue="2147483647" minValue="1" missingMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed" name="inbagRandomSeed" promptMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed" rangeMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed" required="true" width="60px">Random seed:</Option>
+            <Option indent="1" inputType="string" name="inbagRandomSeedNote">Specifying a random number seed may not replicate results in a distributed computing environment.</Option>
+
+            <Option inputType="string" name="splittingGroup">Splitting Nodes</Option>
+
+            <Option decimalPlaces="0" defaultValue="5" increment="1" inputType="numstepper" invalidMessage="Enter an integer greater than 0 for the minimum number of observations for a leaf" maxValue="999999999" minValue="1" missingMessage="Enter an integer greater than 0 for the minimum number of observations for a leaf" name="minLeafSize" promptMessage="Enter an integer greater than 0 for the minimum number of observations for a leaf" rangeMessage="Enter an integer greater than 0 for the minimum number of observations for a leaf" required="true" width="50px">Minimum number of observations for a leaf:</Option>
+
+            <Option formatValue="false" inputType="string" name="varsToTryLabel">Number of inputs considered for splitting a node:</Option>
+            <Option defaultValue="varsToTryAllChoice" inputType="combobox" name="varsToTryCombo">Number of inputs considered for splitting a node:</Option>
+            <Option inputType="string" name="varsToTryAllChoice">All inputs (Default)</Option>
+            <Option inputType="string" name="varsToTryCustomChoice">Use custom number of inputs</Option>
+            <Option decimalPlaces="0" increment="1" inputType="numstepper" invalidMessage="Enter an integer greater than 0 and less than or equal to the total number of selected inputs for the number of inputs to consider splitting a node" maxValue="999999999" minValue="1" missingMessage="Enter an integer greater than 0 and less than or equal to the total number of selected inputs for the number of inputs to consider splitting a node" name="customVarsToTryValue" promptMessage="Enter an integer greater than 0 and less than or equal to the total number of selected inputs for the number of inputs to consider splitting a node" rangeMessage="Enter an integer greater than 0 and less than or equal to the total number of selected inputs for the number of inputs to consider splitting a node" required="true" width="50px">Number of inputs:</Option>
+
+            <Option defaultValue="1" inputType="checkbox" name="useVarsToTryRange">Autotune number of inputs considered for splitting a node</Option>
+
+
+            <Option inputType="string" name="initialVarsToTryHelpMsg">If the initial value for the number of inputs considered for splitting a node is blank or is greater than the total number of selected inputs, then the number of selected inputs is used instead.</Option>
+            <Option decimalPlaces="0" defaultValue="100" helpMessageRef="initialVarsToTryHelpMsg" increment="1" indent="1" inputType="numstepper" invalidMessage="Enter an integer greater than 0 and less than or equal to the total number of selected inputs for the initial value of the number of inputs to consider splitting a node" maxValue="999999999" minValue="1" missingMessage="Enter an integer greater than 0 and less than or equal to the total number of selected inputs for the initial value of the number of inputs to consider splitting a node" name="initialVarsToTry" promptMessage="Enter an integer greater than 0 and less than or equal to the total number of selected inputs for the initial value of the number of inputs to consider splitting a node" rangeMessage="Enter an integer greater than 0 and less than or equal to the total number of selected inputs for the initial value of the number of inputs to consider splitting a node" width="75px">Initial value:</Option>
+            <Option decimalPlaces="0" defaultValue="1" increment="1" indent="1" inputType="numstepper" invalidMessage="Enter an integer greater than 0 and less than or equal to the total number of selected inputs for the lower bound of the number of inputs to consider splitting a node" maxValue="999999999" minValue="1" missingMessage="Enter an integer greater than 0 and less than or equal to the total number of selected inputs for the lower bound of the number of inputs to consider splitting a node" name="lowerVarsToTry" promptMessage="Enter an integer greater than 0 and less than or equal to the total number of selected inputs for the lower bound of the number of inputs to consider splitting a node" rangeMessage="Enter an integer greater than 0 and less than or equal to the total number of selected inputs for the lower bound of the number of inputs to consider splitting a node" required="true" width="75px">Lower bound:</Option>
+            <Option decimalPlaces="0" defaultValue="100" increment="1" indent="1" inputType="numstepper" invalidMessage="Enter an integer greater than 0 and less than or equal to the total number of selected inputs for the upper bound of the number of inputs to consider splitting a node" maxValue="999999999" minValue="1" missingMessage="Enter an integer greater than 0 and less than or equal to the total number of selected inputs for the upper bound of the number of inputs to consider splitting a node" name="upperVarsToTry" promptMessage="Enter an integer greater than 0 and less than or equal to the total number of selected inputs for the upper bound of the number of inputs to consider splitting a node" rangeMessage="Enter an integer greater than 0 and less than or equal to the total number of selected inputs for the upper bound of the number of inputs to consider splitting a node" required="true" width="75px">Upper bound:</Option>
+
+            <Option decimalPlaces="0,15" defaultValue="0.1" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the learning rate" maxValue="1" minValue="0.000001" missingMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the learning rate" name="learningRate" promptMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the learning rate" rangeMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the learning rate" required="true" width="60px">Learning rate:</Option>
+            <Option defaultValue="1" inputType="checkbox" name="useLearningRateRange">Autotune learning rate</Option>
+            <Option decimalPlaces="0,15" defaultValue="0.1" indent="1" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the initial value of the learning rate" maxValue="1" minValue="0.000001" missingMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the initial value of the learning rate" name="initialLearningRate" promptMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the initial value of the learning rate" rangeMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the initial value of the learning rate" required="true" width="100px">Initial value:</Option>
+            <Option decimalPlaces="0,15" defaultValue="0.01" indent="1" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the lower bound of the learning rate" maxValue="1" minValue="0.000001" missingMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the lower bound of the learning rate" name="lowerLearningRate" promptMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the lower bound of the learning rate" rangeMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the lower bound of the learning rate" required="true" width="100px">Lower bound:</Option>
+            <Option decimalPlaces="0,15" defaultValue="1" indent="1" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the upper bound of the learning rate" maxValue="1" minValue="0.000001" missingMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the upper bound of the learning rate" name="upperLearningRate" promptMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the upper bound of the learning rate" rangeMessage="Enter a value greater than or equal to 1e-6 and less than or equal to 1 for the upper bound of the learning rate" required="true" width="100px">Upper bound:</Option>
+
+            <Option inputType="string" name="optimizationGroup">Optimization</Option>
+
+            <Option decimalPlaces="0,15" defaultValue="0" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 for the Lasso regularization parameter" minValue="0" missingMessage="Enter a value greater than or equal to 0 for the Lasso regularization parameter" name="lassoRegularization" promptMessage="Enter a value greater than or equal to 0 for the Lasso regularization parameter" rangeMessage="Enter a value greater than or equal to 0 for the Lasso regularization parameter" required="true" width="100px">Lasso regularization:</Option>
+
+            <Option defaultValue="1" inputType="checkbox" name="useLassoRegularizationRange">Autotune LASSO regularization</Option>
+            <Option decimalPlaces="0,15" defaultValue="0" indent="1" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 for the initial value of the Lasso regularization parameter" minValue="0" missingMessage="Enter a value greater than or equal to 0 for the initial value of the Lasso regularization parameter" name="initialLassoRegularization" promptMessage="Enter a value greater than or equal to 0 for the initial value of the Lasso regularization parameter" rangeMessage="Enter a value greater than or equal to 0 for the initial value of the Lasso regularization parameter" required="true" width="100px">Initial value:</Option>
+            <Option decimalPlaces="0,15" defaultValue="0" indent="1" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 for the lower bound of the Lasso regularization parameter" minValue="0" missingMessage="Enter a value greater than or equal to 0 for the lower bound of the Lasso regularization parameter" name="lowerLassoRegularization" promptMessage="Enter a value greater than or equal to 0 for the lower bound of the Lasso regularization parameter" rangeMessage="Enter a value greater than or equal to 0 for the lower bound of the Lasso regularization parameter" required="true" width="100px">Lower bound:</Option>
+            <Option decimalPlaces="0,15" defaultValue="10" indent="1" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 for the upper bound of the Lasso regularization parameter" minValue="0" missingMessage="Enter a value greater than or equal to 0 for the upper bound of the Lasso regularization parameter" name="upperLassoRegularization" promptMessage="Enter a value greater than or equal to 0 for the upper bound of the Lasso regularization parameter" rangeMessage="Enter a value greater than or equal to 0 for the upper bound of the Lasso regularization parameter" required="true" width="100px">Upper bound:</Option>
+
+            <Option decimalPlaces="0,15" defaultValue="1" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 for the ridge regularization parameter" minValue="0" missingMessage="Enter a value greater than or equal to 0 for the ridge regularization parameter" name="ridgeRegularization" promptMessage="Enter a value greater than or equal to 0 for the ridge regularization parameter" rangeMessage="Enter a value greater than or equal to 0 for the ridge regularization parameter" required="true" width="100px">Ridge regularization:</Option>
+
+            <Option defaultValue="1" inputType="checkbox" name="useRidgeRegularizationRange">Autotune ridge regularization</Option>
+            <Option decimalPlaces="0,15" defaultValue="1" indent="1" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 for the initial value of the ridge regularization parameter" minValue="0" missingMessage="Enter a value greater than or equal to 0 for the initial value of the ridge regularization parameter" name="initialRidgeRegularization" promptMessage="Enter a value greater than or equal to 0 for the initial value of the ridge regularization parameter" rangeMessage="Enter a value greater than or equal to 0 for the initial value of the ridge regularization parameter" required="true" width="100px">Initial value:</Option>
+            <Option decimalPlaces="0,15" defaultValue="0" indent="1" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 for the lower bound of the ridge regularization parameter" minValue="0" missingMessage="Enter a value greater than or equal to 0 for the lower bound of the ridge regularization parameter" name="lowerRidgeRegularization" promptMessage="Enter a value greater than or equal to 0 for the lower bound of the ridge regularization parameter" rangeMessage="Enter a value greater than or equal to 0 for the lower bound of the ridge regularization parameter" required="true" width="100px">Lower bound:</Option>
+            <Option decimalPlaces="0,15" defaultValue="10" indent="1" inputType="numbertext" invalidMessage="Enter a value greater than or equal to 0 for the upper bound of the ridge regularization parameter" minValue="0" missingMessage="Enter a value greater than or equal to 0 for the upper bound of the ridge regularization parameter" name="upperRidgeRegularization" promptMessage="Enter a value greater than or equal to 0 for the upper bound of the ridge regularization parameter" rangeMessage="Enter a value greater than or equal to 0 for the upper bound of the ridge regularization parameter" required="true" width="100px">Upper bound:</Option>
+
+            <Option inputType="string" name="autotuneGroup">Autotune Settings</Option>
+            <Option helpMessageRef="autotuneReadMore" inputType="checkbox" name="autotune">Automatically tune selected options</Option>
+            <Option inputType="string" name="autotuneReadMore">The autotuning process explores many different combinations of algorithm options, training a model for each combination (and multiple models when using cross-validation).  In an effort to find the best model, some of these combinations will be configurations that take a long time to train.  The overall time it takes to find the best model will vary and you should expect this process to take significantly longer than training a single model.</Option>
+
+            <Option defaultValue="autoPartitionChoice" inputType="combobox" name="autotuneCombo">Validation method:</Option>
+            <Option inputType="string" name="autoPartitionChoice">Partition</Option>
+            <Option inputType="string" name="autoCVChoice">K-fold cross-validation</Option>
+
+            <Option defaultValue="0.3" indent="1" inputType="numbertext" invalidMessage="Enter a value greater than 0 and less than 1 for the proportion of validation data observations in the data set" maxValue="0.9999999999" minValue="0.0000000001" missingMessage="Enter a value greater than 0 and less than 1 for the proportion of validation data observations in the data set" name="autoValidationFraction" promptMessage="Enter a value greater than 0 and less than 1 for the proportion of validation data observations in the data set" rangeMessage="Enter a value greater than 0 and less than 1 for the proportion of validation data observations in the data set" required="true" width="50px">Proportion of validation cases:</Option>
+            <Option decimalPlaces="0" defaultValue="5" increment="1" indent="1" inputType="numstepper" invalidMessage="Enter an integer greater than or equal to 2 and less than or equal to 20 for the number of folds" maxValue="20" minValue="2" missingMessage="Enter an integer greater than or equal to 2 and less than or equal to 20 for the number of folds" name="autoNFolds" promptMessage="Enter an integer greater than or equal to 2 and less than or equal to 20 for the number of folds" rangeMessage="Enter an integer greater than or equal to 2 and less than or equal to 20 for the number of folds" required="true" width="50px">Number of folds:</Option>
+
+            <Option decimalPlaces="0,15" defaultValue="60" increment="1" inputType="numstepper" invalidMessage="Enter a number greater than or equal to 1 for the maximum time in minutes" maxValue="999999999" minValue="1" missingMessage="Enter a number greater than or equal to 1 for the maximum time in minutes" name="autoMaxtime" promptMessage="Enter a number greater than or equal to 1 for the maximum time in minutes" rangeMessage="Enter a number greater than or equal to 1 for the maximum time in minutes" required="true" width="50px">Maximum time (in minutes):</Option>
+            <Option decimalPlaces="0" defaultValue="5" increment="1" inputType="numstepper" invalidMessage="Enter an integer greater than or equal to 1 for the maximum number of iterations" maxValue="999999999" minValue="1" missingMessage="Enter an integer greater than or equal to 1 for the maximum number of iterations" name="autoMaxiter" promptMessage="Enter an integer greater than or equal to 1 for the maximum number of iterations" rangeMessage="Enter an integer greater than or equal to 1 for the maximum number of iterations" required="true" width="50px">Maximum iterations:</Option>
+
+            <Option defaultValue="gaSearchChoice" inputType="combobox" name="autoSearchMethod">Search method:</Option>
+            <Option inputType="string" name="gaSearchChoice">Genetic algorithm</Option>
+            <Option inputType="string" name="lhsSearchChoice">Latin hypercube sample</Option>
+            <Option inputType="string" name="randomSearchChoice">Random sample</Option>
+            <Option inputType="string" name="bayesSearchChoice">Bayesian sample</Option>
+
+            <Option decimalPlaces="0" defaultValue="50" increment="1" indent="1" inputType="numstepper" invalidMessage="Enter an integer greater than 1 for the sample size" maxValue="999999999" minValue="2" missingMessage="Enter an integer greater than 1 for the sample size" name="autoSampleSize" promptMessage="Enter an integer greater than 1 for the sample size" rangeMessage="Enter an integer greater than 1 for the sample size" required="true" width="75px">Sample size:</Option>
+
+            <Option defaultValue="autotuneMiscChoice" inputType="combobox" name="autoNominalObjective">Objective:</Option>
+            <Option defaultValue="autotuneASEChoice" inputType="combobox" name="autoIntervalObjective">Objective:</Option>
+
+            <Option inputType="string" name="autotuneASEChoice">Average square error</Option>
+            <Option inputType="string" name="autotuneAUCChoice">Area under curve</Option>
+            <Option inputType="string" name="autotuneF1Choice">F1 score</Option>
+            <Option inputType="string" name="autotuneF05Choice">F0.5 score</Option>
+            <Option inputType="string" name="autotuneGammaChoice">Goodman-Kruskal gamma</Option>
+            <Option inputType="string" name="autotuneGiniChoice">Gini's coefficient</Option>
+            <Option inputType="string" name="autotuneMCLLChoice">Multi-class log loss</Option>
+            <Option inputType="string" name="autotuneMiscChoice">Misclassification rate</Option>
+            <Option inputType="string" name="autotuneRaseChoice">Root average square error</Option>
+            <Option inputType="string" name="autotuneTauChoice">Kendall's Tau-a</Option>
+            <Option inputType="string" name="autotuneMAEChoice">Mean absolute error</Option>
+            <Option inputType="string" name="autotuneMSLEChoice">Mean square logarithmic error</Option>
+            <Option inputType="string" name="autotuneRMAEChoice">Root mean absolute error</Option>
+            <Option inputType="string" name="autotuneRMSLEChoice">Root mean square logarithmic error</Option>
+            <Option inputType="string" name="autotuneKSChoice">Kolmogorov-Smirnov statistic</Option>
+
+            <Option defaultValue="autoUseFirstLevelChoice" inputType="combobox" name="autoTargetEventCombo">Event of interest:</Option>
+            <Option inputType="string" name="autoUseFirstLevelChoice">Use first target value</Option>
+            <Option inputType="string" name="autoSelectLevelChoice">Select target value</Option>
+
+            <Option indent="1" inputType="distinct" name="autoEventCombo" required="true" selectMessage="Select a level" source="categoricalTarget">Selected event:</Option>
+
+            <Option inputType="checkbox" name="useAutoNParallel">Set number of parallel evaluations</Option>
+            <Option decimalPlaces="0" defaultValue="2" increment="1" indent="1" inputType="numstepper" invalidMessage="Enter an integer greater than or equal to 1 for the number of parallel evaluations" maxValue="999999999" minValue="1" missingMessage="Enter an integer greater than or equal to 1 for the number of parallel evaluations" name="autoNParallel" promptMessage="Enter an integer greater than or equal to 1 for the number of parallel evaluations" rangeMessage="Enter an integer greater than or equal to 1 for the number of parallel evaluations" required="true" width="50px">Parallel evaluations:</Option>
+
+            <Option inputType="string" name="autotuneDetailsGroup">Genetic Algorithm Settings</Option>
+            <Option decimalPlaces="0" defaultValue="50" increment="1" inputType="numstepper" invalidMessage="Enter an integer greater than or equal to 3 for the maximum number of evaluations" maxValue="999999999" minValue="3" missingMessage="Enter an integer greater than or equal to 3 for the maximum number of evaluations" name="autoMaxevals" promptMessage="Enter an integer greater than or equal to 3 for the maximum number of evaluations" rangeMessage="Enter an integer greater than or equal to 3 for the maximum number of evaluations" required="true" width="50px">Maximum evaluations:</Option>
+            <Option decimalPlaces="0" defaultValue="10" increment="1" inputType="numstepper" invalidMessage="Enter an integer greater than or equal to 2 for the number of evaluations per iteration" maxValue="999999999" minValue="2" missingMessage="Enter an integer greater than or equal to 2 for the number of evaluations per iteration" name="autoPopsize" promptMessage="Enter an integer greater than or equal to 2 for the number of evaluations per iteration" rangeMessage="Enter an integer greater than or equal to 2 for the number of evaluations per iteration" required="true" width="50px">Evaluations per iteration:</Option>
+
+            <Option defaultValue="tableHistory" inputType="combobox" name="tuneHistoryCombo">Evaluation history report:</Option>
+            <Option inputType="string" name="tableHistory" returnValue="table">Results table</Option>
+            <Option inputType="string" name="logHistory" returnValue="log">Log</Option>
+            <Option inputType="string" name="allHistory" returnValue="all">Results table and log</Option>
+            <Option inputType="string" name="noHistory" returnValue="none">Suppress report</Option>
+
+            <Option inputType="string" name="tunerplotGroup">Autotune plots</Option>
+            <Option inputType="checkbox" name="tunerPlot">Objective history</Option>
+            <Option inputType="checkbox" name="bestPlot">Best objective history</Option>
+            <Option inputType="checkbox" name="byparmPlot">Option values vs. objective</Option>
+
+            <Option inputType="string" name="outputTab">Output</Option>
+            <Option inputType="string" name="outputGroup">Output Data</Option>
+
+            <Option inputType="string" name="odsOutputLibrefNote">The following data sets must use a SAS libref:</Option>
+            <Option inputType="string" name="casOutputLibrefNote">The following tables must use a CAS engine libref:</Option>
+
+            <Option inputType="checkbox" name="outputDS">Save scored data</Option>
+            <Option indent="1" inputType="outputdata" libraryEngineInclude="cas" name="outputDSName" required="true" unique="true">Specify a CAS table:</Option>
+
+            <Option indent="1" inputType="string" name="includeVarsInstruction">Include variables from the input CAS table:</Option>
+            <Option indent="1" inputType="radio" name="includeAllVars" variable="includeVars">All variables</Option>
+            <Option defaultValue="1" indent="1" inputType="radio" name="includeAnalysisVars" variable="includeVars">Variables used in the analysis</Option>
+            <Option indent="1" inputType="radio" name="includeSelectedVars" variable="includeVars">Selected variables</Option>
+
+            <Option inputType="checkbox" name="outModelDS">Save model</Option>
+            <Option indent="1" inputType="outputdata" libraryEngineInclude="cas" name="outModelDSName" required="true" unique="true">Specify a CAS table:</Option>
+
+            <Option inputType="checkbox" name="outFitDS">Save fit statistics</Option>
+            <Option defaultValue="work.Gradboost_fit" indent="1" inputType="outputdata" libraryEngineInclude="v9" name="outFitDSName" required="true" unique="true">Specify a SAS data set:</Option>
+
+            <Option inputType="checkbox" name="outVarImpDS">Save variable importance measures</Option>
+            <Option defaultValue="work.Gradboost_varimp" indent="1" inputType="outputdata" libraryEngineInclude="v9" name="outVarImpDSName" required="true" unique="true">Specify a SAS data set:</Option>
+
+            <Option inputType="checkbox" name="scoreCode">Save scoring model</Option>
+            <Option indent="1" inputType="outputdata" libraryEngineInclude="CAS" name="scoringCodeFileName" required="true" unique="true">Specify a CAS table:</Option>
+            <Option indent="2" inputType="string" name="includeVarsInstruction2">Include variables from the input CAS table:</Option>
+            <Option indent="2" inputType="radio" name="includeAllVars2" variable="includeVars2">All variables</Option>
+            <Option defaultValue="1" indent="2" inputType="radio" name="includeAnalysisVarsPred2" variable="includeVars2">Variables used in the analysis excluding the target, for prediction</Option>
+            <Option indent="2" inputType="radio" name="includeAnalysisVarsAssess2" variable="includeVars2">Variables used in the analysis including the target, for assessment</Option>
+            <Option indent="2" inputType="radio" name="includeSelectedVars2" variable="includeVars2">Selected variables</Option>
+
+            <Option inputType="string" name="plotsGroup">Plots</Option>
+            <Option inputType="checkbox" name="asePlot">Average square error by number of trees</Option>
+            <Option inputType="checkbox" name="missclassPlot">Misclassifications by number of trees</Option>
+            <Option inputType="checkbox" name="variableImportancePlot">Variable importance chart</Option>
+
+<!-- these resources are used to i18n the plot -->
+            <Option inputType="string" name="plotTitle1">Misclassifications by Number of Trees</Option>
+            <Option inputType="string" name="plotTitle1int">Average Square Error by Number of Trees</Option>
+            <Option inputType="string" name="plotTitle2">Out-of-Bag vs. Training</Option>
+            <Option inputType="string" name="plotTitle2v">Training vs. Validation</Option>
+<!-- plotTitle2a is TEMPORARY for 16w17 until OOB becomes available -->
+
+            <Option inputType="string" name="plotTitle2a">Training</Option>
+            <Option inputType="string" name="asePlotTitle">Average Square Error</Option>
+            <Option inputType="string" name="missclassPlotTitle">Misclassification Rate</Option>
+            <Option inputType="string" name="nTreesPlotTitle">Number of Trees</Option>
+            <Option inputType="string" name="trainingPlotTitle">Training</Option>
+            <Option inputType="string" name="oobPlotTitle">OOB</Option>
+            <Option inputType="string" name="validPlotTitle">Validation</Option>
+            <Option inputType="string" name="variableImportancePlotTitle">Variable Importance</Option>
+            <Option inputType="string" name="autotitle1">Tune with {0}</Option>
+            <Option inputType="string" name="odscomment">NOTE: The output statements are required for the autotune plots.</Option>
+
+<!-- Interpretability plots -->
+            <Option inputType="string" name="interpretGroup">Interpretability Plots</Option>
+            <Option inputType="checkbox" name="pdPlot">Partial dependence plot</Option>
+            <Option helpMessageRef="iceplothelp" inputType="checkbox" name="icePlot">Individual conditional expectation plot</Option>
+            <Option inputType="string" name="iceplothelp">Only the first 200 plots are created.  For other plots, copy the PROC SGPLOT code and alter the WHERE statement.</Option>
+            <Option defaultValue="intervalPD" indent="1" inputType="combobox" name="pdCombo">Analysis variable type:</Option>
+            <Option inputType="string" name="intervalPD">Interval input</Option>
+            <Option inputType="string" name="nominalPD">Nominal input</Option>
+            <Option indent="2" inputType="combobox" name="pdPlotVar1" required="true" selectMessage="Select an interval input" sourceLink="intervalVariables">Variable:</Option>
+            <Option defaultValue="10" increment="1" indent="2" inputType="numstepper" invalidMessage="Enter a value between 2 and 100 inclusive" maxValue="100" minValue="2" missingMessage="Enter a value between 2 and 100 inclusive" name="pdBins" promptMessage="Enter a value between 2 and 100 inclusive" rangeMessage="Enter a value between 2 and 100 inclusive" required="true">Number of bins:</Option>
+            <Option indent="2" inputType="combobox" name="pdPlotVar2" required="true" selectMessage="Select a nominal input" sourceLink="nominalVariables">Variable:</Option>
+            <Option defaultValue="10" increment="1" indent="2" inputType="numstepper" invalidMessage="Enter a value between 2 and 100 inclusive" maxValue="100" minValue="2" missingMessage="Enter a value between 2 and 100 inclusive" name="pdMaxlev" promptMessage="Enter a value between 2 and 100 inclusive" rangeMessage="Enter a value between 2 and 100 inclusive" required="true">Maximum number of levels:</Option>
+            <Option helpMessageRef="pdPlotValueMsg" indent="1" inputType="distinct" name="pdPlotValue" required="true" source="categoricalTarget">Value for nominal target variable:</Option>
+            <Option inputType="string" name="pdPlotValueMsg">The level of interest for a nominal target variable must be specified</Option>
+            <Option inputType="string" name="pdPlotTitle">Partial Dependence:</Option>
+            <Option inputType="string" name="icePlotTitle">Individual Conditional Expectation:</Option>
+            <Option inputType="string" name="icePlotMsg">Only the first 200 observations will be plotted</Option>
+
+
+<!-- Partition data -->
+            <Option inputType="string" name="partitionGroup">Partition Data</Option>
+            <Option inputType="string" name="inputDataLabel">Input data contains training data. Include:</Option>
+            <Option inputType="checkbox" name="testDataChoice">Test data</Option>
+            <Option inputType="checkbox" name="validationDataChoice">Validation data</Option>
+            <Option indent="1" inputType="numbertext" invalidMessage="Enter a value greater than 0 and less than 1 for the proportion of training data observations in the data set" maxValue="0.9999999999" minValue="0.0000000001" missingMessage="Enter a value greater than 0 and less than 1 for the proportion of training data observations in the data set" name="trainingDataFraction" promptMessage="Enter a value greater than 0 and less than 1 for the proportion of training data observations in the data set" rangeMessage="Enter a value greater than 0 and less than 1 for the proportion of training data observations in the data set" required="true" width="100px">Proportion of training cases:</Option>
+            <Option indent="1" inputType="numbertext" invalidMessage="Enter a value greater than 0 and less than 1 for the proportion of test data observations in the data set" maxValue="0.9999999999" minValue="0.0000000001" missingMessage="Enter a value greater than 0 and less than 1 for the proportion of test data observations in the data set" name="testDataFraction" promptMessage="Enter a value greater than 0 and less than 1 for the proportion of test data observations in the data set" rangeMessage="Enter a value greater than 0 and less than 1 for the proportion of test data observations in the data set" required="true" width="100px">Proportion of testing cases:</Option>
+
+            <Option indent="1" inputType="numbertext" invalidMessage="Enter a value greater than 0 and less than 1 for the proportion of validation data observations in the data set" maxValue="0.9999999999" minValue="0.0000000001" missingMessage="Enter a value greater than 0 and less than 1 for the proportion of validation data observations in the data set" name="validationDataFraction" promptMessage="Enter a value greater than 0 and less than 1 for the proportion of validation data observations in the data set" rangeMessage="Enter a value greater than 0 and less than 1 for the proportion of validation data observations in the data set" required="true" width="100px">Proportion of validation cases:</Option>
+
+            <Option defaultValue="0" inputType="checkbox" name="useRandomSeed">Random number seed</Option>
+            <Option decimalPlaces="0" indent="1" inputType="numbertext" invalidMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed" maxValue="2147483647" minValue="1" missingMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed" name="randomSeed" promptMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed" rangeMessage="Enter an integer greater than 0 and less than 2,147,483,648 for the random seed" required="true" width="100px">Random seed:</Option>
+            <Option indent="1" inputType="string" name="partitionRandomSeedNote">Specifying a random number seed may not replicate results in a distributed computing environment.</Option>
+
+            <Option defaultValue="partitionDataFractionChoice" inputType="combobox" name="partitionDataCombo">Identify partitions:</Option>
+            <Option inputType="string" name="partitionDataFractionChoice">Specify a sample proportion</Option>
+            <Option inputType="string" name="partitionDataVariableChoice">Choose a value of a partitioning variable</Option>
+
+            <Option indent="2" inputType="distinct" name="validationLevelCombo" required="true" source="partitionVariable">Validation data value:</Option>
+            <Option indent="2" inputType="distinct" name="testLevelCombo" required="true" source="partitionVariable">Test data value:</Option>
+            <Option indent="2" inputType="checkbox" name="useTrainingLevel">Select training data value</Option>
+            <Option indent="2" inputType="distinct" name="trainingLevelCombo" required="true" source="partitionVariable">Training data value:</Option>
+
+            <Option inputType="string" name="defaultLabel">default</Option>
+            <Option inputType="string" name="bestLabel">best</Option>
+            <Option inputType="string" name="interpmsg">Note: This feature requires at least 2 input variables</Option>
+         </Options>
+    </Metadata>
+
+    <UI>
+        <Container option="dataTab">
+            <Group open="true" option="dataGroup">
+                <DataItem data="dataset"/>
+
+                <Group open="true" option="partitionGroup">
+                   <OptionItem option="inputDataLabel"/>
+                    <OptionItem option="validationDataChoice"/>
+                    <OptionItem option="testDataChoice"/>
+
+                    <OptionChoice option="partitionDataCombo">
+                        <OptionItem option="partitionDataFractionChoice"/>
+                        <OptionItem option="partitionDataVariableChoice"/>
+                    </OptionChoice>
+                    <RoleItem role="partitionVariable"/>
+
+                    <OptionChoice option="validationLevelCombo"/>
+                    <OptionChoice option="testLevelCombo"/>
+                    <OptionItem option="useTrainingLevel"/>
+                    <OptionChoice option="trainingLevelCombo"/>
+
+<!--
+                    <OptionItem option="trainingDataFraction"/>
+-->
+                    <OptionItem option="validationDataFraction"/>
+                    <OptionItem option="testDataFraction"/>
+
+                    <OptionItem option="useRandomSeed"/>
+                    <OptionItem option="randomSeed"/>
+                    <OptionItem option="partitionRandomSeedNote"/>
+                </Group>
+            </Group>
+
+            <Group open="true" option="rolesGroup">
+                <Group open="true" option="targetGroup">
+                    <OptionItem option="useNominalTarget"/>
+                    <OptionItem option="useIntervalTarget"/>
+                    <RoleItem role="categoricalTarget"/>
+                    <RoleItem role="continuousTarget"/>
+                </Group>
+                <Group open="true" option="inputsGroup">
+                    <RoleItem role="intervalVariables"/>
+                    <OptionItem option="useIntervalBins"/>
+                    <OptionItem option="intervalBins"/>
+                    <RoleItem role="nominalVariables"/>
+                </Group>
+            </Group>
+        </Container>
+
+
+        <Container option="optionsTab">
+            <Group open="true" option="methodsGroup">
+                <OptionItem option="autotune"/>
+
+                    <OptionItem option="useLassoRegularizationRange"/>
+                    <OptionItem option="lassoRegularization"/>
+                    <HorizontalLayout>
+                       <OptionItem option="initialLassoRegularization"/>
+                       <OptionItem option="lowerLassoRegularization"/>
+                       <OptionItem option="upperLassoRegularization"/>
+                    </HorizontalLayout>
+
+                    <OptionItem option="useRidgeRegularizationRange"/>
+                    <OptionItem option="ridgeRegularization"/>
+                    <HorizontalLayout>
+                       <OptionItem option="initialRidgeRegularization"/>
+                       <OptionItem option="lowerRidgeRegularization"/>
+                       <OptionItem option="upperRidgeRegularization"/>
+                    </HorizontalLayout>
+
+                    <OptionItem option="useInbagFractionRange"/>
+                    <OptionItem option="inbagFraction"/>
+                    <HorizontalLayout>
+                       <OptionItem option="initialInbagFraction"/>
+                       <OptionItem option="lowerInbagFraction"/>
+                       <OptionItem option="upperInbagFraction"/>
+                    </HorizontalLayout>
+
+                    <OptionItem option="useLearningRateRange"/>
+                    <OptionItem option="learningRate"/>
+                    <HorizontalLayout>
+                       <OptionItem option="initialLearningRate"/>
+                       <OptionItem option="lowerLearningRate"/>
+                       <OptionItem option="upperLearningRate"/>
+                    </HorizontalLayout>
+
+                    <OptionItem option="useMaxTreeRange"/>
+                    <OptionItem option="maxTrees"/>
+                    <HorizontalLayout>
+                       <OptionItem option="initialMaxTrees"/>
+                       <OptionItem option="lowerMaxTrees"/>
+                       <OptionItem option="upperMaxTrees"/>
+                    </HorizontalLayout>
+
+                    <OptionItem option="useVarsToTryRange"/>
+                    <OptionChoice option="varsToTryCombo">
+                        <OptionItem option="varsToTryAllChoice"/>
+                        <OptionItem option="varsToTryCustomChoice"/>
+                    </OptionChoice>
+
+                    <OptionItem option="customVarsToTryValue"/>
+                    <HorizontalLayout>
+                       <OptionItem option="initialVarsToTry"/>
+                       <OptionItem option="lowerVarsToTry"/>
+                       <OptionItem option="upperVarsToTry"/>
+                    </HorizontalLayout>
+
+
+                    <OptionItem option="maxDepth"/>
+                    <OptionItem option="minLeafSize"/>
+                    <OptionItem option="maxBranches"/>
+
+                 <Group option="samplingGroup">
+
+                    <OptionItem option="useInbagRandomSeed"/>
+                    <OptionItem option="inbagRandomSeed"/>
+                    <OptionItem option="inbagRandomSeedNote"/>
+
+                </Group>
+
+                <Group open="true" option="autotuneGroup">
+
+                    <OptionChoice option="autoSearchMethod">
+                        <OptionItem option="gaSearchChoice"/>
+                        <OptionItem option="lhsSearchChoice"/>
+                        <OptionItem option="randomSearchChoice"/>
+                        <OptionItem option="bayesSearchChoice"/>
+                    </OptionChoice>
+
+                    <Group option="autotuneDetailsGroup">
+                       <HorizontalLayout>
+                          <OptionItem option="autoMaxiter"/>
+                          <OptionItem option="autoMaxevals"/>
+                          <OptionItem option="autoPopsize"/>
+                       </HorizontalLayout>
+                    </Group>
+                    <OptionItem option="autoSampleSize"/>
+
+                    <OptionChoice option="autoNominalObjective">
+                        <OptionItem option="autotuneAUCChoice"/>
+                        <OptionItem option="autotuneASEChoice"/>
+                        <OptionItem option="autotuneF1Choice"/>
+                        <OptionItem option="autotuneF05Choice"/>
+                        <OptionItem option="autotuneGiniChoice"/>
+                        <OptionItem option="autotuneGammaChoice"/>
+                        <OptionItem option="autotuneTauChoice"/>
+                        <OptionItem option="autotuneKSChoice"/>
+                        <OptionItem option="autotuneMiscChoice"/>
+                        <OptionItem option="autotuneMCLLChoice"/>
+                        <OptionItem option="autotuneRaseChoice"/>
+                   </OptionChoice>
+
+                    <OptionChoice option="autoIntervalObjective">
+
+                        <OptionItem option="autotuneASEChoice"/>
+                        <OptionItem option="autotuneMAEChoice"/>
+                        <OptionItem option="autotuneMSLEChoice"/>
+                        <OptionItem option="autotuneRaseChoice"/>
+                        <OptionItem option="autotuneRMAEChoice"/>
+                        <OptionItem option="autotuneRMSLEChoice"/>
+                    </OptionChoice>
+
+                    <OptionChoice option="autoTargetEventCombo">
+                        <OptionItem option="autoUseFirstLevelChoice"/>
+                        <OptionItem option="autoSelectLevelChoice"/>
+                    </OptionChoice>
+                    <OptionItem option="autoEventCombo"/>
+
+                    <OptionItem option="autoMaxtime"/>
+
+                    <OptionChoice option="autotuneCombo">
+                        <OptionItem option="autoPartitionChoice"/>
+                        <OptionItem option="autoCVChoice"/>
+                    </OptionChoice>
+                    <OptionItem option="autoValidationFraction"/>
+                    <OptionItem option="autoNFolds"/>
+                    <OptionItem option="useAutoNParallel"/>
+                    <OptionItem option="autoNParallel"/>
+
+                    <OptionChoice option="tuneHistoryCombo">
+                      <OptionItem option="tableHistory"/>
+                      <OptionItem option="logHistory"/>
+                      <OptionItem option="allHistory"/>
+                      <OptionItem option="noHistory"/>
+                    </OptionChoice>
+
+                </Group>
+
+            </Group>
+            <Group open="true" option="plotsGroup">
+                <OptionItem option="asePlot"/>
+                <OptionItem option="missclassPlot"/>
+                <OptionItem option="variableImportancePlot"/>
+                <Group option="tunerplotGroup">
+                   <OptionItem option="tunerPlot"/>
+                   <OptionItem option="bestPlot"/>
+                   <OptionItem option="byparmPlot"/>
+                </Group>
+            </Group>
+
+            <Group open="true" option="interpretGroup">
+               <OptionItem option="interpmsg"/>
+               <OptionItem option="pdPlot"/>
+               <OptionItem option="icePlot"/>
+               <OptionItem option="pdPlotValue"/>
+               <OptionChoice option="pdCombo">
+                  <OptionItem option="intervalPD"/>
+                  <OptionItem option="nominalPD"/>
+               </OptionChoice>
+               <OptionItem option="pdPlotVar1"/>
+               <OptionItem option="pdBins"/>
+               <OptionItem option="pdPlotVar2"/>
+               <OptionItem option="pdMaxlev"/>
+            </Group>
+
+        </Container>
+
+        <Container option="outputTab">
+            <Group open="true" option="outputGroup">
+                <OptionItem option="casOutputLibrefNote"/>
+                <OptionItem option="outputDS"/>
+                <OptionItem option="outputDSName"/>
+                <OptionItem option="includeVarsInstruction"/>
+                <OptionItem option="includeAllVars"/>
+                <OptionItem option="includeAnalysisVars"/>
+                <OptionItem option="includeSelectedVars"/>
+                <RoleItem role="copyVariables"/>
+
+                <OptionItem option="outModelDS"/>
+                <OptionItem option="outModelDSName"/>
+
+                <OptionItem option="scoreCode"/>
+                <OptionItem option="scoringCodeFileName"/>
+                <OptionItem option="includeVarsInstruction2"/>
+                <OptionItem option="includeAllVars2"/>
+                <OptionItem option="includeAnalysisVarsPred2"/>
+                <OptionItem option="includeAnalysisVarsAssess2"/>
+                <OptionItem option="includeSelectedVars2"/>
+                <RoleItem role="outputVariables2"/>
+
+                <OptionItem option="odsOutputLibrefNote"/>
+                <OptionItem option="outFitDS"/>
+                <OptionItem option="outFitDSName"/>
+                <OptionItem option="outVarImpDS"/>
+                <OptionItem option="outVarImpDSName"/>
+            </Group>
+        </Container>
+
+    </UI>
+
+    <Dependencies>
+ <!-- Dependencies whose targets are used in conditions of dependencies -->
+ <!-- These dependencies must precede the dependencies that use one of these targets in a dependency condition -->
+        <Dependency condition="($autotune == 1)">
+            <Target action="show" conditionResult="true" option="autotuneGroup"/>
+            <Target action="hide" conditionResult="false" option="autotuneGroup"/>
+            <Target action="show" conditionResult="true" option="useMaxTreeRange"/>
+            <Target action="hide" conditionResult="false" option="useMaxTreeRange"/>
+            <Target action="show" conditionResult="true" option="useLearningRateRange"/>
+            <Target action="hide" conditionResult="false" option="useLearningRateRange"/>
+            <Target action="show" conditionResult="true" option="useInbagFractionRange"/>
+            <Target action="hide" conditionResult="false" option="useInbagFractionRange"/>
+            <Target action="show" conditionResult="true" option="useVarsToTryRange"/>
+            <Target action="hide" conditionResult="false" option="useVarsToTryRange"/>
+            <Target action="show" conditionResult="true" option="useLassoRegularizationRange"/>
+            <Target action="hide" conditionResult="false" option="useLassoRegularizationRange"/>
+            <Target action="show" conditionResult="true" option="useRidgeRegularizationRange"/>
+            <Target action="hide" conditionResult="false" option="useRidgeRegularizationRange"/>
+            <Target action="show" conditionResult="true" option="tunerplotGroup"/>
+            <Target action="hide" conditionResult="false" option="tunerplotGroup"/>
+        </Dependency>
+
+        <Dependency condition="($targetType == 'useNominalTarget' &amp;&amp; $autotune == 1)">
+            <Target action="show" conditionResult="true" option="autoTargetEventCombo"/>
+            <Target action="hide" conditionResult="false" option="autoTargetEventCombo"/>
+        </Dependency>
+
+        <Dependency condition="($autotune == 1 &amp;&amp; !($validationDataChoice=='1') &amp;&amp; !($testDataChoice=='1'))">
+            <Target action="show" conditionResult="true" option="autotuneCombo"/>
+            <Target action="hide" conditionResult="false" option="autotuneCombo"/>
+        </Dependency>
+
+        <Dependency condition="(!($autotune == 1) || ($autotune == 1 &amp;&amp; !($useVarsToTryRange == 1)))">
+            <Target action="show" conditionResult="true" option="varsToTryCombo"/>
+            <Target action="hide" conditionResult="false" option="varsToTryCombo"/>
+        </Dependency>
+
+        <Dependency condition="($intervalVariables.size() &gt; 0)">
+            <Target action="show" conditionResult="true" option="useIntervalBins"/>
+            <Target action="hide" conditionResult="false" option="useIntervalBins"/>
+         </Dependency>
+
+        <Dependency condition="($validationDataChoice=='1' || $testDataChoice=='1')">
+            <Target action="show" conditionResult="true" option="partitionDataCombo"/>
+            <Target action="hide" conditionResult="false" option="partitionDataCombo"/>
+        </Dependency>
+        <Dependency condition="(($validationDataChoice=='1' || $testDataChoice=='1') &amp;&amp; $partitionDataCombo == 'partitionDataVariableChoice')">
+            <Target action="show" conditionResult="true" option="partitionVariable"/>
+            <Target action="hide" conditionResult="false" option="partitionVariable"/>
+        </Dependency>
+        <Dependency condition="($validationDataChoice=='1' || $testDataChoice=='1') &amp;&amp;             $partitionDataCombo == 'partitionDataFractionChoice'">
+            <Target action="show" conditionResult="true" option="useRandomSeed"/>
+            <Target action="hide" conditionResult="false" option="useRandomSeed"/>
+        </Dependency>
+
+        <Dependency condition="(($validationDataChoice==1 || $testDataChoice==1) &amp;&amp;             $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp;             $partitionVariable.size() &gt; 0             )">
+            <Target action="show" conditionResult="true" option="useTrainingLevel"/>
+            <Target action="hide" conditionResult="false" option="useTrainingLevel"/>
+        </Dependency>
+
+        <Dependency condition="($outputDS==1)">
+            <Target action="show" conditionResult="true" option="includeVars"/>
+            <Target action="hide" conditionResult="false" option="includeVars"/>
+         </Dependency>
+
+        <Dependency condition="($scoreCode==1)">
+            <Target action="show" conditionResult="true" option="includeVars2"/>
+            <Target action="hide" conditionResult="false" option="includeVars2"/>
+        </Dependency>
+
+ <!-- End of Dependencies whose targets are used in conditions of dependencies -->
+
+        <Dependency condition="($intervalVariables.size() &gt; 0 &amp;&amp; $useIntervalBins == 1)">
+            <Target action="show" conditionResult="true" option="intervalBins"/>
+            <Target action="hide" conditionResult="false" option="intervalBins"/>
+         </Dependency>
+
+        <Dependency condition="($targetType == 'useNominalTarget')">
+            <Target action="show" conditionResult="true" option="categoricalTarget"/>
+            <Target action="hide" conditionResult="false" option="categoricalTarget"/>
+            <Target action="show" conditionResult="true" option="missclassPlot"/>
+            <Target action="hide" conditionResult="false" option="missclassPlot"/>
+         </Dependency>
+        <Dependency condition="($targetType == 'useIntervalTarget')">
+            <Target action="show" conditionResult="true" option="continuousTarget"/>
+            <Target action="hide" conditionResult="false" option="continuousTarget"/>
+            <Target action="show" conditionResult="true" option="asePlot"/>
+            <Target action="hide" conditionResult="false" option="asePlot"/>
+        </Dependency>
+
+        <Dependency condition="(!($autotune == 1) || ($autotune == 1 &amp;&amp; !($useMaxTreeRange == 1)))">
+            <Target action="show" conditionResult="true" option="maxTrees"/>
+            <Target action="hide" conditionResult="false" option="maxTrees"/>
+        </Dependency>
+
+        <Dependency condition=" (!($autotune == 1) || ($autotune == 1 &amp;&amp; !($useInbagFractionRange == 1))) ">
+            <Target action="show" conditionResult="true" option="inbagFraction"/>
+            <Target action="hide" conditionResult="false" option="inbagFraction"/>
+        </Dependency>
+
+        <Dependency condition="(!($autotune == 1) || ($autotune == 1 &amp;&amp; !($useLearningRateRange == 1)))">
+            <Target action="show" conditionResult="true" option="learningRate"/>
+            <Target action="hide" conditionResult="false" option="learningRate"/>
+        </Dependency>
+
+        <Dependency condition="(!($autotune == 1) || ($autotune == 1 &amp;&amp; !($useLassoRegularizationRange == 1)))">
+            <Target action="show" conditionResult="true" option="lassoRegularization"/>
+            <Target action="hide" conditionResult="false" option="lassoRegularization"/>
+        </Dependency>
+
+        <Dependency condition="(!($autotune == 1) || ($autotune == 1 &amp;&amp; !($useRidgeRegularizationRange == 1)))">
+            <Target action="show" conditionResult="true" option="ridgeRegularization"/>
+            <Target action="hide" conditionResult="false" option="ridgeRegularization"/>
+        </Dependency>
+
+        <Dependency condition="($autotune == 1 &amp;&amp; $useMaxTreeRange == 1)">
+            <Target action="show" conditionResult="true" option="initialMaxTrees"/>
+            <Target action="hide" conditionResult="false" option="initialMaxTrees"/>
+            <Target action="show" conditionResult="true" option="lowerMaxTrees"/>
+            <Target action="hide" conditionResult="false" option="lowerMaxTrees"/>
+            <Target action="show" conditionResult="true" option="upperMaxTrees"/>
+            <Target action="hide" conditionResult="false" option="upperMaxTrees"/>
+        </Dependency>
+        <Dependency condition="($autotune == 1 &amp;&amp; $useLearningRateRange == 1)">
+            <Target action="show" conditionResult="true" option="initialLearningRate"/>
+            <Target action="hide" conditionResult="false" option="initialLearningRate"/>
+            <Target action="show" conditionResult="true" option="lowerLearningRate"/>
+            <Target action="hide" conditionResult="false" option="lowerLearningRate"/>
+            <Target action="show" conditionResult="true" option="upperLearningRate"/>
+            <Target action="hide" conditionResult="false" option="upperLearningRate"/>
+        </Dependency>
+        <Dependency condition="($autotune == 1 &amp;&amp; $useInbagFractionRange == 1)">
+            <Target action="show" conditionResult="true" option="initialInbagFraction"/>
+            <Target action="hide" conditionResult="false" option="initialInbagFraction"/>
+            <Target action="show" conditionResult="true" option="lowerInbagFraction"/>
+            <Target action="hide" conditionResult="false" option="lowerInbagFraction"/>
+            <Target action="show" conditionResult="true" option="upperInbagFraction"/>
+            <Target action="hide" conditionResult="false" option="upperInbagFraction"/>
+        </Dependency>
+        <Dependency condition="($autotune == 1 &amp;&amp; $useLassoRegularizationRange == 1)">
+            <Target action="show" conditionResult="true" option="initialLassoRegularization"/>
+            <Target action="hide" conditionResult="false" option="initialLassoRegularization"/>
+            <Target action="show" conditionResult="true" option="lowerLassoRegularization"/>
+            <Target action="hide" conditionResult="false" option="lowerLassoRegularization"/>
+            <Target action="show" conditionResult="true" option="upperLassoRegularization"/>
+            <Target action="hide" conditionResult="false" option="upperLassoRegularization"/>
+        </Dependency>
+        <Dependency condition="($autotune == 1 &amp;&amp; $useRidgeRegularizationRange == 1)">
+            <Target action="show" conditionResult="true" option="initialRidgeRegularization"/>
+            <Target action="hide" conditionResult="false" option="initialRidgeRegularization"/>
+            <Target action="show" conditionResult="true" option="lowerRidgeRegularization"/>
+            <Target action="hide" conditionResult="false" option="lowerRidgeRegularization"/>
+            <Target action="show" conditionResult="true" option="upperRidgeRegularization"/>
+            <Target action="hide" conditionResult="false" option="upperRidgeRegularization"/>
+        </Dependency>
+
+        <Dependency condition="(             (!($autotune == 1) || ($autotune == 1 &amp;&amp; !($useVarsToTryRange == 1))) &amp;&amp;             $varsToTryCombo == 'varsToTryCustomChoice'          )">
+            <Target action="show" conditionResult="true" option="customVarsToTryValue"/>
+            <Target action="hide" conditionResult="false" option="customVarsToTryValue"/>
+        </Dependency>
+        <Dependency condition="($autotune == 1 &amp;&amp; $useVarsToTryRange == 1)">
+            <Target action="show" conditionResult="true" option="initialVarsToTry"/>
+            <Target action="hide" conditionResult="false" option="initialVarsToTry"/>
+            <Target action="show" conditionResult="true" option="lowerVarsToTry"/>
+            <Target action="hide" conditionResult="false" option="lowerVarsToTry"/>
+            <Target action="show" conditionResult="true" option="upperVarsToTry"/>
+            <Target action="hide" conditionResult="false" option="upperVarsToTry"/>
+        </Dependency>
+
+        <Dependency condition="($useInbagRandomSeed==1)">
+            <Target action="show" conditionResult="true" option="inbagRandomSeed"/>
+            <Target action="hide" conditionResult="false" option="inbagRandomSeed"/>
+            <Target action="show" conditionResult="true" option="inbagRandomSeedNote"/>
+            <Target action="hide" conditionResult="false" option="inbagRandomSeedNote"/>
+        </Dependency>
+
+        <Dependency condition="$autotune == 1 &amp;&amp; !($validationDataChoice=='1') &amp;&amp; $autotuneCombo == 'autoPartitionChoice'">
+            <Target action="show" conditionResult="true" option="autoValidationFraction"/>
+            <Target action="hide" conditionResult="false" option="autoValidationFraction"/>
+        </Dependency>
+        <Dependency condition="$autotune == 1 &amp;&amp; !($validationDataChoice=='1') &amp;&amp; $autotuneCombo == 'autoCVChoice'">
+            <Target action="show" conditionResult="true" option="autoNFolds"/>
+            <Target action="hide" conditionResult="false" option="autoNFolds"/>
+        </Dependency>
+        <Dependency condition="$autotune == 1 &amp;&amp; $useAutoNParallel == 1">
+            <Target action="show" conditionResult="true" option="autoNParallel"/>
+            <Target action="hide" conditionResult="false" option="autoNParallel"/>
+        </Dependency>
+
+        <Dependency condition="($targetType == 'useNominalTarget' &amp;&amp; $autotune == 1)">
+            <Target action="show" conditionResult="true" option="autoNominalObjective"/>
+            <Target action="hide" conditionResult="false" option="autoNominalObjective"/>
+        </Dependency>
+        <Dependency condition="($targetType == 'useIntervalTarget' &amp;&amp; $autotune == 1)">
+            <Target action="show" conditionResult="true" option="autoIntervalObjective"/>
+            <Target action="hide" conditionResult="false" option="autoIntervalObjective"/>
+        </Dependency>
+
+        <Dependency condition="($targetType == 'useNominalTarget' &amp;&amp; $autotune == 1 &amp;&amp; $autoTargetEventCombo == 'autoSelectLevelChoice')">
+            <Target action="show" conditionResult="true" option="autoEventCombo"/>
+            <Target action="hide" conditionResult="false" option="autoEventCombo"/>
+        </Dependency>
+
+        <Dependency condition="($autotune == 1 &amp;&amp; ($autoSearchMethod == 'lhsSearchChoice' || $autoSearchMethod == 'randomSearchChoice'))">
+            <Target action="show" conditionResult="true" option="autoSampleSize"/>
+            <Target action="hide" conditionResult="false" option="autoSampleSize"/>
+        </Dependency>
+
+        <Dependency condition="($autotune == 1 &amp;&amp; $autoSearchMethod == 'gaSearchChoice')">
+            <Target action="show" conditionResult="true" option="autotuneDetailsGroup"/>
+            <Target action="hide" conditionResult="false" option="autotuneDetailsGroup"/>
+        </Dependency>
+
+        <Dependency condition="($outputDS==1)">
+            <Target action="enable" conditionResult="true" option="outputDSName"/>
+            <Target action="disable" conditionResult="false" option="outputDSName"/>
+            <Target action="show" conditionResult="true" option="includeVarsInstruction"/>
+            <Target action="hide" conditionResult="false" option="includeVarsInstruction"/>
+         </Dependency>
+        <Dependency condition="($outputDS=='1' &amp;&amp; $includeVars=='includeSelectedVars')">
+            <Target action="show" conditionResult="true" option="copyVariables"/>
+            <Target action="hide" conditionResult="false" option="copyVariables"/>
+        </Dependency>
+        <Dependency condition="($outFitDS==1)">
+            <Target action="enable" conditionResult="true" option="outFitDSName"/>
+            <Target action="disable" conditionResult="false" option="outFitDSName"/>
+        </Dependency>
+        <Dependency condition="($outVarImpDS==1)">
+            <Target action="enable" conditionResult="true" option="outVarImpDSName"/>
+            <Target action="disable" conditionResult="false" option="outVarImpDSName"/>
+        </Dependency>
+        <Dependency condition="($outModelDS==1)">
+            <Target action="enable" conditionResult="true" option="outModelDSName"/>
+            <Target action="disable" conditionResult="false" option="outModelDSName"/>
+        </Dependency>
+
+        <Dependency condition="($scoreCode==1)">
+            <Target action="enable" conditionResult="true" option="scoringCodeFileName"/>
+            <Target action="disable" conditionResult="false" option="scoringCodeFileName"/>
+            <Target action="show" conditionResult="true" option="includeVarsInstruction2"/>
+            <Target action="hide" conditionResult="false" option="includeVarsInstruction2"/>
+        </Dependency>
+
+        <Dependency condition="($scoreCode=='1' &amp;&amp; $includeVars2=='includeSelectedVars2')">
+            <Target action="show" conditionResult="true" option="outputVariables2"/>
+            <Target action="hide" conditionResult="false" option="outputVariables2"/>
+        </Dependency>
+
+        <Dependency condition="($validationDataChoice=='1' || $testDataChoice=='1') &amp;&amp;             $partitionDataCombo == 'partitionDataFractionChoice' &amp;&amp;             $useRandomSeed == '1'">
+            <Target action="show" conditionResult="true" option="randomSeed"/>
+            <Target action="hide" conditionResult="false" option="randomSeed"/>
+            <Target action="show" conditionResult="true" option="partitionRandomSeedNote"/>
+            <Target action="hide" conditionResult="false" option="partitionRandomSeedNote"/>
+        </Dependency>
+<!-- NOT USED
+        <Dependency condition="(($validationDataChoice=='1' || $testDataChoice=='1') &amp;&amp; $partitionDataCombo == 'partitionDataFractionChoice')">
+            <Target option="trainingDataFraction" conditionResult="true"  action="show"/>
+            <Target option="trainingDataFraction" conditionResult="false" action="hide"/>
+        </Dependency>
+-->
+        <Dependency condition="($validationDataChoice=='1' &amp;&amp; $partitionDataCombo == 'partitionDataFractionChoice')">
+            <Target action="show" conditionResult="true" option="validationDataFraction"/>
+            <Target action="hide" conditionResult="false" option="validationDataFraction"/>
+        </Dependency>
+
+        <Dependency condition="($testDataChoice=='1' &amp;&amp; $partitionDataCombo == 'partitionDataFractionChoice')">
+            <Target action="show" conditionResult="true" option="testDataFraction"/>
+            <Target action="hide" conditionResult="false" option="testDataFraction"/>
+        </Dependency>
+
+        <Dependency condition="(($validationDataChoice==1 || $testDataChoice==1) &amp;&amp;             $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp;             $partitionVariable.size() &gt; 0  &amp;&amp;             $useTrainingLevel == 1             )">
+            <Target action="show" conditionResult="true" option="trainingLevelCombo"/>
+            <Target action="hide" conditionResult="false" option="trainingLevelCombo"/>
+        </Dependency>
+
+        <Dependency condition="($validationDataChoice=='1' &amp;&amp; $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp; $partitionVariable.size() &gt; 0)">
+            <Target action="show" conditionResult="true" option="validationLevelCombo"/>
+            <Target action="hide" conditionResult="false" option="validationLevelCombo"/>
+        </Dependency>
+        <Dependency condition="($testDataChoice=='1' &amp;&amp; $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp; $partitionVariable.size() &gt; 0)">
+            <Target action="show" conditionResult="true" option="testLevelCombo"/>
+            <Target action="hide" conditionResult="false" option="testLevelCombo"/>
+        </Dependency>
+
+<!-- Interpretability plot defendencies -->
+
+        <Dependency condition="($nominalVariables.size() + $intervalVariables.size()) &lt; 2">
+           <Target action="show" conditionResult="true" option="interpmsg"/>
+           <Target action="hide" conditionResult="false" option="interpmsg"/>
+           <Target action="disable" conditionResult="true" option="interpretGroup"/>
+           <Target action="enable" conditionResult="false" option="interpretGroup"/>
+        </Dependency>
+        <Dependency condition="($pdPlot == 1 || $icePlot == 1) &amp;&amp; ($nominalVariables.size() + $intervalVariables.size() &gt; 1)">
+           <Target action="show" conditionResult="true" option="pdCombo"/>
+           <Target action="hide" conditionResult="false" option="pdCombo"/>
+        </Dependency>
+        <Dependency condition="($pdPlot == 1 || $icePlot == 1) &amp;&amp; $intervalVariables.size() == 0 ">
+           <Target action="set" conditionResult="true" option="pdCombo" property="value" value="nominalPD"/>
+        </Dependency>
+        <Dependency condition="($pdPlot == 1 || $icePlot == 1) &amp;&amp; $nominalVariables.size() == 0 ">
+           <Target action="set" conditionResult="true" option="pdCombo" property="value" value="intervalPD"/>
+        </Dependency>
+        <Dependency condition="(($pdPlot == 1 || $icePlot == 1) &amp;&amp; $pdCombo == 'intervalPD' &amp;&amp; ($nominalVariables.size() + $intervalVariables.size() &gt; 1))">
+           <Target action="show" conditionResult="true" option="pdPlotVar1"/>
+           <Target action="hide" conditionResult="false" option="pdPlotVar1"/>
+           <Target action="show" conditionResult="true" option="pdBins"/>
+           <Target action="hide" conditionResult="false" option="pdBins"/>
+        </Dependency>
+        <Dependency condition="($pdPlot == 1 || $icePlot == 1) &amp;&amp; $pdCombo == 'nominalPD' &amp;&amp; ($nominalVariables.size() + $intervalVariables.size() &gt; 1)">
+           <Target action="show" conditionResult="true" option="pdPlotVar2"/>
+           <Target action="hide" conditionResult="false" option="pdPlotVar2"/>
+           <Target action="show" conditionResult="true" option="pdMaxlev"/>
+           <Target action="hide" conditionResult="false" option="pdMaxlev"/>
+        </Dependency>
+        <Dependency condition="($pdPlot ==1 || $icePlot == 1) &amp;&amp; $useNominalTarget == '1' ">
+           <Target action="show" conditionResult="true" option="pdPlotValue"/>
+           <Target action="hide" conditionResult="false" option="pdPlotValue"/>
+        </Dependency>
+
+
+    </Dependencies>
+
+    <Requirements>
+        <Requirement condition="($intervalVariables.size() &gt; 0 || $nominalVariables.size() &gt; 0)">
+            <Message>Select at least one interval or nominal input.</Message>
+        </Requirement>
+
+<!-- not currently used
+        <Requirement condition="(!($validationDataChoice == 1) ||
+          ($partitionDataCombo == 'partitionDataVariableChoice') ||
+          ($validationDataChoice == 1 &amp;&amp; $testDataChoice == 0 &amp;&amp; ( $validationDataFraction == '' || $validationDataFraction &lt; $MathTool.toDouble(1.0)))
+)">
+            <Message nlsKey="requirementKey.txt">The sampling proportion for validation data must be greater than 0 and less than 1.</Message>
+        </Requirement>
+  -->
+        <Requirement condition="(!($validationDataChoice == 1) || !($testDataChoice == 1) ||             ($partitionDataCombo == 'partitionDataVariableChoice') ||             ($validationDataChoice == 1 &amp;&amp; $testDataChoice == 1 &amp;&amp;             ($validationDataFraction == '' || $MathTool.add($MathTool.toDouble($validationDataFraction),$MathTool.toDouble($testDataFraction) ) &lt; 1.0)))">
+            <Message>The sum of the sampling proportions for validation and test data must be less than 1.0.</Message>
+        </Requirement>
+
+        <Requirement condition="(         !(             ($validationDataChoice == 1 &amp;&amp; $testDataChoice == 1) &amp;&amp;             $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp;             $partitionVariable.size() &gt; 0 &amp;&amp;             $validationLevelCombo == $testLevelCombo         ))">
+            <Message>The value of the partitioning variable must be different for validation and test cases.</Message>
+        </Requirement>
+        <Requirement condition="(         !(             $validationDataChoice == 1 &amp;&amp;             $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp;             $partitionVariable.size() &gt; 0 &amp;&amp;             $useTrainingLevel == 1 &amp;&amp;             $validationLevelCombo == $trainingLevelCombo         ))">
+            <Message>The value of the partitioning variable must be different for training and validation cases.</Message>
+        </Requirement>
+        <Requirement condition="(         !(             $testDataChoice == 1 &amp;&amp;             $partitionDataCombo == 'partitionDataVariableChoice' &amp;&amp;             $partitionVariable.size() &gt; 0 &amp;&amp;             $useTrainingLevel == 1 &amp;&amp;             $testLevelCombo == $trainingLevelCombo         ))">
+            <Message>The value of the partitioning variable must be different for training and test cases.</Message>
+        </Requirement>
+
+        <Requirement condition="!($autotune ==1 &amp;&amp; $useMaxTreeRange == 1 &amp;&amp; ($lowerMaxTrees &gt; $upperMaxTrees))">
+            <Message>The lower bound for the number of trees must be less than the upper bound.</Message>
+        </Requirement>
+
+        <Requirement condition="!($autotune ==1 &amp;&amp; $useInbagFractionRange == 1 &amp;&amp; ($lowerInbagFraction &gt; $upperInbagFraction))">
+            <Message>The lower bound for the sampling proportion must be less than the upper bound.</Message>
+        </Requirement>
+
+        <Requirement condition="!($autotune ==1 &amp;&amp; $useLearningRateRange == 1 &amp;&amp; ($lowerLearningRate &gt; $upperLearningRate))">
+            <Message>The lower bound for the learning rate must be less than the upper bound.</Message>
+        </Requirement>
+
+        <Requirement condition="!($autotune ==1 &amp;&amp; $useVarsToTryRange == 1 &amp;&amp; ($lowerVarsToTry &gt; $upperVarsToTry))">
+            <Message>The lower bound for the number of inputs to consider splitting a node must be less than the upper bound.</Message>
+        </Requirement>
+
+<!--         <Requirement condition="!($autotune ==1 &amp;&amp; $useVarsToTryRange == 1 &amp;&amp;
+            (($intervalVariables.size() + $nominalVariables.size()) &gt; 0) &amp;&amp;
+            !($initialVarsToTry == '') &amp;&amp;
+            (
+             ($initialVarsToTry &gt; ($intervalVariables.size() + $nominalVariables.size()))
+            )
+
+        )">
+            <Message nlsKey="useVarsToTryInitialValueTooLargeRequirementKey.txt">The initial value for the number of inputs to consider splitting a node cannot be greater than the total number of selected inputs.</Message>
+        </Requirement> -->
+        <Requirement condition="!($autotune ==1 &amp;&amp; $useVarsToTryRange == 1 &amp;&amp;             (($intervalVariables.size() + $nominalVariables.size()) &gt; 0) &amp;&amp;             (              ($lowerVarsToTry &gt; ($intervalVariables.size() + $nominalVariables.size()))             )          )">
+            <Message>The lower bound for the number of inputs to consider splitting a node cannot be greater than the total number of selected inputs.</Message>
+        </Requirement>
+<!-- This requirement checks for an upper bound > total selected inputs IF the upper bound is not 100 (the default) -->
+        <Requirement condition="!($autotune ==1 &amp;&amp; $useVarsToTryRange == 1 &amp;&amp;             !($upperVarsToTry == 100) &amp;&amp;             (              ($upperVarsToTry &gt; ($intervalVariables.size() + $nominalVariables.size()))             )          )">
+            <Message>The upper bound for the number of inputs to consider splitting a node cannot be greater than the total number of selected inputs.</Message>
+        </Requirement>
+
+        <Requirement condition="!(( !($autotune ==1) || ($autotune ==1 &amp;&amp; !($useVarsToTryRange == 1))) &amp;&amp;             (($intervalVariables.size() + $nominalVariables.size()) &gt; 0) &amp;&amp;             (              ($customVarsToTryValue &gt; ($intervalVariables.size() + $nominalVariables.size()))             )          )">
+            <Message>The number of inputs to consider splitting a node cannot be greater than the total number of selected inputs.</Message>
+        </Requirement>
+
+        <Requirement condition="!($autotune ==1 &amp;&amp; $useLassoRegularizationRange == 1 &amp;&amp; ($lowerLassoRegularization &gt; $upperLassoRegularization))">
+            <Message>The lower bound for the LASSO regularization parameter must be less than the upper bound.</Message>
+        </Requirement>
+
+        <Requirement condition="!($autotune ==1 &amp;&amp; $useRidgeRegularizationRange == 1 &amp;&amp; ($lowerRidgeRegularization &gt; $upperRidgeRegularization))">
+            <Message>The lower bound for the ridge regularization parameter must be less than the upper bound.</Message>
+        </Requirement>
+
+        <Requirement condition="!($autotune ==1) || ($autotune == 1 &amp;&amp; ($useMaxTreeRange == 1 || $useInbagFractionRange == 1 || $useVarsToTryRange == 1 || $useLearningRateRange == 1 || $useLassoRegularizationRange == 1 || $useRidgeRegularizationRange == 1))         ">
+            <Message>Select at least one option to autotune.</Message>
+        </Requirement>
+
+        <Requirement condition="!($pdCombo == 'nominalPD' &amp;&amp; $nominalVariables.size() == 0)">
+           <Message>No nominal input variables have been specified</Message>
+        </Requirement>
+        <Requirement condition="!($pdCombo == 'intervalPD' &amp;&amp; $intervalVariables.size() == 0)">
+           <Message>No interval input variables have been specified</Message>
+        </Requirement>
+    </Requirements>
+
+    <CodeTemplate>
+        <![CDATA[
+ods noproctitle;
+
+#set($fitstatPlot=0)
+#if (($missclassPlot && $missclassPlot == 1) || ($asePlot && $asePlot == 1) )
+   #set($fitstatPlot=1)
+#end
+
+#set($needtmpcas = 0)
+#if ( ($pdPlot == 1 || $icePlot == 1) && ($scoreCode == 0))
+   #set($needtmpcas=1)
+#end
+
+#if ($needtmpcas == 1)
+libname _tmpcas_ cas caslib="CASUSER";
+#end
+
+proc gradboost data=$dataset
+#if ((!($autotune == 1) || ($autotune == 1 && !($useMaxTreeRange == 1))) && !($maxTrees==100)) ntrees=$maxTrees#end
+#if (!($maxDepth == 4)) maxdepth=$maxDepth#end
+#if (!($maxBranches==2)) maxbranch=$maxBranches#end
+#if (!($minLeafSize==5)) minleafsize=$minLeafSize#end
+#if ($useInbagRandomSeed==1) seed=$inbagRandomSeed#end
+#if ($intervalVariables.size() > 0 && $useIntervalBins == 1 && $intervalBins != 50) numbin=$intervalBins#end
+#if ($varsToTryCombo == 'varsToTryCustomChoice') vars_to_try=$customVarsToTryValue#end
+#if ((!($autotune == 1) || ($autotune == 1 && !($useInbagFractionRange == 1))) && !($inbagFraction== 0.5)) subsamplerate=$inbagFraction#end
+#if ((!($autotune == 1) || ($autotune == 1 && !($useLearningRateRange == 1))) && !($learningRate == 0.1)) learningrate=$learningRate#end
+#if ((!($autotune == 1) || ($autotune == 1 && !($useLassoRegularizationRange == 1))) && !($lassoRegularization == 0)) lasso=$lassoRegularization#end
+#if ((!($autotune == 1) || ($autotune == 1 && !($useRidgeRegularizationRange == 1))) && !($ridgeRegularization == 1)) ridge=$ridgeRegularization#end
+#if ($outModelDS==1) outmodel=$outModelDSName#end
+;
+
+#if ($dataset.getWhereClause() != '')
+   where $dataset.getWhereClause();
+#end
+
+## PARTITION THE DATA
+#if ($testDataChoice == 1 || $validationDataChoice == 1)
+   partition
+   #if($partitionDataCombo == 'partitionDataFractionChoice')
+ fraction(#if ($validationDataChoice == 1) validate=$validationDataFraction#end
+      #if($testDataChoice == 1) test=$testDataFraction#end
+      #if($useRandomSeed == '1') seed=$randomSeed#end
+   #elseif ($partitionDataCombo == 'partitionDataVariableChoice')
+ role=#foreach( $item in $partitionVariable ) $item #end(
+      #if ($validationDataChoice == 1) validate=$CTMUtil.quoteString($validationLevelCombo)#end
+      #if($testDataChoice == 1) test=$CTMUtil.quoteString($testLevelCombo)#end
+      #if($useTrainingLevel == 1) train=$CTMUtil.quoteString($trainingLevelCombo)#end
+   #end
+   );
+#end
+
+#if ($targetType == 'useNominalTarget')
+   #if ($categoricalTarget.size() > 0)
+   target
+      #foreach( $item in $categoricalTarget ) $item#end / level=nominal
+   ;
+   #end
+#elseif ($targetType == 'useIntervalTarget')
+   #if ($continuousTarget.size() > 0)
+   target
+   #foreach( $item in $continuousTarget ) $item#end
+   / level=interval
+   ;
+   #end
+#end
+
+#if ($intervalVariables.size() > 0)
+   input
+   #foreach( $item in $intervalVariables ) $item#end / level=interval
+   ;
+#end
+
+#if ($nominalVariables.size() > 0)
+   input
+   #foreach( $item in $nominalVariables ) $item#end / level=nominal
+   ;
+#end
+
+#if ($autotune == 1)
+   autotune
+
+ tuningparameters=(
+      #if ($useMaxTreeRange == 1)
+         ntrees#if (!($initialMaxTrees == 100) || !($lowerMaxTrees == 20) || !($upperMaxTrees == 150))
+(#if (!($initialMaxTrees == 100))init=$initialMaxTrees#end#if (!($lowerMaxTrees == 20)) lb=$lowerMaxTrees#end#if (!($upperMaxTrees == 150)) ub=$upperMaxTrees#end)
+         #end
+      #{else}ntrees(exclude)
+      #end
+      #if ($useInbagFractionRange == 1)
+         samplingrate#if (!($initialInbagFraction == 0.5) || !($lowerInbagFraction == 0.1) || !($upperInbagFraction == 1.0))
+(#if (!($initialInbagFraction == 0.5))init=$initialInbagFraction#end#if (!($lowerInbagFraction == 0.1)) lb=$lowerInbagFraction#end#if (!($upperInbagFraction == 1.0)) ub=$upperInbagFraction#end)
+         #end
+      #{else} samplingrate(exclude)
+      #end
+      #if ($useVarsToTryRange == 1)
+         #if($initialVarsToTry == '')#set($initVarsToTry=$intervalVariables.size() + $nominalVariables.size())
+         #else#set($initVarsToTry=$initialVarsToTry)
+         #end
+ vars_to_try(init=$initVarsToTry#if (!($lowerVarsToTry == 1)) lb=$lowerVarsToTry#end#if (!($upperVarsToTry == 100)) ub=$upperVarsToTry#end)
+      #else vars_to_try(exclude)
+      #end
+      #if ($useLearningRateRange == 1)
+         learningrate#if (!($initialLearningRate == 0.1) || !($lowerLearningRate == 0.01) || !($upperLearningRate == 1.0    ))
+(#if (!($initialLearningRate == 0.1))init=$initialLearningRate#end#if (!($lowerLearningRate == 0.01)) lb=$lowerLearningRate#end#if (!($upperLearningRate == 1.0)) ub=$upperLearningRate#end)
+         #end
+      #else learningrate(exclude)
+      #end
+      #if ($useLassoRegularizationRange == 1)
+         lasso#if (!($initialLassoRegularization == 0) || !($lowerLassoRegularization == 0) || !($upperLassoRegularization == 10    ))
+(#if (!($initialLassoRegularization == 0))init=$initialLassoRegularization#end#if (!($lowerLassoRegularization == 0)) lb=$lowerLassoRegularization#end#if (!($upperLassoRegularization == 10)) ub=$upperLassoRegularization#end)
+         #end
+      #else lasso(exclude)#end
+      #if ($useRidgeRegularizationRange == 1)
+         ridge#if (!($initialRidgeRegularization == 1) || !($lowerRidgeRegularization == 0) || !($upperRidgeRegularization == 10    ))
+(#if (($initialRidgeRegularization != 1))init=$initialRidgeRegularization#end#if (!($lowerRidgeRegularization == 0)) lb=$lowerRidgeRegularization#end#if (!($upperRidgeRegularization == 10)) ub=$upperRidgeRegularization#end)#end
+#else ridge(exclude)#end)
+
+   #if ($targetType == 'useNominalTarget')
+      #if ($autoTargetEventCombo == 'autoSelectLevelChoice')
+ targetevent=$CTMUtil.quoteString($autoEventCombo)
+      #end
+   #end
+
+   #if (!($autoSearchMethod == 'gaSearchChoice'))searchmethod=
+#if ($autoSearchMethod == 'lhsSearchChoice')lhs #elseif ($autoSearchMethod == 'randomSearchChoice')random #elseif ($autoSearchMethod == 'bayesSearchChoice')bayesian #end
+#if ((($autoSearchMethod == 'lhsSearchChoice' || $autoSearchMethod == 'randomSearchChoice')) && !($autoSampleSize == 50)) samplesize=$autoSampleSize#end
+#end
+
+   #if ($targetType == 'useNominalTarget')
+      #set($_autotuneObjective=$autoNominalObjective)
+   #elseif ($targetType == 'useIntervalTarget')
+      #set($_autotuneObjective=$autoIntervalObjective)
+   #end
+
+   objective=
+      #if     ($_autotuneObjective== 'autotuneASEChoice')ase
+      #elseif ($_autotuneObjective== 'autotuneAUCChoice')auc
+      #elseif ($_autotuneObjective== 'autotuneF1Choice')f1
+      #elseif ($_autotuneObjective== 'autotuneF05Choice')f05
+      #elseif ($_autotuneObjective== 'autotuneGammaChoice')gamma
+      #elseif ($_autotuneObjective== 'autotuneGiniChoice')gini
+      #elseif ($_autotuneObjective== 'autotuneMCLLChoice')mcll
+      #elseif ($_autotuneObjective== 'autotuneMiscChoice')misc
+      #elseif ($_autotuneObjective== 'autotuneRaseChoice')rase
+      #elseif ($_autotuneObjective== 'autotuneTauChoice')tau
+      #elseif ($_autotuneObjective== 'autotuneKSChoice')ks
+      #elseif ($_autotuneObjective== 'autotuneMAEChoice')mae
+      #elseif ($_autotuneObjective== 'autotuneMSLEChoice')msle
+      #elseif ($_autotuneObjective== 'autotuneRMAEChoice')rmae
+      #elseif ($_autotuneObjective== 'autotuneRMSLEChoice')rmsle
+      #end
+
+   ## Autotune optimization parameters
+   #if (!($validationDataChoice == 1))
+      #if     ($autotuneCombo == 'autoPartitionChoice') fraction=$autoValidationFraction
+      #elseif ($autotuneCombo == 'autoCVChoice') kfold=$autoNFolds
+      #end
+   #end
+
+   ##Fix for SASSTUDIO-13316 - Always add maxTime to the AUTOTUNE statement
+   maxtime=%sysevalf($autoMaxtime*60)
+
+   #if ($autoSearchMethod == 'gaSearchChoice')
+      #if (!($autoMaxiter == 5)) maxiters=$autoMaxiter#end
+      #if (!($autoMaxevals == 50)) maxevals=$autoMaxevals#end
+      #if (!($autoPopsize == 10)) popsize=$autoPopsize#end
+   #end
+   #if ($useAutoNParallel == 1) nparallel=$autoNParallel#end
+   #if($tuneHistoryCombo != 'table')
+      #if($tunerPlot == '1' || $byparmPlot == '1')
+         #if($tuneHistoryCombo == 'log' || $tuneHistoryCombo == 'none'); %put $odscomment#else evalhistory=$tuneHistoryCombo #end
+      #else evalhistory=$tuneHistoryCombo
+      #end
+   #end;
+#if($tunerPlot==1)ods output TunerResults = _tempTuneResults_;#end
+#if($tunerPlot==1 || $byparmPlot==1)ods output EvaluationHistory = _tempEvalHistory_;#end
+#if($bestPlot==1)ods output IterationHistory = _tempIterHistory_;#end
+#end
+
+#if (($outFitDS==1 || $fitstatPlot == 1) || ($outVarImpDS == 1 || $variableImportancePlot == 1))
+   ods output
+   #if ($outFitDS==1 || $fitstatPlot == 1)
+      #if ($outFitDS==1)#set($fitStatsDSName="$outFitDSName")
+      #else#set($fitStatsDSName="Work._Gradboost_FitStats_")
+      #end
+ FitStatistics=$fitStatsDSName
+   #end
+
+   #if ($outVarImpDS==1 || $variableImportancePlot == 1)
+      #if ($outVarImpDS == 1)
+            #set($varimpDSName="$outVarImpDSName")
+      #else #set($varimpDSName="Work._Gradboost_VarImp_")
+      #end
+ VariableImportance=$varimpDSName
+   #end
+   ;
+#end
+#if ($outputDS==1)
+   score out=$outputDSName
+   #if     ($includeVars=='includeAllVars') copyvars=(_all_)
+   #elseif ($includeVars=='includeSelectedVars')
+      #if( $copyVariables.size() > 0 ) copyvars=(#foreach( $item in $copyVariables ) $item#end)#end
+   #elseif ($includeVars=='includeAnalysisVars')
+      #if (($targetType == 'useNominalTarget' && $categoricalTarget.size() > 0) ||
+           ($targetType == 'useIntervalTarget' && $continuousTarget.size() > 0) ||
+           $intervalVariables.size() > 0 ||
+           $nominalVariables.size() > 0 ||
+           ($validationDataChoice==1 && $partitionDataCombo == 'partitionDataVariableChoice' && $partitionVariable.size() > 0)
+           )
+ copyvars=(
+         #if ($targetType == 'useNominalTarget' && $categoricalTarget.size() > 0)
+             #foreach( $item in $categoricalTarget ) $item#end
+         #end
+         #if ($targetType == 'useIntervalTarget' && $continuousTarget.size() > 0)
+             #foreach( $item in $continuousTarget ) $item#end
+         #end
+         #if ($intervalVariables.size() > 0)
+             #foreach( $item in $intervalVariables ) $item#end
+         #end
+         #if ($nominalVariables.size() > 0)
+             #foreach( $item in $nominalVariables ) $item#end
+         #end
+         #if ($validationDataChoice==1 && $partitionDataCombo == 'partitionDataVariableChoice' && $partitionVariable.size() > 0)
+            #foreach( $item in $partitionVariable ) $item#end
+         #end
+ )
+       #end
+   #end
+;
+#end
+
+
+#if ($scoreCode == 1)
+   savestate rstore = $scoringCodeFileName;
+   #if     ($includeVars2=='includeAllVars2') id _all_;
+   #elseif ($includeVars2=='includeSelectedVars2')
+      #if( $outputVariables2.size() > 0 ) id #foreach( $item in $outputVariables2 ) $item#end; #end
+   #elseif ($includeVars2=='includeAnalysisVarsPred2' || $includeVars2=='includeAnalysisVarsAssess2')
+     id #if ($includeVars2=='includeAnalysisVarsAssess2' && $targetType == 'useNominalTarget' && $categoricalTarget.size() > 0) #foreach($item in $categoricalTarget) $item #end #end
+        #if ($includeVars2=='includeAnalysisVarsAssess2' && $targetType == 'useIntervalTarget' && $continuousTarget.size() > 0) #foreach( $item in $continuousTarget ) $item #end #end
+        #if ($intervalVariables.size() > 0) #foreach( $item in $intervalVariables ) $item #end #end
+        #if ($nominalVariables.size() > 0) #foreach( $item in $nominalVariables ) $item #end #end
+         ;
+      #end
+#end
+
+#if ($needtmpcas == 1)
+   savestate rstore = _tmpcas_._gradboostModel_;
+#end
+
+run;
+
+#if ($fitstatPlot == 1)
+proc sgplot data=$fitStatsDSName;
+    #if ($targetType == 'useIntervalTarget')
+     ## Average Square Error by Trees title
+    title3 $CTMUtil.quoteString( $plotTitle1int );
+    #else
+    ## Missclassifications by Trees title
+    title3 $CTMUtil.quoteString( $plotTitle1 );
+    #end
+
+    ## Training vs. Validation title
+    title4
+    #if ($validationDataChoice == 1) $CTMUtil.quoteString( $plotTitle2v );
+## TEMPORARY title for 16w17
+    #else $CTMUtil.quoteString( $plotTitle2a ); ## commented out for 16w17: $CTMUtil.quoteString( $plotTitle2 );
+    #end
+
+    series x=Trees y=
+    #if ($targetType == 'useIntervalTarget') ASETrain
+    #else MiscTrain
+    #end
+    ;
+
+#* OOB commented out for 16w17
+    series x=Trees y=
+    #if ($targetType == 'useIntervalTarget') ASEOob
+    #else MiscOob
+    #end
+    / lineattrs=(pattern=shortdash thickness=2);
+*#
+
+    #if ($validationDataChoice == 1)
+    series x=Trees y=
+        #if ($targetType == 'useIntervalTarget') ASEValid
+        #else MiscValid
+        #end
+    /lineattrs=(pattern=dot thickness=2);
+    #end
+
+    yaxis label=
+    ## Average Square Error or Missclassification Rate title
+    #if ($targetType == 'useIntervalTarget') $CTMUtil.quoteString( $asePlotTitle )
+    #else $CTMUtil.quoteString( $missclassPlotTitle )
+    #end
+    ;
+
+    ## Number of Trees title
+    label Trees=$CTMUtil.quoteString( $nTreesPlotTitle );
+    label
+    #if ($targetType == 'useIntervalTarget') ASETrain
+    #else MiscTrain
+    #end
+    ## Training title
+    =$CTMUtil.quoteString( $trainingPlotTitle );
+#* OOB commented out for 16w17
+    label
+    #if ($targetType == 'useIntervalTarget') ASEOob
+    #else MiscOob
+    #end
+    ## OOB title
+    =$CTMUtil.quoteString( $oobPlotTitle );
+*#
+
+    #if ($validationDataChoice == 1)
+    label
+        #if ($targetType == 'useIntervalTarget') ASEValid
+        #else MiscValid
+        #end
+   =$CTMUtil.quoteString( $validPlotTitle );
+    #end
+run;
+title3;
+#end
+
+#if ($variableImportancePlot == 1)
+proc sgplot data=$varimpDSName;
+    ## Variable Importance title
+    title3 $CTMUtil.quoteString( $variableImportancePlotTitle );
+        hbar variable / response=importance nostatlabel categoryorder=respdesc;
+run;
+title3;
+#end
+#if($tunerPlot==1 || $bestPlot==1 || $byparmPlot==1)
+
+##search method
+#if($autoSearchMethod=="gaSearchChoice") #set($smeth = $gaSearchChoice)
+   #elseif ($autoSearchMethod=="lhsSearchChoice") #set($smeth= $lhsSearchChoice)
+   #elseif ($autoSearchMethod=="randomSearchChoice") #set($smeth= $randomSearchChoice)
+   #else #set($smeth= $bayesSearchChoice)
+#end
+
+## objective variable
+
+#if($_autotuneObjective=="autotuneASEChoice") #set($objvar = "averagesqerr")
+   #elseif ($_autotuneObjective=="autotuneMAEChoice") #set($objvar = "meanabserr")
+   #elseif ($_autotuneObjective=="autotuneMSLEChoice") #set($objvar = "meansqlogerr")
+   #elseif ($_autotuneObjective=="autotuneRaseChoice") #set($objvar = "rootase")
+   #elseif ($_autotuneObjective=="autotuneRMAEChoice") #set($objvar = "rootmeanabserr")
+   #elseif ($_autotuneObjective=="autotuneRMSLEChoice") #set($objvar = "rootmeansqlogerr")
+   #elseif ($_autotuneObjective=="autotuneAUCChoice") #set($objvar = "areaundercurve")
+   #elseif ($_autotuneObjective=="autotuneF1Choice") #set($objvar = "f1score")
+   #elseif ($_autotuneObjective=="autotuneF05Choice") #set($objvar = "f05score")
+   #elseif ($_autotuneObjective=="autotuneGammaChoice") #set($objvar = "gammacoefficient")
+   #elseif ($_autotuneObjective=="autotuneGiniChoice") #set($objvar = "ginicoefficient")
+   #elseif ($_autotuneObjective=="autotuneMCLLChoice") #set($objvar = "multiclasslogloss")
+   #elseif ($_autotuneObjective=="autotuneMiscChoice") #set($objvar = "misclasserr")
+   #elseif ($_autotuneObjective=="autotuneTauChoice") #set($objvar = "taucoefficient")
+   #elseif ($_autotuneObjective=="autotuneKSChoice") #set($objvar = "kscoefficient")
+   #else #set($objvar = "misclasserr")
+   #end
+
+#end  ## end of plots loop
+#if($tunerPlot==1 || $bestPlot==1 || $byparmPlot==1)
+   #set( $tmptitle = $autotitle1.replace("{0}", "${smeth}") )
+   title $CTMUtil.quoteString($tmptitle);
+#end
+#if($tunerPlot==1)
+data _null_;
+   set _tempTuneResults_;if _n_ = 1 then call symput('default',$objvar);if _n_ = 2 then call symput('best',$objvar);
+run;
+data _tempEvalHistory_;
+   set _tempEvalHistory_;
+   default=&default;
+   best=&best;
+run;
+proc sgplot data=_tempEvalHistory_;
+   scatter x=evaluation y=$objvar / group=iteration;
+   series x=evaluation y=default/curvelabel="$defaultLabel" lineattrs=(pattern=shortdash);
+   series x=evaluation y=best / curvelabel="$bestLabel" lineattrs=(pattern=shortdash color=green);
+run;
+#end
+
+#if($bestPlot==1)
+proc sgplot data=_tempIterHistory_;
+   series x=iteration y=best_obj;
+   series x=iteration y=time_sec / y2axis;
+run;
+#end
+
+#if($byparmPlot==1)
+proc sgscatter data=_tempEvalHistory_;
+   plot
+   #if($useInbagFractionRange==1) $objvar * subsamplerate #end
+   #if($useVarsToTryRange==1) $objvar * m #end
+   #if($useLearningRateRange==1) $objvar * learningrate #end
+   #if($useLassoRegularizationRange==1) $objvar * lasso #end
+   #if($useRidgeRegularizationRange==1) $objvar * ridge #end
+   / group=iteration
+;
+run;
+#end
+
+#if($tunerPlot==1 || $bestPlot==1 || $byparmPlot==1)
+proc delete
+data=#if($tunerPlot==1)_tempTuneResults_#end#if($tunerPlot==1 || $byparmPlot==1) _tempEvalHistory_#end#if($bestPlot==1) _tempIterHistory_#end;
+run;
+#end
+
+#if($variableImportancePlot == 1 && !($outVarImpDS == 1))
+proc delete data=$varimpDSName;run;
+#end
+
+#if ($fitstatPlot == 1 && !($outFitDS==1))
+proc delete data=$fitStatsDSName;run;
+#end
+
+
+#if ($pdPlot == 1 || $icePlot == 1)
+#if($targetType == 'useIntervalTarget')
+#foreach($item in $continuousTarget)
+   #set($tempvar = "$item.get('value')")
+   #set($predictedTarget = "p_$tempvar")
+#end #end
+
+#if($targetType == 'useNominalTarget')
+#foreach($item in $categoricalTarget)
+   #set($tempvar = "$item.get('value')")
+   #set($predictedTarget = "p_${tempvar}$pdPlotValue" )
+#end #end
+
+
+#if($pdCombo == 'intervalPD') #foreach($item in $pdPlotVar1) #set($pdPlotVar = $item.get('value')) #end #end
+#if($pdCombo == 'nominalPD')  #foreach($item in $pdPlotVar2) #set($pdPlotVar = $item.get('value')) #end #end
+
+#set($CASlibref = $dataset.getLibrary())
+#set($CASlib="%sysfunc(getlcaslib($CASlibref))")
+#if($scoreCode == 1)
+#set($outCASlibref = $scoringCodeFileName.getLibrary())
+#set($outCASlib = "%sysfunc(getlcaslib($outCASlibref))")
+#else
+#set($outCASlibref = "_tmpcas_")
+#set($outCASlib = "casuser")
+#end
+proc cas;
+   explainModel.partialDependence /
+      table={name=$CTMUtil.quoteString($dataset.get('table')), caslib=$CTMUtil.doubleQuoteString($CASlib)} modelTableType='ASTORE'
+      #if($scoreCode == 1) modelTable={name=$CTMUtil.quoteString($scoringCodeFileName.get('table'))}#end
+      #if($needtmpcas == 1) modelTable = {name='_gradboostModel_' caslib='casuser'}#end
+      inputs={#foreach($item in $nominalVariables)$CTMUtil.doubleQuoteString($item.get('value')) #end
+         #foreach($item in $intervalVariables) $CTMUtil.doubleQuoteString($item.get('value')) #end}
+      analysisVariable={name=$CTMUtil.doubleQuoteString($pdPlotVar)
+      #if($pdCombo == 'intervalPD')nBins = $pdBins#end
+      #if($pdCombo == 'nominalPD')maxLevels = $pdMaxlev #end
+      }
+      predictedTarget=$CTMUtil.quoteString($predictedTarget)
+      outputTables = {replace=true, names={PARTIALDEPENDENCE={name="_partialdep_" caslib=$CTMUtil.doubleQuoteString($outCASlib)}}}
+      #if($icePlot == 1) output = {casout={name="_icedata_", caslib=$CTMUtil.doubleQuoteString($outCASlib), replace=true}, copyvars='ALL'}#end
+      ;
+run;
+quit;
+
+#if($pdPlot == 1)
+#set($temptitle = "$pdPlotTitle $pdPlotVar")
+title $CTMUtil.doubleQuoteString($temptitle);
+proc sgplot data = ${outCASlibref}._partialdep_;
+    series x = $CTMUtil.toSASName($pdPlotVar) y = MeanPrediction  ;
+run;
+#end
+
+#if($icePlot == 1)
+data _icedata_;
+   set ${outCASlibref}._icedata_;
+   retain _id_ 0;
+   if _bin_id_ = 1 then _id_ + 1;
+run;
+#set($temptitle = "$icePlotTitle $pdPlotVar")
+title $CTMUtil.doubleQuoteString($temptitle);
+/* $icePlotMsg */
+proc sgplot data = _icedata_;
+    where _id_ < 200;
+    series x = $CTMUtil.toSASName($pdPlotVar) y = $predictedTarget / group = _id_;
+run;
+#end
+
+#end ##end of interpretability plots
+
+#if($needtmpcas == 1)
+#if($pdPlot == 1 || $icePlot == 1)
+proc delete data=_tmpcas_._gradboostModel_;
+run;
+#end
+libname _tmpcas_;
+#end
+#if ($icePlot ==1)
+proc delete data=work._icedata_;
+#end
+
+
+]]>
+    </CodeTemplate>
+<TemplateValues version="7.3">
+<![CDATA[
+{"dataset":{"librarytable":"CASUSER.CUSTOMERFOCUSGROUP2"},"categoricalTarget":"json:[{\"value\":\"Influencer\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"}]","continuousTarget":"","intervalVariables":"json:[{\"value\":\"Customer_ID\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"Age\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"Date\",\"type\":\"Numeric\",\"length\":8,\"format\":\"MMDDYY10.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"life_value\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"customer_since_m\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"t_since_last_purchase_m\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"Est_HH_Income\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"cs_med_H_value\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"cs_pct_H_owner\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"forecast_region\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"connections_LT\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"emails_month\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"previous_return_issues\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"inactivity_months\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"emails_in_pk_y\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"emails_in_offpk_y\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"texts_out_offpk_y\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"texts_out_pk_y\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"last_cc_charge\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"store_visits_y\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"last_discount_amt\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"recent_callcenter_contacts\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"avg_order_value_3y\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"purchases_3yr\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"purchases_6y\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"purchases_9yr\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"}]","nominalVariables":"json:[{\"value\":\"LongLat\",\"type\":\"Char\",\"length\":20,\"format\":\"$20.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"Region\",\"type\":\"Char\",\"length\":13,\"format\":\"$13.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"Gender\",\"type\":\"Char\",\"length\":1,\"format\":\"$1.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"JobClassification\",\"type\":\"Char\",\"length\":12,\"format\":\"$12.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"Sales_channel\",\"type\":\"Char\",\"length\":24,\"format\":\"$24.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"last_order_type\",\"type\":\"Char\",\"length\":15,\"format\":\"$15.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"Month\",\"type\":\"Char\",\"length\":3,\"format\":\"$3.\",\"informat\":\"\",\"className\":\"RoleObject\"},{\"value\":\"credit_level\",\"type\":\"Char\",\"length\":10,\"format\":\"$10.\",\"informat\":\"\",\"className\":\"RoleObject\"}]","copyVariables":"","outputVariables2":"","partitionVariable":"","useIntervalTarget":"0","targetType":"useNominalTarget","useNominalTarget":"1","useIntervalBins":"1","intervalBins":50,"maxTrees":100,"useMaxTreeRange":"1","initialMaxTrees":100,"lowerMaxTrees":20,"upperMaxTrees":150,"maxDepth":4,"maxBranches":2,"inbagFraction":0.5,"useInbagFractionRange":"1","initialInbagFraction":0.5,"lowerInbagFraction":0.1,"upperInbagFraction":1,"useInbagRandomSeed":"0","inbagRandomSeed":"","minLeafSize":5,"varsToTryCombo":[{"value":"varsToTryAllChoice","displayValue":"All inputs (Default)","keys":["varsToTryAllChoice",null,"All inputs (Default)"],"label":"All inputs (Default)","baseid":"{\"value\":\"varsToTryAllChoice\",\"label\":\"All inputs (Default)\"}","id":"{\"value\":\"varsToTryAllChoice\",\"label\":\"All inputs (Default)\"}1"}],"customVarsToTryValue":"","useVarsToTryRange":"1","initialVarsToTry":100,"lowerVarsToTry":1,"upperVarsToTry":100,"learningRate":0.1,"useLearningRateRange":"1","initialLearningRate":0.1,"lowerLearningRate":0.01,"upperLearningRate":1,"lassoRegularization":0,"useLassoRegularizationRange":"1","initialLassoRegularization":0,"lowerLassoRegularization":0,"upperLassoRegularization":10,"ridgeRegularization":1,"useRidgeRegularizationRange":"1","initialRidgeRegularization":1,"lowerRidgeRegularization":0,"upperRidgeRegularization":10,"autotune":"1","autotuneCombo":[{"value":"autoPartitionChoice","displayValue":"Partition","keys":["autoPartitionChoice",null,"Partition"],"label":"Partition","baseid":"{\"value\":\"autoPartitionChoice\",\"label\":\"Partition\"}","id":"{\"value\":\"autoPartitionChoice\",\"label\":\"Partition\"}1"}],"autoValidationFraction":0.3,"autoNFolds":5,"autoMaxtime":60,"autoMaxiter":5,"autoSearchMethod":[{"value":"gaSearchChoice","displayValue":"Genetic algorithm","keys":["gaSearchChoice",null,"Genetic algorithm"],"label":"Genetic algorithm","baseid":"{\"value\":\"gaSearchChoice\",\"label\":\"Genetic algorithm\"}","id":"{\"value\":\"gaSearchChoice\",\"label\":\"Genetic algorithm\"}1"}],"autoSampleSize":50,"autoNominalObjective":[{"value":"autotuneMiscChoice","displayValue":"Misclassification rate","keys":["autotuneMiscChoice",null,"Misclassification rate"],"label":"Misclassification rate","baseid":"{\"value\":\"autotuneMiscChoice\",\"label\":\"Misclassification rate\"}","id":"{\"value\":\"autotuneMiscChoice\",\"label\":\"Misclassification rate\"}1"}],"autoIntervalObjective":[{"value":"autotuneASEChoice","displayValue":"Average square error","keys":["autotuneASEChoice",null,"Average square error"],"label":"Average square error","baseid":"{\"value\":\"autotuneASEChoice\",\"label\":\"Average square error\"}","id":"{\"value\":\"autotuneASEChoice\",\"label\":\"Average square error\"}1"}],"autoTargetEventCombo":[{"value":"autoUseFirstLevelChoice","displayValue":"Use first target value","keys":["autoUseFirstLevelChoice",null,"Use first target value"],"label":"Use first target value","baseid":"{\"value\":\"autoUseFirstLevelChoice\",\"label\":\"Use first target value\"}","id":"{\"value\":\"autoUseFirstLevelChoice\",\"label\":\"Use first target value\"}1"}],"useAutoNParallel":"0","autoNParallel":2,"autoMaxevals":50,"autoPopsize":10,"tuneHistoryCombo":[{"value":"table","displayValue":"Results table","keys":["tableHistory","table","Results table"],"label":"Results table","baseid":"{\"value\":\"table\",\"label\":\"Results table\"}","id":"{\"value\":\"table\",\"label\":\"Results table\"}1"}],"tunerPlot":"1","bestPlot":"1","byparmPlot":"1","outputDS":"0","outputDSName":{"value":"","cbSelected":false},"includeAllVars":"0","includeVars":"includeAnalysisVars","includeAnalysisVars":"1","includeSelectedVars":"0","outModelDS":"0","outModelDSName":{"value":"","cbSelected":false},"outFitDS":"1","outFitDSName":{"value":"work.Gradboost_fit","cbSelected":false},"outVarImpDS":"0","outVarImpDSName":{"value":"work.Gradboost_varimp","cbSelected":false},"scoreCode":"0","scoringCodeFileName":{"value":"","cbSelected":false},"includeAllVars2":"0","includeVars2":"includeAnalysisVarsPred2","includeAnalysisVarsPred2":"1","includeAnalysisVarsAssess2":"0","includeSelectedVars2":"0","asePlot":"0","missclassPlot":"1","variableImportancePlot":"1","pdPlot":"1","icePlot":"1","pdCombo":[{"value":"intervalPD","displayValue":"Interval input","keys":["intervalPD",null,"Interval input"],"label":"Interval input","baseid":"{\"value\":\"intervalPD\",\"label\":\"Interval input\"}","id":"{\"value\":\"intervalPD\",\"label\":\"Interval input\"}1"}],"pdPlotVar1":"json:[{\"value\":\"life_value\",\"type\":\"Numeric\",\"length\":8,\"format\":\"BEST12.\",\"informat\":\"\",\"className\":\"RoleObject\"}]","pdBins":10,"pdPlotVar2":"","pdMaxlev":10,"pdPlotValue":0,"testDataChoice":"1","validationDataChoice":"1","testDataFraction":0.1,"validationDataFraction":0.2,"useRandomSeed":"0","randomSeed":"","partitionDataCombo":[{"value":"partitionDataFractionChoice","displayValue":"Specify a sample proportion","keys":["partitionDataFractionChoice",null,"Specify a sample proportion"],"label":"Specify a sample proportion","baseid":"{\"value\":\"partitionDataFractionChoice\",\"label\":\"Specify a sample proportion\"}","id":"{\"value\":\"partitionDataFractionChoice\",\"label\":\"Specify a sample proportion\"}1"}],"useTrainingLevel":"0"}
+]]>
+</TemplateValues>
+
+</Task>
