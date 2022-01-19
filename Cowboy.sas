@@ -16,5 +16,5 @@ title1 c=white f=swiss 'Wifi Antenna Signal Level @1.5m from the floor';
 title2 h=2 color=bibg angle=90 'Relative Strength';
 
 proc g3d data=hat;
-plot y*x=z / ctop=green ctext=white;
+plot y*x=z / ctop=yellowgreen ctext=white;
 run; 
