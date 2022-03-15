@@ -1,3 +1,5 @@
+# Simple python program
+
 input_table='sashelp.class'
 output_table='work.class_transposed'
 
