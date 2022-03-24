@@ -1,3 +1,8 @@
+/* Simple SAS program with Proc SQL queries and datasteps followed by */
+/* frequently used statistical analysis SAS Procedures                */
+/* Demo by Jocelyn.Gascon-Giroux@sas.com 514-918-7397                 */
+
+
 libname source '~/Data/source';
 libname target '~/Data/target';
 
@@ -48,3 +53,4 @@ proc univariate data=TARGET.COMBINED noprint;
 		store_visits_y last_discount_amt avg_order_value_3y purchases_3yr 
 		purchases_6y purchases_9yr;
 run;
+
