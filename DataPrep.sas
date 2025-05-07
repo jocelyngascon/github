@@ -30,7 +30,7 @@ run;
 
 /***************************/
 
-/*** Analyze categorical variables ***/
+/*** Analyse categorical variables ***/
 title "Frequencies for Categorical Variables";
 
 proc freq data=TARGET.COMBINED;
@@ -54,3 +54,5 @@ proc univariate data=TARGET.COMBINED noprint;
 		purchases_6y purchases_9yr;
 run;
 
+/* data _null_; rc = git_clone("ssh-remote-repository-url","target-directory","ssh-user-name","ssh-password","ssh-public-key","ssh-private-key");put rc=;run; */
+ 
