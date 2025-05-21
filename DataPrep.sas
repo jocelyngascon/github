@@ -1,6 +1,6 @@
 /* Simple SAS program with Proc SQL queries and datasteps followed by */
 /* frequently used statistical analysis SAS Procedures                */
-/* Demo by Jocelyn.Gascon-Giroux@sas.com 514-918-7397                 */
+/* Demo by Jocelyn.Gascon-Giroux@sas.com 514-918-7397 bis                */
 
 
 libname source '~/Data/source';
